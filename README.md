@@ -9,7 +9,7 @@ Application web permettant de gérer des artistes :
 - supprimer un artiste
 - afficher la liste
 
-Projet réalisé dans le cadre du cours PID (ICC) donné par Mme Ruth.
+Projet réalisé dans le cadre du cours PID (ICC) donné par M Ruth.
 
 ## Technologies
 - Laravel
