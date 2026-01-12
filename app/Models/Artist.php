@@ -9,5 +9,7 @@ class Artist extends Model
 {
     use HasFactory;
 
+    public $timestamps = false;   // AJOUTE CETTE LIGNE
+
     protected $fillable = ['firstname', 'lastname'];
 }
