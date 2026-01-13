@@ -8,6 +8,7 @@ use Database\Seeders\ArtistSeeder;
 use Database\Seeders\UserSeeder;
 use Database\Seeders\TypeSeeder;
 use Database\Seeders\LocalitySeeder;
+use Database\Seeders\PriceSeeder;
 
 class DatabaseSeeder extends Seeder
 {
@@ -23,6 +24,7 @@ class DatabaseSeeder extends Seeder
             UserSeeder::class,
             TypeSeeder::class,
             LocalitySeeder::class,
+            PriceSeeder::class,
         ]);
     }
 }
