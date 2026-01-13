@@ -4,12 +4,7 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
-use Database\Seeders\ArtistSeeder;
-use Database\Seeders\UserSeeder;
-use Database\Seeders\TypeSeeder;
-use Database\Seeders\LocalitySeeder;
-use Database\Seeders\PriceSeeder;
-use Database\Seeders\RoleSeeder;
+use Illuminate\Support\Facades\DB;
 
 class DatabaseSeeder extends Seeder
 {
@@ -20,6 +15,11 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+        // Désactiver les contraintes FK (MySQL) pour autoriser truncate dans les seeders
+        if (DB::getDriverName() === 'mysql') {
+            DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+        }
+
         $this->call([
             ArtistSeeder::class,
             UserSeeder::class,
@@ -28,5 +28,10 @@ class DatabaseSeeder extends Seeder
             PriceSeeder::class,
             RoleSeeder::class,
         ]);
+
+        // Réactiver les contraintes FK
+        if (DB::getDriverName() === 'mysql') {
+            DB::statement('SET FOREIGN_KEY_CHECKS=1;');
+        }
     }
 }
