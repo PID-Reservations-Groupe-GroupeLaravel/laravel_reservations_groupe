@@ -7,6 +7,7 @@ use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Database\Seeders\ArtistSeeder;
 use Database\Seeders\UserSeeder;
 use Database\Seeders\TypeSeeder;
+use Database\Seeders\LocalitySeeder;
 
 class DatabaseSeeder extends Seeder
 {
@@ -21,6 +22,7 @@ class DatabaseSeeder extends Seeder
             ArtistSeeder::class,
             UserSeeder::class,
             TypeSeeder::class,
+            LocalitySeeder::class,
         ]);
     }
 }
