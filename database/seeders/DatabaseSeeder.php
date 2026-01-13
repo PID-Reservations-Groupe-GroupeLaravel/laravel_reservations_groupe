@@ -10,12 +10,8 @@ class DatabaseSeeder extends Seeder
 {
     use WithoutModelEvents;
 
-    /**
-     * Seed the application's database.
-     */
     public function run(): void
     {
-        // Désactiver les contraintes FK (MySQL) pour autoriser truncate dans les seeders
         if (DB::getDriverName() === 'mysql') {
             DB::statement('SET FOREIGN_KEY_CHECKS=0;');
         }
@@ -25,11 +21,12 @@ class DatabaseSeeder extends Seeder
             UserSeeder::class,
             TypeSeeder::class,
             LocalitySeeder::class,
+            LocationSeeder::class,
             PriceSeeder::class,
             RoleSeeder::class,
+            ShowSeeder::class,
         ]);
 
-        // Réactiver les contraintes FK
         if (DB::getDriverName() === 'mysql') {
             DB::statement('SET FOREIGN_KEY_CHECKS=1;');
         }
