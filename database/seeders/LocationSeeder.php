@@ -15,14 +15,18 @@ class LocationSeeder extends Seeder
             'slug' => 'espace-delvaux-la-venerie',
             'designation' => 'Espace Delvaux / La Vénerie',
             'address' => 'Rue Gratès 3',
-            'locality_postal_code' => '1170',
+            'locality_postal_code' => '1000',
+            'website' => null,
+            'phone' => null,
         ]);
 
         Location::create([
             'slug' => 'dexia-art-center',
             'designation' => 'Dexia Art Center',
             'address' => 'Place Rogier',
-            'locality_postal_code' => '1210',
+            'locality_postal_code' => '1000',
+            'website' => null,
+            'phone' => null,
         ]);
     }
 }
