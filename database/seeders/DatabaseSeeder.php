@@ -9,6 +9,7 @@ use Database\Seeders\UserSeeder;
 use Database\Seeders\TypeSeeder;
 use Database\Seeders\LocalitySeeder;
 use Database\Seeders\PriceSeeder;
+use Database\Seeders\RoleSeeder;
 
 class DatabaseSeeder extends Seeder
 {
@@ -25,6 +26,7 @@ class DatabaseSeeder extends Seeder
             TypeSeeder::class,
             LocalitySeeder::class,
             PriceSeeder::class,
+            RoleSeeder::class,
         ]);
     }
 }
