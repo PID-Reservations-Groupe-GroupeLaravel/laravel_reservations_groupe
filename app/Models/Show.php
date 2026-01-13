@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Show extends Model
 {
@@ -48,5 +49,14 @@ class Show extends Model
     public function reviews(): HasMany
     {
         return $this->hasMany(Review::class);
+    }
+
+    /**
+     * A show can have many prices.
+     * Pivot table: price_show (price_id, show_id)
+     */
+    public function prices(): BelongsToMany
+    {
+        return $this->belongsToMany(Price::class);
     }
 }
