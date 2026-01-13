@@ -21,9 +21,10 @@ class Artist extends Model
 
     /**
      * An artist can have many types.
+     * Pivot table: artist_type (artist_id, type_id)
      */
     public function types(): BelongsToMany
     {
-        return $this->belongsToMany(Type::class, 'artist_type');
+        return $this->belongsToMany(Type::class);
     }
 }

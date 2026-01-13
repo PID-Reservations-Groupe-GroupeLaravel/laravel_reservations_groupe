@@ -10,17 +10,20 @@ class Type extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['type'];
+    protected $fillable = [
+        'type',
+    ];
 
     protected $table = 'types';
 
     public $timestamps = false;
 
     /**
-     * A type can be linked to many artists.
+     * A type can belong to many artists.
+     * Pivot table: artist_type (artist_id, type_id)
      */
     public function artists(): BelongsToMany
     {
-        return $this->belongsToMany(Artist::class, 'artist_type');
+        return $this->belongsToMany(Artist::class);
     }
 }
