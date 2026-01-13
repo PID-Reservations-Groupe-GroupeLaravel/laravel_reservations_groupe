@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Locality extends Model
 {
@@ -16,12 +17,17 @@ class Locality extends Model
 
     protected $table = 'localities';
 
-    // Clé primaire = postal_code (pas id)
     protected $primaryKey = 'postal_code';
-
-    // Important : postal_code est une string, pas un int auto-increment
     public $incrementing = false;
     protected $keyType = 'string';
 
     public $timestamps = false;
+
+    /**
+     * A locality can have many locations.
+     */
+    public function locations(): HasMany
+    {
+        return $this->hasMany(Location::class, 'locality_postal_code', 'postal_code');
+    }
 }
