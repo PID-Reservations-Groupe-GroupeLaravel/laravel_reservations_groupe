@@ -14,10 +14,10 @@ class LocationSeeder extends Seeder
         Location::create([
             'slug' => 'espace-delvaux-la-venerie',
             'designation' => 'Espace Delvaux / La Vénerie',
-            'address' => 'Rue Gratès 3',
+            'address' => 'Rue Grates 3',
             'locality_postal_code' => '1000',
-            'website' => null,
-            'phone' => null,
+            'website' => 'https://www.lavenerie.be',
+            'phone' => '+32 (0)2/663.85.50',
         ]);
 
         Location::create([
@@ -26,6 +26,24 @@ class LocationSeeder extends Seeder
             'address' => 'Place Rogier',
             'locality_postal_code' => '1000',
             'website' => null,
+            'phone' => null,
+        ]);
+
+        Location::create([
+            'slug' => 'la-samaritaine',
+            'designation' => 'La Samaritaine',
+            'address' => 'Rue ...',
+            'locality_postal_code' => '1000',
+            'website' => 'http://www.lasamaritaine.be/',
+            'phone' => null,
+        ]);
+
+        Location::create([
+            'slug' => 'espace-magh',
+            'designation' => 'Espace Magh',
+            'address' => 'Rue ...',
+            'locality_postal_code' => '1000',
+            'website' => 'http://www.espacemagh.be',
             'phone' => null,
         ]);
     }

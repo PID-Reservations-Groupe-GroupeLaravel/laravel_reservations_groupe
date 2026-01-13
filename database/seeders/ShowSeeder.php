@@ -12,8 +12,10 @@ class ShowSeeder extends Seeder
     {
         Show::truncate();
 
-        $loc1 = Location::where('slug', 'espace-delvaux-la-venerie')->first();
-        $loc2 = Location::where('slug', 'dexia-art-center')->first();
+        $venerie = Location::where('slug', 'espace-delvaux-la-venerie')->first();
+        $dexia   = Location::where('slug', 'dexia-art-center')->first();
+        $sama    = Location::where('slug', 'la-samaritaine')->first();
+        $magh    = Location::where('slug', 'espace-magh')->first();
 
         Show::create([
             'slug' => 'ayiti',
@@ -22,7 +24,7 @@ class ShowSeeder extends Seeder
             'poster_url' => null,
             'duration' => 90,
             'created_in' => 2012,
-            'location_id' => $loc1?->id,
+            'location_id' => $venerie?->id,
             'bookable' => true,
         ]);
 
@@ -33,8 +35,30 @@ class ShowSeeder extends Seeder
             'poster_url' => null,
             'duration' => 75,
             'created_in' => 2011,
-            'location_id' => $loc2?->id,
+            'location_id' => $dexia?->id,
             'bookable' => false,
+        ]);
+
+        Show::create([
+            'slug' => 'ceci-nest-pas-un-chanteur',
+            'title' => "Ceci n'est pas un chanteur",
+            'description' => null,
+            'poster_url' => null,
+            'duration' => 80,
+            'created_in' => 2012,
+            'location_id' => $dexia?->id,
+            'bookable' => false,
+        ]);
+
+        Show::create([
+            'slug' => 'manneke',
+            'title' => 'Manneke...',
+            'description' => null,
+            'poster_url' => null,
+            'duration' => 70,
+            'created_in' => 2012,
+            'location_id' => $sama?->id,
+            'bookable' => true,
         ]);
     }
 }
