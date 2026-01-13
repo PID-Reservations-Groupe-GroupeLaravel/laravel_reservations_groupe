@@ -42,5 +42,11 @@ class Show extends Model
         return $this->hasMany(Representation::class);
     }
 
-    // On ajoutera reviews() au bloc 3
+    /**
+     * A show can have many reviews.
+     */
+    public function reviews(): HasMany
+    {
+        return $this->hasMany(Review::class);
+    }
 }
