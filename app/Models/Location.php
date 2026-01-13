@@ -24,15 +24,27 @@ class Location extends Model
 
     public $timestamps = false;
 
+    /**
+     * A location belongs to one locality.
+     */
     public function locality(): BelongsTo
     {
         return $this->belongsTo(Locality::class, 'locality_postal_code', 'postal_code');
     }
 
+    /**
+     * A location can host many shows.
+     */
     public function shows(): HasMany
     {
         return $this->hasMany(Show::class);
     }
 
-    // On ajoutera representations() au bloc 2
+    /**
+     * A location can have many representations.
+     */
+    public function representations(): HasMany
+    {
+        return $this->hasMany(Representation::class);
+    }
 }

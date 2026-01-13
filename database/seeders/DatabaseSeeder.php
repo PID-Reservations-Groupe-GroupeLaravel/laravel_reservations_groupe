@@ -25,6 +25,7 @@ class DatabaseSeeder extends Seeder
             PriceSeeder::class,
             RoleSeeder::class,
             ShowSeeder::class,
+            RepresentationSeeder::class,
         ]);
 
         if (DB::getDriverName() === 'mysql') {

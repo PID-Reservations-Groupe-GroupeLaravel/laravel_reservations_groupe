@@ -26,10 +26,21 @@ class Show extends Model
 
     public $timestamps = true;
 
+    /**
+     * A show belongs to one location.
+     */
     public function location(): BelongsTo
     {
         return $this->belongsTo(Location::class);
     }
 
-    // On ajoutera representations() + reviews() aux blocs suivants
+    /**
+     * A show can have many representations.
+     */
+    public function representations(): HasMany
+    {
+        return $this->hasMany(Representation::class);
+    }
+
+    // On ajoutera reviews() au bloc 3
 }
