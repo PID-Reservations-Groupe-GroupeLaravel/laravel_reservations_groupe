@@ -12,9 +12,12 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('localities', function (Blueprint $table) {
-            $table->string('postal_code', 6)->primary();
+            $table->string('postal_code', 10);
             $table->string('locality', 60);
-            //  PAS de timestamps
+
+            $table->primary('postal_code');
+
+            // $table->timestamps(); // PAS de timestamps
         });
     }
 
