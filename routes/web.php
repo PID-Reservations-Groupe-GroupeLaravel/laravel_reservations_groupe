@@ -5,6 +5,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ArtistController;
 use App\Http\Controllers\LocationController;
 use App\Http\Controllers\ShowController;
+use App\Http\Controllers\TypeController;
 
 /*
 |--------------------------------------------------------------------------
@@ -19,6 +20,7 @@ Route::view('/', 'welcome')->name('home');
 | Dashboard
 |--------------------------------------------------------------------------
 */
+
 Route::view('/dashboard', 'dashboard')
     ->middleware(['auth', 'verified'])
     ->name('dashboard');
@@ -28,6 +30,7 @@ Route::view('/dashboard', 'dashboard')
 | Profile
 |--------------------------------------------------------------------------
 */
+
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
@@ -39,6 +42,7 @@ Route::middleware('auth')->group(function () {
 | Public routes (PDF)
 |--------------------------------------------------------------------------
 */
+
 Route::get('/location', [LocationController::class, 'index'])->name('location.index');
 Route::get('/location/{id}', [LocationController::class, 'show'])
     ->whereNumber('id')
@@ -49,11 +53,17 @@ Route::get('/show/{id}', [ShowController::class, 'show'])
     ->whereNumber('id')
     ->name('show.show');
 
+Route::get('/type', [TypeController::class, 'index'])->name('type.index');
+Route::get('/type/{id}', [TypeController::class, 'show'])
+    ->whereNumber('id')
+    ->name('type.show');
+
 /*
 |--------------------------------------------------------------------------
 | Artists (Admin only)
 |--------------------------------------------------------------------------
 */
+
 Route::middleware(['auth', 'verified', 'admin'])->group(function () {
     Route::resource('artists', ArtistController::class);
 });
