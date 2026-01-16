@@ -6,7 +6,6 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Show extends Model
 {
@@ -20,6 +19,7 @@ class Show extends Model
         'duration',
         'created_in',
         'location_id',
+        'price_id',
         'bookable',
     ];
 
@@ -27,36 +27,23 @@ class Show extends Model
 
     public $timestamps = true;
 
-    /**
-     * A show belongs to one location.
-     */
     public function location(): BelongsTo
     {
         return $this->belongsTo(Location::class);
     }
 
-    /**
-     * A show can have many representations.
-     */
+    public function price(): BelongsTo
+    {
+        return $this->belongsTo(Price::class);
+    }
+
     public function representations(): HasMany
     {
         return $this->hasMany(Representation::class);
     }
 
-    /**
-     * A show can have many reviews.
-     */
     public function reviews(): HasMany
     {
         return $this->hasMany(Review::class);
-    }
-
-    /**
-     * A show can have many prices.
-     * Pivot table: price_show (price_id, show_id)
-     */
-    public function prices(): BelongsToMany
-    {
-        return $this->belongsToMany(Price::class);
     }
 }

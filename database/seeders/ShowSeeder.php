@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use App\Models\Show;
 use App\Models\Location;
+use App\Models\Price;
 
 class ShowSeeder extends Seeder
 {
@@ -15,7 +16,10 @@ class ShowSeeder extends Seeder
         $venerie = Location::where('slug', 'espace-delvaux-la-venerie')->first();
         $dexia   = Location::where('slug', 'dexia-art-center')->first();
         $sama    = Location::where('slug', 'la-samaritaine')->first();
-        $magh    = Location::where('slug', 'espace-magh')->first();
+
+        $p850  = Price::where('price', 8.50)->first();
+        $p550  = Price::where('price', 5.50)->first();
+        $p1050 = Price::where('price', 10.50)->first();
 
         Show::create([
             'slug' => 'ayiti',
@@ -25,18 +29,8 @@ class ShowSeeder extends Seeder
             'duration' => 90,
             'created_in' => 2012,
             'location_id' => $venerie?->id,
+            'price_id' => $p850?->id,          // PDF: 8.50€
             'bookable' => true,
-        ]);
-
-        Show::create([
-            'slug' => 'cible-mouvante',
-            'title' => 'Cible mouvante',
-            'description' => null,
-            'poster_url' => null,
-            'duration' => 75,
-            'created_in' => 2011,
-            'location_id' => $dexia?->id,
-            'bookable' => false,
         ]);
 
         Show::create([
@@ -47,6 +41,7 @@ class ShowSeeder extends Seeder
             'duration' => 80,
             'created_in' => 2012,
             'location_id' => $dexia?->id,
+            'price_id' => $p550?->id,          // PDF: 5.50€
             'bookable' => false,
         ]);
 
@@ -58,6 +53,7 @@ class ShowSeeder extends Seeder
             'duration' => 70,
             'created_in' => 2012,
             'location_id' => $sama?->id,
+            'price_id' => $p1050?->id,         // PDF: 10.50€
             'bookable' => true,
         ]);
     }

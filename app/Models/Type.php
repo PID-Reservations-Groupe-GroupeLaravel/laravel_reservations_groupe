@@ -4,26 +4,29 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Type extends Model
 {
     use HasFactory;
 
-    protected $fillable = [
-        'type',
-    ];
-
-    protected $table = 'types';
-
-    public $timestamps = false;
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
+    protected $fillable = ['type'];
 
     /**
-     * A type can belong to many artists.
-     * Pivot table: artist_type (artist_id, type_id)
+     * The table associated with the model.
+     *
+     * @var string
      */
-    public function artists(): BelongsToMany
-    {
-        return $this->belongsToMany(Artist::class);
-    }
+    protected $table = 'types';
+
+    /**
+     * Indicates if the model should be timestamped.
+     *
+     * @var bool
+     */
+    public $timestamps = false;
 }

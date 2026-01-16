@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('types', function (Blueprint $table) {
             $table->id();
             $table->string('type', 60);
+            // $table->timestamps(); // N’oubliez pas de supprimer cette ligne !
         });
     }
 

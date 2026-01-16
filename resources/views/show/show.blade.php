@@ -15,7 +15,14 @@
         <p><strong>Lieu de création :</strong> {{ $show->location->designation }}</p>
     @endif
 
-    <p><strong>Prix :</strong> (à afficher selon ton modèle Price si prévu)</p>
+    <p>
+        <strong>Prix :</strong>
+        @if($show->price)
+            {{ number_format((float)$show->price->price, 2, '.', '') }} €
+        @else
+            —
+        @endif
+    </p>
 
     <p><em>{{ $show->bookable ? 'Réservable' : 'Non réservable' }}</em></p>
 
