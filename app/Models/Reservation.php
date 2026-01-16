@@ -17,7 +17,7 @@ class Reservation extends Model
 
     protected $table = 'reservations';
 
-    // created_at personnalisé -> booking_date
+    // created_at personnalisé -> booking_date (updated_at reste normal)
     public $timestamps = true;
     const CREATED_AT = 'booking_date';
 
