@@ -20,7 +20,7 @@ class PriceSeeder extends Seeder
         //Define data
         $data = [
             [
-                'type' => 'normal',
+                'type' => 'normal (ancien tarifs)',
                 'price' => 14.90,
                 'description' => 'Ancien tarif normal.',
                 'start_date' => '2020-01-01',

@@ -3,48 +3,53 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 use App\Models\Location;
 
 class LocationSeeder extends Seeder
 {
     public function run(): void
     {
-        Location::truncate();
+        // Nettoyage
+        DB::table('locations')->truncate();
 
-        Location::create([
-            'slug' => 'espace-delvaux-la-venerie',
-            'designation' => 'Espace Delvaux / La Vénerie',
-            'address' => 'Rue Grates 3',
-            'locality_postal_code' => '1000',
-            'website' => 'https://www.lavenerie.be',
-            'phone' => '+32 (0)2/663.85.50',
-        ]);
+        // Données (ajoute ici TOUS les lieux du PDF)
+        $data = [
+            [
+                'slug' => 'espace-delvaux-la-venerie',
+                'designation' => 'Espace Delvaux / La Vénerie',
+                'address' => 'Rue Gratès 3',
+                'locality_postal_code' => '1000',
+                'website' => 'https://www.lavenerie.be',
+                'phone' => '+32 (0)2/663.85.50',
+            ],
 
-        Location::create([
-            'slug' => 'dexia-art-center',
-            'designation' => 'Dexia Art Center',
-            'address' => 'Place Rogier',
-            'locality_postal_code' => '1000',
-            'website' => null,
-            'phone' => null,
-        ]);
+            [
+                'slug' => 'la-samaritaine',
+                'designation' => 'La Samaritaine',
+                'address' => 'Rue de l\'Église 16',
+                'locality_postal_code' => '1040',
+                'website' => 'https://www.lasamaritaine.be',
+                'phone' => null,
+            ],
+            [
+                'slug' => 'theatre-le-public',
+                'designation' => 'Théâtre Le Public',
+                'address' => 'Rue Braemt 64-70',
+                'locality_postal_code' => '1210',
+                'website' => 'https://www.theatrepublic.be',
+                'phone' => '+32 (0)2/724.24.44',
+            ],
+            [
+                'slug' => 'theatre-national-wallonie-bruxelles',
+                'designation' => 'Théâtre National Wallonie-Bruxelles',
+                'address' => 'Boulevard Émile Jacqmain 111-115',
+                'locality_postal_code' => '1000',
+                'website' => 'https://www.theatrenational.be',
+                'phone' => '+32 (0)2/203.53.03',
+            ],
+        ];
 
-        Location::create([
-            'slug' => 'la-samaritaine',
-            'designation' => 'La Samaritaine',
-            'address' => 'Rue ...',
-            'locality_postal_code' => '1000',
-            'website' => 'http://www.lasamaritaine.be/',
-            'phone' => null,
-        ]);
-
-        Location::create([
-            'slug' => 'espace-magh',
-            'designation' => 'Espace Magh',
-            'address' => 'Rue ...',
-            'locality_postal_code' => '1000',
-            'website' => 'http://www.espacemagh.be',
-            'phone' => null,
-        ]);
+        DB::table('locations')->insert($data);
     }
 }

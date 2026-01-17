@@ -24,10 +24,14 @@ class Locality extends Model
     public $timestamps = false;
 
     /**
-     * A locality can have many locations.
+     * A locality has many locations.
      */
     public function locations(): HasMany
     {
-        return $this->hasMany(Location::class, 'locality_postal_code', 'postal_code');
+        return $this->hasMany(
+            Location::class,
+            'locality_postal_code', // clé étrangère dans locations
+            'postal_code'           // clé primaire dans localities
+        );
     }
 }
