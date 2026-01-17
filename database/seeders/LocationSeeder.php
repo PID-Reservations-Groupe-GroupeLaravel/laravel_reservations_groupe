@@ -4,36 +4,44 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
-use App\Models\Location;
+use Illuminate\Support\Str;
 
 class LocationSeeder extends Seeder
 {
     public function run(): void
     {
-        // Nettoyage
-        DB::table('locations')->truncate();
-
-        // Données (ajoute ici TOUS les lieux du PDF)
-        $data = [
+        $locations = [
             [
-                'slug' => 'espace-delvaux-la-venerie',
                 'designation' => 'Espace Delvaux / La Vénerie',
-                'address' => 'Rue Gratès 3',
-                'locality_postal_code' => '1000',
+                'address' => '3 rue Gratès',
+                'locality_postal_code' => '1170',
                 'website' => 'https://www.lavenerie.be',
                 'phone' => '+32 (0)2/663.85.50',
             ],
-
             [
-                'slug' => 'la-samaritaine',
-                'designation' => 'La Samaritaine',
-                'address' => 'Rue de l\'Église 16',
-                'locality_postal_code' => '1040',
-                'website' => 'https://www.lasamaritaine.be',
+                'designation' => 'Dexia Art Center',
+                'address' => '50 rue de l\'Ecuyer',
+                'locality_postal_code' => '1000',
+                'website' => null,
                 'phone' => null,
             ],
             [
-                'slug' => 'theatre-le-public',
+                'designation' => 'La Samaritaine',
+                'address' => '16 rue de la samaritaine',
+                'locality_postal_code' => '1000',
+                'website' => 'http://www.lasamaritaine.be/',
+                'phone' => null,
+            ],
+            [
+                'designation' => 'Espace Magh',
+                'address' => '17 rue du Poinçon',
+                'locality_postal_code' => '1000',
+                'website' => 'http://www.espacemagh.be',
+                'phone' => '+32 (0)2/274.05.10',
+            ],
+
+            // (Optionnels mais utiles si tu veux “tous les lieux” qu’on avait déjà)
+            [
                 'designation' => 'Théâtre Le Public',
                 'address' => 'Rue Braemt 64-70',
                 'locality_postal_code' => '1210',
@@ -41,7 +49,6 @@ class LocationSeeder extends Seeder
                 'phone' => '+32 (0)2/724.24.44',
             ],
             [
-                'slug' => 'theatre-national-wallonie-bruxelles',
                 'designation' => 'Théâtre National Wallonie-Bruxelles',
                 'address' => 'Boulevard Émile Jacqmain 111-115',
                 'locality_postal_code' => '1000',
@@ -50,6 +57,16 @@ class LocationSeeder extends Seeder
             ],
         ];
 
-        DB::table('locations')->insert($data);
+        // Générer slug depuis designation
+        foreach ($locations as &$loc) {
+            $loc['slug'] = Str::slug($loc['designation'], '-');
+        }
+        unset($loc);
+
+        DB::table('locations')->upsert(
+            $locations,
+            ['slug'], // slug est unique dans ta migration
+            ['designation', 'address', 'locality_postal_code', 'website', 'phone']
+        );
     }
 }

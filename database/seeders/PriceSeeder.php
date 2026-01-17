@@ -2,25 +2,16 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
-use App\Models\Price;
 
 class PriceSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
-        //Empty the table first
-        Price::truncate();
-
-        //Define data
         $data = [
             [
-                'type' => 'normal (ancien tarifs)',
+                'type' => 'normal',
                 'price' => 14.90,
                 'description' => 'Ancien tarif normal.',
                 'start_date' => '2020-01-01',
@@ -42,7 +33,10 @@ class PriceSeeder extends Seeder
             ],
         ];
 
-        //Insert data in the table
-        DB::table('prices')->insert($data);
+        DB::table('prices')->upsert(
+            $data,
+            ['type', 'start_date'], // identifiant logique
+            ['price', 'description', 'end_date']
+        );
     }
 }

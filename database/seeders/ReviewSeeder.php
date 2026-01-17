@@ -11,7 +11,7 @@ class ReviewSeeder extends Seeder
 {
     public function run(): void
     {
-        Review::truncate();
+     
 
         $user = User::first();
         $show = Show::first();

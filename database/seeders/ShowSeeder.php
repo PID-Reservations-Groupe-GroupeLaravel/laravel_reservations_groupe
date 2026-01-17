@@ -11,7 +11,7 @@ class ShowSeeder extends Seeder
 {
     public function run(): void
     {
-        Show::truncate();
+       
 
         $venerie = Location::where('slug', 'espace-delvaux-la-venerie')->first();
         $dexia   = Location::where('slug', 'dexia-art-center')->first();

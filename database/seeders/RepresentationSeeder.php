@@ -12,7 +12,7 @@ class RepresentationSeeder extends Seeder
 {
     public function run(): void
     {
-        Representation::truncate();
+        
 
         $show = Show::first();
         $location = Location::first();

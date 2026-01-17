@@ -10,8 +10,7 @@ class ArtistSeeder extends Seeder
 {
     public function run(): void
     {
-        // Vider la table
-        Artist::truncate();
+
 
         $artists = [
             ['firstname' => 'Daniel', 'lastname' => 'Marcelin'],
