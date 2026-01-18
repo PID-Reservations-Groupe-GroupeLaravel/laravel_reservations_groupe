@@ -88,7 +88,7 @@ Route::get('/price/{id}', [PriceController::class, 'show'])
 
 Route::get('/locality', [LocalityController::class, 'index'])->name('locality.index');
 Route::get('/locality/{postal_code}', [LocalityController::class, 'show'])
-    ->whereNumber('postal_code')
+    ->where('postal_code', '[0-9]+')
     ->name('locality.show');
 
 /*

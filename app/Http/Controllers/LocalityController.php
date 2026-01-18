@@ -12,7 +12,7 @@ class LocalityController extends Controller
      */
     public function index()
     {
-        $localities = Locality::all();
+        $localities = Locality::orderBy('postal_code')->get();
 
         return view('locality.index', [
             'localities' => $localities,
@@ -20,54 +20,16 @@ class LocalityController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
      * Display the specified resource.
      */
     public function show(string $postal_code)
     {
-        $locality = Locality::find($postal_code);
+        $locality = Locality::where('postal_code', $postal_code)
+            ->with('locations')
+            ->firstOrFail();
 
         return view('locality.show', [
             'locality' => $locality,
         ]);
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $postal_code)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $postal_code)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $postal_code)
-    {
-        //
     }
 }

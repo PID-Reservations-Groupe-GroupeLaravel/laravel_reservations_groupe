@@ -9,7 +9,7 @@
         @foreach($localities as $locality)
             <li>
                 <a href="{{ route('locality.show', $locality->postal_code) }}">
-                    {{ $locality->postal_code }} - {{ $locality->locality }}
+                    {{ $locality->postal_code }} {{ $locality->locality }}
                 </a>
             </li>
         @endforeach
