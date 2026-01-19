@@ -1,18 +1,31 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<html lang="fr">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>@yield('title', config('app.name'))</title>
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <meta charset="UTF-8">
+    <title>@yield('title', 'Reservations')</title>
+    <link rel="stylesheet" href="{{ asset('css/app.css') }}">
 </head>
-<body class="font-sans antialiased bg-gray-100">
+<body>
 
-    @include('layouts.navigation')
+<header>
+    <nav style="display:flex; gap:20px; padding:10px; border-bottom:1px solid #ccc;">
+        <a href="{{ route('home') }}">Home</a>
+        <a href="{{ route('show.index') }}">Shows</a>
+        <a href="{{ route('location.index') }}">Locations</a>
 
-    <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-        @yield('content')
-    </div>
+        {{--  Artists (route resource = artists.*) --}}
+        <a href="{{ route('artists.index') }}">Artists</a>
+
+        <a href="{{ route('type.index') }}">Types</a>
+        <a href="{{ route('price.index') }}">Prices</a>
+        <a href="{{ route('locality.index') }}">Localities</a>
+        <a href="{{ route('role.index') }}">Roles</a>
+    </nav>
+</header>
+
+<main style="padding:20px;">
+    @yield('content')
+</main>
 
 </body>
 </html>
