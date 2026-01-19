@@ -14,28 +14,45 @@ class DatabaseSeeder extends Seeder
             DB::statement('SET FOREIGN_KEY_CHECKS=0;');
         }
 
-        // Truncate dans l'ordre (enfants -> parents)
+        /**
+         * Truncate dans l'ordre : ENFANTS -> PARENTS
+         * (d'abord pivots & tables dépendantes, puis tables "maîtres")
+         */
+
+        // Pivots
         DB::table('artist_type')->truncate();
         DB::table('price_show')->truncate();
+
+        // Dépendants de shows
         DB::table('representations')->truncate();
         DB::table('reviews')->truncate();
         DB::table('reservations')->truncate();
-        DB::table('locations')->truncate();
 
+        // Dépendants de shows (shows lui-même avant ses parents)
         DB::table('shows')->truncate();
+
+        // Parents de shows
+        DB::table('locations')->truncate();
+        DB::table('prices')->truncate();
+
+        // Dépendances diverses
         DB::table('artists')->truncate();
         DB::table('types')->truncate();
 
-        DB::table('prices')->truncate();
+        // Auth / roles
         DB::table('roles')->truncate();
         DB::table('users')->truncate();
+
+        // Localities (parent de locations via locality_postal_code)
         DB::table('localities')->truncate();
 
         if (DB::getDriverName() === 'mysql') {
             DB::statement('SET FOREIGN_KEY_CHECKS=1;');
         }
 
-        // Seed dans l'ordre (parents -> enfants)
+        /**
+         * Seed dans l'ordre : PARENTS -> ENFANTS
+         */
         $this->call([
             RoleSeeder::class,
             UserSeeder::class,
@@ -47,8 +64,8 @@ class DatabaseSeeder extends Seeder
             LocationSeeder::class,
 
             PriceSeeder::class,
-
             ShowSeeder::class,
+
             RepresentationSeeder::class,
             ReviewSeeder::class,
 

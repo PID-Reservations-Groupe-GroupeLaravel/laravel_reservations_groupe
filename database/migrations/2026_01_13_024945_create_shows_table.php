@@ -6,6 +6,9 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
+    /**
+     * Run the migrations.
+     */
     public function up(): void
     {
         Schema::create('shows', function (Blueprint $table) {
@@ -19,15 +22,21 @@ return new class extends Migration
             $table->foreignId('location_id')->nullable();
             $table->boolean('bookable')->default(false);
 
+            // timestamps custom (comme dans le PDF)
             $table->timestamp('created_at')->useCurrent();
-            $table->timestamp('updated_at')->nullable()->useCurrentOnUpdate();
+            $table->timestamp('updated_at')->nullable();
 
             $table->foreign('location_id')
-                ->references('id')->on('locations')
-                ->onDelete('restrict')->onUpdate('cascade');
+                ->references('id')
+                ->on('locations')
+                ->onDelete('restrict')
+                ->onUpdate('cascade');
         });
     }
 
+    /**
+     * Reverse the migrations.
+     */
     public function down(): void
     {
         Schema::dropIfExists('shows');

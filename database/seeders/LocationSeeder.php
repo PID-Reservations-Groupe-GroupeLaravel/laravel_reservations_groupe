@@ -6,10 +6,23 @@ use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
+use App\Models\Location;
+
 class LocationSeeder extends Seeder
 {
     public function run(): void
     {
+        // Empty the table first (DEV uniquement)
+        if (DB::getDriverName() === 'mysql') {
+            DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+        }
+
+        Location::truncate();
+
+        if (DB::getDriverName() === 'mysql') {
+            DB::statement('SET FOREIGN_KEY_CHECKS=1;');
+        }
+
         $locations = [
             [
                 'designation' => 'Espace Delvaux / La Vénerie',
@@ -20,7 +33,7 @@ class LocationSeeder extends Seeder
             ],
             [
                 'designation' => 'Dexia Art Center',
-                'address' => '50 rue de l\'Ecuyer',
+                'address' => "50 rue de l'Écuyer",
                 'locality_postal_code' => '1000',
                 'website' => null,
                 'phone' => null,
