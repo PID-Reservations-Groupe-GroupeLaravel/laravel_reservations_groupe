@@ -9,12 +9,15 @@ class TypeSeeder extends Seeder
 {
     public function run(): void
     {
-        $data = [
-            ['type' => 'comédien'],
-            ['type' => 'scénographe'],
-            ['type' => 'auteur'],
-        ];
+        DB::statement('SET FOREIGN_KEY_CHECKS=0');
+        DB::table('artist_type')->truncate();
+        DB::table('types')->truncate();
+        DB::statement('SET FOREIGN_KEY_CHECKS=1');
 
-        DB::table('types')->upsert($data, ['type'], []);
+        DB::table('types')->insert([
+            ['type' => 'auteur'],
+            ['type' => 'scénographe'],
+            ['type' => 'comédien'],
+        ]);
     }
 }

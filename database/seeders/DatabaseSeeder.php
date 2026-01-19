@@ -7,16 +7,17 @@ use Illuminate\Support\Facades\DB;
 
 class DatabaseSeeder extends Seeder
 {
+    /**
+     * Seed the application's database.
+     */
     public function run(): void
     {
-        // Reset PROPRE (DEV uniquement)
         if (DB::getDriverName() === 'mysql') {
             DB::statement('SET FOREIGN_KEY_CHECKS=0;');
         }
 
         /**
-         * Truncate dans l'ordre : ENFANTS -> PARENTS
-         * (d'abord pivots & tables dépendantes, puis tables "maîtres")
+         * IMPORTANT : on vide dans l'ordre “ENFANTS -> PARENTS”
          */
 
         // Pivots
@@ -59,6 +60,9 @@ class DatabaseSeeder extends Seeder
 
             TypeSeeder::class,
             ArtistSeeder::class,
+
+            // table pivot artist_type
+            ArtistTypeSeeder::class,
 
             LocalitySeeder::class,
             LocationSeeder::class,
