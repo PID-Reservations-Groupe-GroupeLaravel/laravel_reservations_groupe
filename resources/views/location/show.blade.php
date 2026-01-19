@@ -1,34 +1,54 @@
-<!doctype html>
-<html lang="fr">
-<head>
-    <meta charset="utf-8">
-    <title>{{ $location->designation }}</title>
-</head>
-<body>
-    <h1>{{ $location->designation }}</h1>
+@extends('layouts.main')
 
-    <p><strong>Adresse :</strong> {{ $location->address }}</p>
+@section('title', 'Fiche d\'un lieu de spectacle')
 
-    @if(!empty($location->website))
-        <p><a href="{{ $location->website }}" target="_blank">{{ $location->website }}</a></p>
-    @endif
+@section('content')
+    <article>
+        <h1>{{ $location->designation }}</h1>
 
-    @if(!empty($location->phone))
-        <p><a href="tel:{{ $location->phone }}">{{ $location->phone }}</a></p>
-    @endif
+        <address>
+            <p>{{ $location->address }}</p>
 
-    <h2>Liste des spectacles</h2>
+            <p>
+                {{ $location->locality->postal_code }}
+                {{ $location->locality->locality }}
+            </p>
 
-    @if($location->shows->count() === 0)
-        <p>Aucun spectacle</p>
-    @else
+            @if($location->website)
+                <p>
+                    <a href="{{ $location->website }}" target="_blank">
+                        {{ $location->website }}
+                    </a>
+                </p>
+            @else
+                <p>Pas de site web</p>
+            @endif
+
+            @if($location->phone)
+                <p>
+                    <a href="tel:{{ $location->phone }}">
+                        {{ $location->phone }}
+                    </a>
+                </p>
+            @else
+                <p>Pas de téléphone</p>
+            @endif
+        </address>
+
+        <h2>Liste des spectacles</h2>
+
         <ul>
             @foreach($location->shows as $show)
-                <li><a href="{{ route('show.show', $show->id) }}">{{ $show->title }}</a></li>
+                <li>
+                    <a href="{{ route('show.show', $show->id) }}">
+                        {{ $show->title }}
+                    </a>
+                </li>
             @endforeach
         </ul>
-    @endif
+    </article>
 
-    <p><a href="{{ route('location.index') }}">Retour à l’index</a></p>
-</body>
-</html>
+    <nav>
+        <a href="{{ route('location.index') }}">Retour à l'index</a>
+    </nav>
+@endsection
