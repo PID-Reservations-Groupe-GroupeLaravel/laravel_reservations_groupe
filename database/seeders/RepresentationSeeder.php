@@ -13,13 +13,11 @@ class RepresentationSeeder extends Seeder
 {
     public function run(): void
     {
-        // Empty the table first (avoid FK problems)
+        // Vider la table proprement
         if (DB::getDriverName() === 'mysql') {
             DB::statement('SET FOREIGN_KEY_CHECKS=0;');
         }
-
         Representation::truncate();
-
         if (DB::getDriverName() === 'mysql') {
             DB::statement('SET FOREIGN_KEY_CHECKS=1;');
         }
@@ -31,17 +29,19 @@ class RepresentationSeeder extends Seeder
             return;
         }
 
-        // (Garde ton jeu de données actuel)
+        // IMPORTANT : on crée une représentation EXACTEMENT au 2012-10-12 20:30:00
+        // (pour que ton RepresentationReservationSeeder trouve quelque chose)
+        Representation::create([
+            'show_id' => $show->id,
+            'location_id' => $location->id,
+            'schedule' => Carbon::create(2012, 10, 12, 20, 30, 0),
+        ]);
+
+        // + une autre représentation (optionnelle)
         Representation::create([
             'show_id' => $show->id,
             'location_id' => $location->id,
             'schedule' => Carbon::now()->addDays(7),
-        ]);
-
-        Representation::create([
-            'show_id' => $show->id,
-            'location_id' => $location->id,
-            'schedule' => Carbon::now()->addDays(14),
         ]);
     }
 }
