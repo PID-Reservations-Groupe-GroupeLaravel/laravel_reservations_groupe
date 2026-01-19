@@ -3,26 +3,41 @@
 namespace App\Http\Controllers;
 
 use App\Models\Show;
-use Illuminate\View\View;
+use Illuminate\Http\Request;
 
 class ShowController extends Controller
 {
-    public function index(): View
+    /**
+     * Display a listing of the resource.
+     */
+    public function index()
     {
-        $shows = Show::query()
-            ->with(['location', 'price', 'representations.location'])
-            ->orderBy('title')
-            ->get();
+        $shows = Show::all();
 
-        return view('show.index', compact('shows'));
+        return view('show.index', [
+            'shows' => $shows,
+        ]);
     }
 
-    public function show(int $id): View
+    /**
+     * Display the specified resource.
+     */
+    public function show(string $id)
     {
-        $show = Show::query()
-            ->with(['location', 'price', 'representations.location', 'reviews.user'])
-            ->findOrFail($id);
+        $show = Show::find($id);
 
-        return view('show.show', compact('show'));
+        // Récupérer les artistes du spectacle et les grouper par type
+        $collaborateurs = [];
+
+        if ($show) {
+            foreach ($show->artistTypes as $at) {
+                $collaborateurs[$at->type->type][] = $at->artist;
+            }
+        }
+
+        return view('show.show', [
+            'show' => $show,
+            'collaborateurs' => $collaborateurs,
+        ]);
     }
 }
