@@ -21,7 +21,10 @@ return new class extends Migration
                 ->cascadeOnUpdate()
                 ->cascadeOnDelete();
 
-            $table->unsignedTinyInteger('score'); // 0..255 (on utilisera 1..5)
+            // Score 0..255 (on utilisera 1..5)
+            $table->unsignedTinyInteger('score');
+
+            // Commentaire optionnel
             $table->text('comment')->nullable();
         });
     }
