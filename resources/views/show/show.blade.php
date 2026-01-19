@@ -1,41 +1,34 @@
-<!doctype html>
-<html lang="fr">
-<head>
-    <meta charset="utf-8">
-    <title>{{ $show->title }}</title>
-</head>
-<body>
+@extends('layouts.main')
+
+@section('title', 'Fiche d\'un spectacle')
+
+@section('content')
+<article>
     <h1>{{ $show->title }}</h1>
 
-    @if(!empty($show->poster_url))
-        <p><img src="{{ $show->poster_url }}" alt="{{ $show->title }}" style="max-width:200px;"></p>
+    @if($show->poster_url)
+        <p>
+            <img src="{{ asset('images/'.$show->poster_url) }}"
+                 alt="{{ $show->title }}"
+                 width="200">
+        </p>
+    @else
+        <canvas width="200" height="100" style="border:1px solid #000000;"></canvas>
     @endif
 
     @if($show->location)
         <p><strong>Lieu de création :</strong> {{ $show->location->designation }}</p>
     @endif
 
-    <p>
-        <strong>Prix :</strong>
-        @if($show->price)
-            {{ number_format((float)$show->price->price, 2, '.', '') }} €
-        @else
-            —
-        @endif
-    </p>
+    <p><strong>Durée :</strong> {{ $show->duration }} minutes</p>
+    <p><strong>Année de création :</strong> {{ $show->created_in }}</p>
 
-    <p><em>{{ $show->bookable ? 'Réservable' : 'Non réservable' }}</em></p>
+    @if($show->bookable)
+        <p><em>Réservable</em></p>
+    @else
+        <p><em>Non réservable</em></p>
+    @endif
+</article>
 
-    <h2>Liste des représentations</h2>
-    @forelse($show->representations as $rep)
-        <p>
-            {{ \Illuminate\Support\Carbon::parse($rep->schedule)->format('d-m-Y H:i') }}
-            ({{ optional($rep->location)->designation ?? 'Lieu à déterminer' }})
-        </p>
-    @empty
-        <p>Aucune représentation</p>
-    @endforelse
-
-    <p><a href="{{ route('show.index') }}">Retour à l’index</a></p>
-</body>
-</html>
+<nav><a href="{{ route('show.index') }}">Retour à l'index</a></nav>
+@endsection
