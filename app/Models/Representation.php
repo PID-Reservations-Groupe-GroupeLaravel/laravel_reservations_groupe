@@ -32,12 +32,16 @@ class Representation extends Model
     }
 
     /**
-     * ManyToMany with pivot data (quantity, price, ...).
+     * ManyToMany with pivot data (quantity, unit_price).
      */
     public function reservations(): BelongsToMany
     {
-        return $this->belongsToMany(Reservation::class, 'representation_reservation', 'representation_id', 'reservation_id')
-            ->withPivot(['quantity', 'price'])
-            ->withTimestamps();
+        return $this->belongsToMany(
+            Reservation::class,
+            'representation_reservation',
+            'representation_id',
+            'reservation_id'
+        )->withPivot(['quantity', 'unit_price'])
+         ->withTimestamps();
     }
 }
