@@ -28,42 +28,35 @@ class Show extends Model
 
     public $timestamps = true;
 
-    /**
-     * Get the main location of the show.
-     */
     public function location(): BelongsTo
     {
         return $this->belongsTo(Location::class);
     }
 
-    /**
-     * Get the price of the show.
-     */
     public function price(): BelongsTo
     {
         return $this->belongsTo(Price::class);
     }
 
-    /**
-     * Get the performances (artists in a type of collaboration) for the show.
-     */
     public function artistTypes(): BelongsToMany
     {
-        // pivot: artist_type_show (artist_type_id, show_id)
         return $this->belongsToMany(ArtistType::class, 'artist_type_show', 'show_id', 'artist_type_id');
     }
 
     /**
-     * Get the representations of this show.
+     * ManyToMany : a show can have many prices (tarifs) and a price can be used by many shows.
      */
+    public function prices(): BelongsToMany
+    {
+        // pivot: price_show (price_id, show_id)
+        return $this->belongsToMany(Price::class, 'price_show', 'show_id', 'price_id');
+    }
+
     public function representations(): HasMany
     {
         return $this->hasMany(Representation::class);
     }
 
-    /**
-     * Get the reviews of this show.
-     */
     public function reviews(): HasMany
     {
         return $this->hasMany(Review::class);

@@ -13,9 +13,6 @@ class Price extends Model
     protected $fillable = [
         'type',
         'price',
-        'description',
-        'start_date',
-        'end_date',
     ];
 
     protected $table = 'prices';
@@ -23,11 +20,11 @@ class Price extends Model
     public $timestamps = false;
 
     /**
-     * A price can apply to many shows.
-     * Pivot table: price_show (price_id, show_id)
+     * ManyToMany : a price can be used by many shows.
      */
     public function shows(): BelongsToMany
     {
-        return $this->belongsToMany(Show::class);
+        // pivot: price_show (price_id, show_id)
+        return $this->belongsToMany(Show::class, 'price_show', 'price_id', 'show_id');
     }
 }

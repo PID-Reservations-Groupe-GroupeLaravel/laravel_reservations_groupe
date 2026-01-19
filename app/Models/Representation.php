@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Representation extends Model
 {
@@ -20,19 +21,23 @@ class Representation extends Model
 
     public $timestamps = false;
 
-    /**
-     * A representation belongs to a show.
-     */
     public function show(): BelongsTo
     {
         return $this->belongsTo(Show::class);
     }
 
-    /**
-     * A representation belongs to a location.
-     */
     public function location(): BelongsTo
     {
         return $this->belongsTo(Location::class);
+    }
+
+    /**
+     * ManyToMany with pivot data (quantity, price, ...).
+     */
+    public function reservations(): BelongsToMany
+    {
+        return $this->belongsToMany(Reservation::class, 'representation_reservation', 'representation_id', 'reservation_id')
+            ->withPivot(['quantity', 'price'])
+            ->withTimestamps();
     }
 }

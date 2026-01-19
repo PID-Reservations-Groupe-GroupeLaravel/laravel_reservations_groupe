@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Reservation extends Model
 {
@@ -12,20 +13,26 @@ class Reservation extends Model
 
     protected $fillable = [
         'user_id',
+        'booking_date',
         'status',
     ];
 
     protected $table = 'reservations';
 
-    // created_at personnalisé -> booking_date (updated_at reste normal)
-    public $timestamps = true;
-    const CREATED_AT = 'booking_date';
+    public $timestamps = false;
 
-    /**
-     * A reservation belongs to one user.
-     */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    /**
+     * ManyToMany with pivot data (quantity, price, ...).
+     */
+    public function representations(): BelongsToMany
+    {
+        return $this->belongsToMany(Representation::class, 'representation_reservation', 'reservation_id', 'representation_id')
+            ->withPivot(['quantity', 'price'])
+            ->withTimestamps();
     }
 }

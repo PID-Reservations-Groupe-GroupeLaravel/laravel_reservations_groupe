@@ -7,9 +7,6 @@ use Illuminate\Support\Facades\DB;
 
 class DatabaseSeeder extends Seeder
 {
-    /**
-     * Seed the application's database.
-     */
     public function run(): void
     {
         if (DB::getDriverName() === 'mysql') {
@@ -17,7 +14,7 @@ class DatabaseSeeder extends Seeder
         }
 
         /**
-         * IMPORTANT : on vide dans l'ordre "ENFANTS -> PARENTS"
+         * IMPORTANT : vider dans l'ordre ENFANTS -> PARENTS
          */
 
         // Pivots
@@ -30,7 +27,7 @@ class DatabaseSeeder extends Seeder
         DB::table('reviews')->truncate();
         DB::table('reservations')->truncate();
 
-        // Dépendants de shows (shows lui-même avant ses parents)
+        // Dépendants de shows
         DB::table('shows')->truncate();
 
         // Parents de shows
@@ -41,11 +38,11 @@ class DatabaseSeeder extends Seeder
         DB::table('artists')->truncate();
         DB::table('types')->truncate();
 
-        // Auth / roles
+        // Auth / roles (simple: users.role)
         DB::table('roles')->truncate();
         DB::table('users')->truncate();
 
-        // Localities (parent de locations via locality_postal_code)
+        // Localities
         DB::table('localities')->truncate();
 
         if (DB::getDriverName() === 'mysql') {
@@ -61,24 +58,22 @@ class DatabaseSeeder extends Seeder
 
             TypeSeeder::class,
             ArtistSeeder::class,
-
-            // pivot artist_type (nécessite artists + types)
             ArtistTypeSeeder::class,
 
             LocalitySeeder::class,
             LocationSeeder::class,
 
             PriceSeeder::class,
-
-            //  SHOWS d'abord (obligatoire avant artist_type_show)
             ShowSeeder::class,
 
-            // pivot ArtistType <-> Show ensuite
+            // pivot show <-> price
+            PriceShowSeeder::class,
+
+            // pivot artist_type <-> show
             ArtistTypeShowSeeder::class,
 
             RepresentationSeeder::class,
             ReviewSeeder::class,
-
             ReservationSeeder::class,
         ]);
     }

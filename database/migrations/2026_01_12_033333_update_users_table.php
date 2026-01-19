@@ -9,20 +9,19 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->string('login', 30)->after('id');
-            $table->string('firstname', 60)->after('login');
-            $table->string('lastname', 60)->after('firstname');
-            $table->string('langue', 2);
-            $table->enum('role', ['admin', 'member', 'affiliate', 'press'])->default('member');
-
-            $table->unique('login', 'users_login_unique');
+            // Champs "projet"
+            $table->string('login')->unique()->after('id');
+            $table->string('firstname')->after('login');
+            $table->string('lastname')->after('firstname');
+            $table->string('langue')->default('fr')->after('password');
+            $table->string('role')->default('member')->after('langue');
         });
     }
 
     public function down(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->dropUnique('users_login_unique');
+            $table->dropUnique(['login']);
             $table->dropColumn(['login', 'firstname', 'lastname', 'langue', 'role']);
         });
     }
