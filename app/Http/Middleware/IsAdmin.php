@@ -10,7 +10,17 @@ class IsAdmin
 {
     public function handle(Request $request, Closure $next): Response
     {
-        if (!auth()->check() || auth()->user()->role !== 'admin') {
+        if (!auth()->check()) {
+            abort(403);
+        }
+
+        //  ManyToMany roles : vérifier si l'utilisateur a le rôle "admin"
+        $isAdmin = auth()->user()
+            ->roles()
+            ->where('role', 'admin')
+            ->exists();
+
+        if (!$isAdmin) {
             abort(403);
         }
 

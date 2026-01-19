@@ -23,12 +23,24 @@ class UserFactory extends Factory
      */
     public function definition(): array
     {
+        $firstname = fake()->firstName();
+        $lastname = fake()->lastName();
+
         return [
-            'name' => fake()->name(),
+            'login' => Str::lower(fake()->unique()->userName()),
+            'firstname' => $firstname,
+            'lastname' => $lastname,
+            'name' => $firstname . ' ' . $lastname, // IMPORTANT (colonne NOT NULL)
             'email' => fake()->unique()->safeEmail(),
             'email_verified_at' => now(),
             'password' => static::$password ??= Hash::make('password'),
             'remember_token' => Str::random(10),
+            'created_at' => now(),
+            'updated_at' => null,
+            'langue' => fake()->randomElements(['fr', 'nl', 'en'])[0],
+
+            // role field deleted by DB refactoring: users x roles (ManyToMany)
+            // 'role' => fake()->randomElements(['member', 'affiliate', 'press'])[0],
         ];
     }
 
