@@ -17,10 +17,11 @@ class DatabaseSeeder extends Seeder
         }
 
         /**
-         * IMPORTANT : on vide dans l'ordre “ENFANTS -> PARENTS”
+         * IMPORTANT : on vide dans l'ordre "ENFANTS -> PARENTS"
          */
 
         // Pivots
+        DB::table('artist_type_show')->truncate();
         DB::table('artist_type')->truncate();
         DB::table('price_show')->truncate();
 
@@ -61,14 +62,19 @@ class DatabaseSeeder extends Seeder
             TypeSeeder::class,
             ArtistSeeder::class,
 
-            // table pivot artist_type
+            // pivot artist_type (nécessite artists + types)
             ArtistTypeSeeder::class,
 
             LocalitySeeder::class,
             LocationSeeder::class,
 
             PriceSeeder::class,
+
+            //  SHOWS d'abord (obligatoire avant artist_type_show)
             ShowSeeder::class,
+
+            // pivot ArtistType <-> Show ensuite
+            ArtistTypeShowSeeder::class,
 
             RepresentationSeeder::class,
             ReviewSeeder::class,

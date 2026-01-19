@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Show extends Model
 {
@@ -41,6 +42,15 @@ class Show extends Model
     public function price(): BelongsTo
     {
         return $this->belongsTo(Price::class);
+    }
+
+    /**
+     * Get the performances (artists in a type of collaboration) for the show.
+     */
+    public function artistTypes(): BelongsToMany
+    {
+        // pivot: artist_type_show (artist_type_id, show_id)
+        return $this->belongsToMany(ArtistType::class, 'artist_type_show', 'show_id', 'artist_type_id');
     }
 
     /**
