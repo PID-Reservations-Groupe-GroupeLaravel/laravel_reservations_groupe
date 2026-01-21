@@ -39,7 +39,7 @@ class RoleUserSeeder extends Seeder
             }
         }
 
-        // ✅ Le compte login = "admin" devient admin
+        // Le compte login = "admin" devient admin
         if ($roleAdmin) {
             $adminUser = User::firstWhere('login', 'admin');
             if ($adminUser) {

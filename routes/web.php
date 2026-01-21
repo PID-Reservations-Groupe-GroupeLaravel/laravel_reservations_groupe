@@ -106,7 +106,6 @@ Route::get('/role/{id}', [RoleController::class, 'show'])
 |--------------------------------------------------------------------------
 | Artists (Admin only)
 |--------------------------------------------------------------------------
-| ✅ on utilise le middleware "admin" (IsAdmin)
 */
 
 Route::middleware(['auth', 'verified', 'admin'])->group(function () {

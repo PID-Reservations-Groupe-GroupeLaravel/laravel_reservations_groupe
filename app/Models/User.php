@@ -5,19 +5,19 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
-    use HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable;
 
     protected $fillable = [
         'login',
         'firstname',
         'lastname',
-        'name',      // ✅ IMPORTANT : pour l'inscription
+        'name',
         'email',
         'password',
         'langue',
@@ -37,7 +37,7 @@ class User extends Authenticatable
     }
 
     /**
-     * ManyToMany: A user can have many roles.
+     * ManyToMany: un user peut avoir plusieurs roles.
      */
     public function roles(): BelongsToMany
     {
@@ -45,7 +45,7 @@ class User extends Authenticatable
     }
 
     /**
-     * A user can have many reservations.
+     * Un user peut avoir plusieurs reservations.
      */
     public function reservations(): HasMany
     {
@@ -53,10 +53,18 @@ class User extends Authenticatable
     }
 
     /**
-     * A user can have many reviews.
+     * Un user peut avoir plusieurs reviews.
      */
     public function reviews(): HasMany
     {
         return $this->hasMany(Review::class);
+    }
+
+    /**
+     * Helper: vérifier si l'utilisateur a un rôle (colonne roles.role)
+     */
+    public function hasRole(string $roleName): bool
+    {
+        return $this->roles()->where('role', $roleName)->exists();
     }
 }
