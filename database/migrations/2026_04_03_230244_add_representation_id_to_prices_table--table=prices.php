@@ -7,7 +7,9 @@ return new class extends Migration
 public function up(): void
 {
 Schema::table('prices', function (Blueprint $table) {
-$table->foreignId('representation_id')->nullable()->after('id')->constrained('representations')->nullOnDelete()->cascadeOnUpdate();
+    if (!Schema::hasColumn('prices', 'representation_id')) {
+        $table->foreignId('representation_id')->nullable()->after('id')->constrained('representations')->nullOnDelete()->cascadeOnUpdate();
+    }
 });
 }
 public function down(): void
