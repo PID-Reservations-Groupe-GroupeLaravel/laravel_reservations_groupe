@@ -6,16 +6,15 @@ return new class extends Migration
 {
 public function up(): void
 {
-Schema::table('reservations', function (Blueprint $table) {
-// Changer le type de status : VARCHAR -> ENUM
-$table->enum('status', ['PENDING', 'CONFIRMED', 'CANCELLED'])->default('PENDING')->change();
-});
+    Schema::table('reservations', function (Blueprint $table) {
+        $table->enum('status', ['En attente', 'Payée', 'Annulée'])->default('En attente')->change();
+    });
 }
 public function down(): void
 {
 Schema::table('reservations', function (Blueprint $table) {
 // Revenir au VARCHAR si on rollback
-$table->string('status', 60)->default('PENDING')->change();
+$table->string('status', 60)->default('En attente')->change();
 });
 }
 };
