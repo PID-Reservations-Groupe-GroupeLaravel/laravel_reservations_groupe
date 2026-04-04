@@ -6,12 +6,16 @@ return new class extends Migration
 {
 public function up(): void
 {
-Schema::table('shows', function (Blueprint $table) {
-// Clé étrangère vers le producteur
-$table->foreignId('user_id')->nullable()->after('id')->constrained('users')->nullOnDelete()->cascadeOnUpdate();
-// Statut de validation du spectacle
-$table->enum('status', ['A_CONFIRMER', 'CONFIRME'])->default('A_CONFIRMER')->after('bookable');
-});
+    Schema::table('shows', function (Blueprint $table) {
+        // Clé étrangère vers le producteur
+        if (!Schema::hasColumn('shows', 'user_id')) {
+            $table->foreignId('user_id')->nullable()->after('id')->constrained('users')->nullOnDelete()->cascadeOnUpdate();
+        }
+        // Statut de validation du spectacle
+        if (!Schema::hasColumn('shows', 'status')) {
+            $table->enum('status', ['A_CONFIRMER', 'CONFIRME'])->default('A_CONFIRMER')->after('bookable');
+        }
+    });
 }
 public function down(): void
 {
