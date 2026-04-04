@@ -7,7 +7,9 @@ return new class extends Migration
 public function up(): void
 {
 Schema::table('reviews', function (Blueprint $table) {
-$table->boolean('validated')->default(false)->after('comment');
+    if (!Schema::hasColumn('reviews', 'validated')) {
+        $table->boolean('validated')->default(false)->after('comment');
+    }
 });
 }
 public function down(): void
