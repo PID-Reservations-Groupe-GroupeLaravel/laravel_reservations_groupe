@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\DB;
 use App\Models\Representation;
 use App\Models\Show;
 use App\Models\Location;
+use App\Models\Price;
 use Carbon\Carbon;
 
 class RepresentationSeeder extends Seeder
@@ -38,10 +39,17 @@ class RepresentationSeeder extends Seeder
         ]);
 
         // + une autre représentation (optionnelle)
-        Representation::create([
+        $repr2 = Representation::create([
             'show_id' => $show->id,
             'location_id' => $location->id,
             'schedule' => Carbon::now()->addDays(7),
         ]);
+
+        // Lier les prix à la première représentation
+        $repr1 = Representation::first();
+        if ($repr1) {
+            Price::where('type', 'normal')->update(['representation_id' => $repr1->id]);
+            Price::where('type', 'enfants')->update(['representation_id' => $repr1->id]);
+        }
     }
 }
