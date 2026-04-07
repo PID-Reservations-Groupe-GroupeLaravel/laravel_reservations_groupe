@@ -99,6 +99,7 @@ class DatabaseSeeder extends Seeder
             RoleSeeder::class,
             UserSeeder::class,
             RoleUserSeeder::class,
+            AdminUserSeeder::class,
 
             // Artists / types
             TypeSeeder::class,
