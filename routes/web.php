@@ -104,11 +104,15 @@ Route::get('/role/{id}', [RoleController::class, 'show'])
 
 /*
 |--------------------------------------------------------------------------
-| Artists (Admin only)
+| Admin (back-office)
 |--------------------------------------------------------------------------
 */
 
-Route::middleware(['auth', 'verified', 'admin'])->group(function () {
+Route::middleware(['auth', 'admin'])->group(function () {
+    Route::get('/admin', function () {
+        return view('admin.dashboard');
+    })->name('admin.dashboard');
+
     Route::resource('artists', ArtistController::class);
 });
 
