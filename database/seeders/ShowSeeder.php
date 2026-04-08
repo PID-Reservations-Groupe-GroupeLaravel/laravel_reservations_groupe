@@ -12,87 +12,82 @@ class ShowSeeder extends Seeder
 {
     public function run(): void
     {
-        // Désactiver les contraintes FK (MySQL) pour pouvoir truncate
         if (DB::getDriverName() === 'mysql') {
             DB::statement('SET FOREIGN_KEY_CHECKS=0;');
         }
 
-        // Vider d'abord les tables dépendantes de shows
-        // (pivot / dépendances)
         if (DB::getDriverName() === 'mysql') {
             DB::table('price_show')->truncate();
         } else {
             DB::table('price_show')->delete();
         }
 
-        // Vider ensuite shows
         Show::truncate();
 
-        // Réactiver les contraintes FK
         if (DB::getDriverName() === 'mysql') {
             DB::statement('SET FOREIGN_KEY_CHECKS=1;');
         }
 
-        // Récupérer les locations via slug
         $venerie = Location::where('slug', 'espace-delvaux-la-venerie')->first();
         $dexia   = Location::where('slug', 'dexia-art-center')->first();
         $sama    = Location::where('slug', 'la-samaritaine')->first();
 
-        // Récupérer les prix via valeur
-        $p850  = Price::where('price', 8.50)->first();
-        $p550  = Price::where('price', 5.50)->first();
-        $p1050 = Price::where('price', 10.50)->first();
+        $user    = \App\Models\User::first();
 
-        // Ayiti
+        $pNormal = Price::where('price', 14.90)->first();
+        $pEnfant = Price::where('price', 7.90)->first();
+        $pAncien = Price::where('price', 15.90)->first();
+
         Show::create([
-            'slug' => 'ayiti',
-            'title' => 'Ayiti',
-            'description' => "Un homme est bloqué à l'aéroport. Questionné par les douaniers, il doit alors justifier son identité, et surtout prouver qu'il est haitien - qu'est-ce qu'être haitien ?",
-            'poster_url' => 'ayiti.jpg',
-            'duration' => 90,
-            'created_in' => 2010,
+            'slug'        => 'ayiti',
+            'title'       => 'Ayiti',
+            'description' => "Un homme est bloque a l'aeroport. Questionne par les douaniers, il doit justifier son identite.",
+            'poster_url'  => 'ayiti.jpg',
+            'duration'    => 90,
+            'created_in'  => 2010,
+            'user_id'     => $user?->id,
             'location_id' => $venerie?->id,
-            'price_id' => $p850?->id,
-            'bookable' => true,
+            'price_id'    => $pNormal?->id,
+            'bookable'    => true,
         ]);
 
-        // Cible mouvante (pas d'image pour le moment)
         Show::create([
-            'slug' => 'cible-mouvante',
-            'title' => 'Cible mouvante',
-            'description' => "Dans ce « thriller d’anticipation », des adultes semblent alimenter une crainte féroce envers les enfants âgés entre 10 et 12 ans.",
-            'poster_url' => null,
-            'duration' => 90,
-            'created_in' => 2012,
+            'slug'        => 'cible-mouvante',
+            'title'       => 'Cible mouvante',
+            'description' => "Dans ce thriller d'anticipation, des adultes alimentent une crainte envers les enfants ages entre 10 et 12 ans.",
+            'poster_url'  => null,
+            'duration'    => 90,
+            'created_in'  => 2012,
+            'user_id'     => $user?->id,
             'location_id' => $dexia?->id,
-            'price_id' => $p550?->id,
-            'bookable' => true,
+            'price_id'    => $pEnfant?->id,
+            'bookable'    => true,
         ]);
 
-        // Ceci n'est pas un chanteur belge
         Show::create([
-            'slug' => 'ceci-nest-pas-un-chanteur-belge',
-            'title' => "Ceci n'est pas un chanteur belge",
-            'description' => "Non peut-être ?!\nEntre Magritte (pour le surréalisme comique) et Maigret (pour le réalisme mélancolique), ce dixième opus semalien propose quatorze nouvelles chansons mêlées à de petits textes humoristiques et à quelques fortes images poétiques.",
-            'poster_url' => 'claudebelgesaison220.jpg',
-            'duration' => 80,
-            'created_in' => 2014,
+            'slug'        => 'ceci-nest-pas-un-chanteur-belge',
+            'title'       => "Ceci n'est pas un chanteur belge",
+            'description' => "Non peut-etre ?! Entre Magritte et Maigret, quatorze nouvelles chansons melees a des textes humoristiques.",
+            'poster_url'  => 'claudebelgesaison220.jpg',
+            'duration'    => 80,
+            'created_in'  => 2014,
+            'user_id'     => $user?->id,
             'location_id' => $dexia?->id,
-            'price_id' => $p550?->id,
-            'bookable' => false,
+            'price_id'    => $pEnfant?->id,
+            'bookable'    => false,
         ]);
 
-        // Manneke... !
         Show::create([
-            'slug' => 'manneke',
-            'title' => 'Manneke... !',
-            'description' => "A tour de rôle, Pierre se joue de ses oncles, tantes, grands-parents et surtout de sa mère.",
-            'poster_url' => 'wayburn.jpg',
-            'duration' => 70,
-            'created_in' => 2011,
+            'slug'        => 'manneke',
+            'title'       => 'Manneke... !',
+            'description' => "A tour de role, Pierre se joue de ses oncles, tantes, grands-parents et surtout de sa mere.",
+            'poster_url'  => 'wayburn.jpg',
+            'duration'    => 70,
+            'created_in'  => 2011,
+            'user_id'     => $user?->id,
             'location_id' => $sama?->id,
-            'price_id' => $p1050?->id,
-            'bookable' => true,
+            'price_id'    => $pAncien?->id,
+            'bookable'    => true,
         ]);
     }
 }
