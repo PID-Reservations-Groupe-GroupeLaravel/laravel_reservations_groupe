@@ -10,8 +10,9 @@ class IsAdmin
 {
     public function handle(Request $request, Closure $next): Response
     {
+        // Non connecté → rediriger vers login
         if (!auth()->check()) {
-            abort(403);
+            return redirect()->route('login');
         }
 
         //  ManyToMany roles : vérifier si l'utilisateur a le rôle "admin"
@@ -20,8 +21,9 @@ class IsAdmin
             ->where('role', 'admin')
             ->exists();
 
+        // Connecté mais pas admin → 403
         if (!$isAdmin) {
-            abort(403);
+            abort(403, 'Accès réservé aux administrateurs.');
         }
 
         return $next($request);
