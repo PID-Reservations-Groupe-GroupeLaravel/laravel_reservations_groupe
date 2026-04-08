@@ -67,4 +67,29 @@ class User extends Authenticatable
     {
         return $this->roles()->where('role', $roleName)->exists();
     }
+
+    public function isAdmin(): bool
+    {
+        return $this->hasRole('admin');
+    }
+
+    public function isMembre(): bool
+    {
+        return $this->hasRole('membre');
+    }
+
+    public function isProducteur(): bool
+    {
+        return $this->hasRole('producteur');
+    }
+
+    public function isCritique(): bool
+    {
+        return $this->hasRole('critique');
+    }
+
+    public function isAffilie(): bool
+    {
+        return $this->hasRole('affilie');
+    }
 }
