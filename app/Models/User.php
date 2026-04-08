@@ -36,29 +36,60 @@ class User extends Authenticatable
         ];
     }
 
+    /**
+     * ManyToMany: un user peut avoir plusieurs roles.
+     */
     public function roles(): BelongsToMany
     {
-        return $this->belongsToMany(Role::class, 'role_user', 'user_id', 'role_id');
+        return $this->belongsToMany(Role::class);
     }
 
+    /**
+     * Un user peut avoir plusieurs reservations.
+     */
     public function reservations(): HasMany
     {
         return $this->hasMany(Reservation::class);
     }
 
+    /**
+     * Un user peut avoir plusieurs reviews.
+     */
     public function reviews(): HasMany
     {
         return $this->hasMany(Review::class);
     }
 
+    /**
+     * Helper: vérifier si l'utilisateur a un rôle (colonne roles.role)
+     */
     public function hasRole(string $roleName): bool
     {
         return $this->roles()->where('role', $roleName)->exists();
     }
 
-    public function isAdmin(): bool      { return $this->hasRole('admin'); }
-    public function isMembre(): bool     { return $this->hasRole('membre'); }
-    public function isProducteur(): bool { return $this->hasRole('producteur'); }
-    public function isCritique(): bool   { return $this->hasRole('critique'); }
-    public function isAffilie(): bool    { return $this->hasRole('affilie'); }
+    public function isAdmin(): bool
+    {
+        return $this->hasRole('admin');
+    }
+
+    public function isMembre(): bool
+    {
+        return $this->hasRole('membre');
+    }
+
+    public function isProducteur(): bool
+    {
+        return $this->hasRole('producteur');
+    }
+
+    public function isCritique(): bool
+    {
+        return $this->hasRole('critique');
+    }
+
+    public function isAffilie(): bool
+    {
+        return $this->hasRole('affilie');
+    }
 }
