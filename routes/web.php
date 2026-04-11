@@ -26,6 +26,8 @@ Route::middleware('auth')->group(function () {
 Route::middleware('auth')->group(function () {
     Route::get('/profile/sessions', [SessionController::class, 'index'])
         ->name('profile.sessions');
+    Route::delete('/profile/sessions/others', [SessionController::class, 'destroyOthers'])
+        ->name('profile.sessions.destroy-others');
 });
 
 Route::get('/location', [LocationController::class, 'index'])->name('location.index');
