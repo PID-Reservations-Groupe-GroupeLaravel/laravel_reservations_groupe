@@ -20,6 +20,8 @@
                     <thead class="bg-gray-100">
                         <tr>
                             <th class="p-2 text-left">Date</th>
+                            <th class="p-2 text-left">IP</th>
+                            <th class="p-2 text-left">Navigateur</th>
                             <th class="p-2 text-left">Statut</th>
                         </tr>
                     </thead>
@@ -27,6 +29,8 @@
                         @forelse($history as $entry)
                             <tr class="border-b">
                                 <td class="p-2">{{ $entry->logged_at->format('d/m/Y H:i') }}</td>
+                                <td class="p-2">{{ $entry->ip_address }}</td>
+                                <td class="p-2 text-xs text-gray-500">{{ Str::limit($entry->user_agent, 50) }}</td>
                                 <td class="p-2">
                                     @if($entry->success)
                                         <span class="text-green-600 text-xs font-medium">OK</span>
@@ -36,7 +40,7 @@
                                 </td>
                             </tr>
                         @empty
-                            <tr><td colspan="2" class="p-4 text-center text-gray-500">Aucun historique.</td></tr>
+                            <tr><td colspan="4" class="p-4 text-center text-gray-500">Aucun historique.</td></tr>
                         @endforelse
                     </tbody>
                 </table>
