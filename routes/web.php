@@ -10,6 +10,7 @@ use App\Http\Controllers\PriceController;
 use App\Http\Controllers\LocalityController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SessionController;
+use App\Http\Controllers\PasswordChangeController;
 
 Route::view('/', 'welcome')->name('home');
 
@@ -24,10 +25,13 @@ Route::middleware('auth')->group(function () {
 });
 
 Route::middleware('auth')->group(function () {
-    Route::get('/profile/sessions', [SessionController::class, 'index'])
-        ->name('profile.sessions');
-    Route::delete('/profile/sessions/others', [SessionController::class, 'destroyOthers'])
-        ->name('profile.sessions.destroy-others');
+    Route::get('/profile/sessions', [SessionController::class, 'index'])->name('profile.sessions');
+    Route::delete('/profile/sessions/others', [SessionController::class, 'destroyOthers'])->name('profile.sessions.destroy-others');
+});
+
+Route::middleware('auth')->group(function () {
+    Route::get('/profile/password', [PasswordChangeController::class, 'edit'])->name('profile.password.edit');
+    Route::put('/profile/password', [PasswordChangeController::class, 'update'])->name('profile.password.update');
 });
 
 Route::get('/location', [LocationController::class, 'index'])->name('location.index');
