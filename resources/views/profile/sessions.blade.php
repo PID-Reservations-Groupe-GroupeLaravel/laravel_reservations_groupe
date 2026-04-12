@@ -44,6 +44,19 @@
                         @endforelse
                     </tbody>
                 </table>
+
+                <form method="POST" action="{{ route('profile.sessions.destroy-others') }}">
+                    @csrf
+                    @method('DELETE')
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Mot de passe actuel</label>
+                        <input type="password" name="password" class="w-full border rounded p-2 mt-1" />
+                        @error('password')<p class="text-red-500 text-sm mt-1">{{ $message }}</p>@enderror
+                    </div>
+                    <button type="submit" class="bg-red-600 text-white px-4 py-2 rounded text-sm">
+                        Deconnecter tous les autres appareils
+                    </button>
+                </form>
             </div>
         </div>
     </div>
