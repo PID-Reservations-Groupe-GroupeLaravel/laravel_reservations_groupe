@@ -4,6 +4,7 @@ import Navbar from './components/Navbar'
 import PrivateRoute from './components/PrivateRoute'
 
 import LoginPage        from './pages/LoginPage'
+import RegisterPage     from './pages/RegisterPage'
 import ShowsPage        from './pages/ShowsPage'
 import ShowDetailPage   from './pages/ShowDetailPage'
 import ReservationsPage from './pages/ReservationsPage'
@@ -21,7 +22,8 @@ export default function App() {
               <Route path="/" element={<Navigate to="/shows" replace />} />
 
               {/* Auth */}
-              <Route path="/login" element={<LoginPage />} />
+              <Route path="/login"    element={<LoginPage />} />
+              <Route path="/register" element={<RegisterPage />} />
 
               {/* Public */}
               <Route path="/shows"      element={<ShowsPage />} />
