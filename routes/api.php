@@ -1,5 +1,10 @@
 <?php
 
+use App\Http\Controllers\Admin\AdminUserController;
+use App\Http\Controllers\Admin\AdminShowController;
+use App\Http\Controllers\Admin\AdminRepresentationController;
+use App\Http\Controllers\Admin\AdminReservationController;
+use App\Http\Controllers\Admin\AdminStatsController;
 use App\Http\Controllers\ArtistApiController;
 use App\Http\Controllers\ShowApiController;
 use App\Mail\WelcomeMail;
@@ -137,4 +142,20 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 
     Route::apiResource('artists', ArtistApiController::class);
+});
+
+// Routes admin — auth:sanctum + middleware admin
+Route::middleware(['auth:sanctum', 'admin'])->prefix('admin')->group(function () {
+    // Utilisateurs
+    Route::apiResource('users', AdminUserController::class);
+    // Spectacles
+    Route::apiResource('shows', AdminShowController::class);
+    // Representations
+    Route::apiResource('representations', AdminRepresentationController::class);
+    // Reservations
+    Route::get('reservations', [AdminReservationController::class, 'index']);
+    Route::patch('reservations/{id}', [AdminReservationController::class, 'update']);
+    Route::get('reservations/export/csv', [AdminReservationController::class, 'exportCsv']);
+    // Statistiques
+    Route::get('stats', [AdminStatsController::class, 'index']);
 });
