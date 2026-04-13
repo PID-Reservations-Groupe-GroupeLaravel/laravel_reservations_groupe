@@ -21,10 +21,10 @@ class User extends Authenticatable
         'email',
         'password',
         'langue',
-        // Commit #17 : 2FA columns
         'two_factor_secret',
         'two_factor_recovery_codes',
         'two_factor_confirmed_at',
+        'photo',
     ];
 
     protected $hidden = [
