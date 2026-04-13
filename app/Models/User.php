@@ -21,6 +21,10 @@ class User extends Authenticatable
         'email',
         'password',
         'langue',
+        // Commit #17 : 2FA columns
+        'two_factor_secret',
+        'two_factor_recovery_codes',
+        'two_factor_confirmed_at',
     ];
 
     protected $hidden = [
@@ -91,5 +95,13 @@ class User extends Authenticatable
     public function isAffilie(): bool
     {
         return $this->hasRole('affilie');
+    }
+
+    /**
+     * Commit #22-#23 : historique de connexion de l'utilisateur.
+     */
+    public function loginHistory(): HasMany
+    {
+        return $this->hasMany(LoginHistory::class);
     }
 }
