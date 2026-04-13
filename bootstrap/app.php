@@ -19,4 +19,11 @@ return Application::configure(basePath: dirname(__DIR__))
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //
-    })->create();
+    })
+    // Commit #23 : enregistrer le listener LogSuccessfulLogin
+    ->withEvents(listen: [
+        \Illuminate\Auth\Events\Login::class => [
+            \App\Listeners\LogSuccessfulLogin::class,
+        ],
+    ])
+    ->create();
