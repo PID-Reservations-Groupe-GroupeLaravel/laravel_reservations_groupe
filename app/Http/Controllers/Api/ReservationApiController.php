@@ -44,6 +44,13 @@ class ReservationApiController extends Controller
         ]);
         return (new ReservationResource($reservation->load(['representations.show'])))->response()->setStatusCode(201);
     }
-    public function update(UpdateReservationRequest $request, Reservation $reservation): ReservationResource|JsonResponse { /* TODO */ }
+    public function update(UpdateReservationRequest $request, Reservation $reservation): ReservationResource|JsonResponse
+    {
+        if ($reservation->user_id !== $request->user()->id) {
+            return response()->json(['message' => 'Interdit.'], 403);
+        }
+        $reservation->update(['status' => $request->status]);
+        return new ReservationResource($reservation);
+    }
     public function destroy(Request $request, Reservation $reservation): JsonResponse { /* TODO */ }
 }
