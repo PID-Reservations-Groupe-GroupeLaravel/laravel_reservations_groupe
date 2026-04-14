@@ -1,6 +1,7 @@
 <?php
 namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
+use App\Http\Resources\RepresentationResource;
 use App\Http\Resources\ShowResource;
 use App\Models\Show;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
@@ -15,5 +16,10 @@ class ShowApiController extends Controller
     public function show(Show $show): ShowResource
     {
         return new ShowResource($show->load('location'));
+    }
+
+    public function representations(Show $show): AnonymousResourceCollection
+    {
+        return RepresentationResource::collection($show->representations()->with(['show', 'location'])->get());
     }
 }
