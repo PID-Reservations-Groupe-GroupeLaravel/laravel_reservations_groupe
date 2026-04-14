@@ -22,7 +22,13 @@ class ReservationApiController extends Controller
         return new ReservationCollection($reservations);
     }
 
-    public function show(Request $request, Reservation $reservation): ReservationResource|JsonResponse { /* TODO */ }
+    public function show(Request $request, Reservation $reservation): ReservationResource|JsonResponse
+    {
+        if ($reservation->user_id !== $request->user()->id) {
+            return response()->json(['message' => 'Interdit.'], 403);
+        }
+        return new ReservationResource($reservation->load(['representations.show']));
+    }
     public function store(StoreReservationRequest $request): ReservationResource|JsonResponse { /* TODO */ }
     public function update(UpdateReservationRequest $request, Reservation $reservation): ReservationResource|JsonResponse { /* TODO */ }
     public function destroy(Request $request, Reservation $reservation): JsonResponse { /* TODO */ }
