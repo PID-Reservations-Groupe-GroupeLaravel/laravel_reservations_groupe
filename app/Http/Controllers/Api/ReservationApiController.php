@@ -12,7 +12,16 @@ use Illuminate\Http\Request;
 
 class ReservationApiController extends Controller
 {
-    public function index(Request $request): ReservationCollection { /* TODO */ }
+    public function index(Request $request): ReservationCollection
+    {
+        $reservations = $request->user()
+            ->reservations()
+            ->with(['representations.show'])
+            ->latest('booking_date')
+            ->paginate(10);
+        return new ReservationCollection($reservations);
+    }
+
     public function show(Request $request, Reservation $reservation): ReservationResource|JsonResponse { /* TODO */ }
     public function store(StoreReservationRequest $request): ReservationResource|JsonResponse { /* TODO */ }
     public function update(UpdateReservationRequest $request, Reservation $reservation): ReservationResource|JsonResponse { /* TODO */ }
