@@ -52,5 +52,12 @@ class ReservationApiController extends Controller
         $reservation->update(['status' => $request->status]);
         return new ReservationResource($reservation);
     }
-    public function destroy(Request $request, Reservation $reservation): JsonResponse { /* TODO */ }
+    public function destroy(Request $request, Reservation $reservation): JsonResponse
+    {
+        if ($reservation->user_id !== $request->user()->id) {
+            return response()->json(['message' => 'Interdit.'], 403);
+        }
+        $reservation->update(['status' => 'Annulee']);
+        return response()->json(['message' => 'Reservation annulee.']);
+    }
 }
