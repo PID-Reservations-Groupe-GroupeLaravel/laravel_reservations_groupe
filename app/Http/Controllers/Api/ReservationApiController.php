@@ -29,7 +29,21 @@ class ReservationApiController extends Controller
         }
         return new ReservationResource($reservation->load(['representations.show']));
     }
-    public function store(StoreReservationRequest $request): ReservationResource|JsonResponse { /* TODO */ }
+    public function store(StoreReservationRequest $request): ReservationResource|JsonResponse
+    {
+        $price = Price::findOrFail($request->price_id);
+        $reservation = Reservation::create([
+            'user_id'      => $request->user()->id,
+            'status'       => 'En attente',
+            'booking_date' => now(),
+        ]);
+        $reservation->representations()->attach($request->representation_id, [
+            'price_id'   => $price->id,
+            'unit_price' => $price->price,
+            'quantity'   => $request->quantity,
+        ]);
+        return (new ReservationResource($reservation->load(['representations.show'])))->response()->setStatusCode(201);
+    }
     public function update(UpdateReservationRequest $request, Reservation $reservation): ReservationResource|JsonResponse { /* TODO */ }
     public function destroy(Request $request, Reservation $reservation): JsonResponse { /* TODO */ }
 }
