@@ -13,6 +13,9 @@ class TicketApiController extends Controller
 {
     public function generate(Request $request, Reservation $reservation): JsonResponse
     {
+        if ($reservation->user_id !== $request->user()->id) {
+            return response()->json(['message' => 'Interdit.'], 403);
+        }
         if ($reservation->status !== 'Payee') {
             return response()->json(['message' => 'La reservation doit etre Payee pour generer un ticket.'], 422);
         }
@@ -25,6 +28,9 @@ class TicketApiController extends Controller
 
     public function index(Request $request, Reservation $reservation): AnonymousResourceCollection|JsonResponse
     {
+        if ($reservation->user_id !== $request->user()->id) {
+            return response()->json(['message' => 'Interdit.'], 403);
+        }
         return TicketResource::collection($reservation->tickets);
     }
 }
