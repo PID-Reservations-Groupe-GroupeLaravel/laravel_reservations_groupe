@@ -8,6 +8,7 @@ import ShowsPage        from './pages/ShowsPage'
 import ShowDetailPage   from './pages/ShowDetailPage'
 import ReservationsPage from './pages/ReservationsPage'
 import SessionsPage     from './pages/SessionsPage'
+import RegisterPage     from './pages/RegisterPage'
 
 export default function App() {
   return (
@@ -45,7 +46,9 @@ export default function App() {
                   </a>
                 </div>
               } />
-            </Routes>
+
+              <Route path="/register" element={<RegisterPage />} />
+              </Routes>
           </main>
 
           <footer className="bg-ovatio-blue text-blue-200 text-center text-xs py-4 mt-8">
