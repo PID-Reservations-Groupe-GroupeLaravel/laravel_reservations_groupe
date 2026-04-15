@@ -9,6 +9,7 @@ import ShowsPage        from './pages/ShowsPage'
 import ShowDetailPage   from './pages/ShowDetailPage'
 import ReservationsPage from './pages/ReservationsPage'
 import SessionsPage     from './pages/SessionsPage'
+import CookiesPage      from './pages/CookiesPage'
 
 export default function App() {
   return (
@@ -47,6 +48,7 @@ export default function App() {
                   </a>
                 </div>
               } />
+              <Route path="/cookies" element={<CookiesPage />} />
             </Routes>
           </main>
 
