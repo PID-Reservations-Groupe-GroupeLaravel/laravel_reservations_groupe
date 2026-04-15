@@ -6,6 +6,34 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Route;
 
+Route::post('/register', function (Request $request) {
+    $data = $request->validate([
+        'login'     => 'required|min:3|unique:users,login',
+        'firstname' => 'required|min:2',
+        'lastname'  => 'required|min:2',
+        'email'     => 'required|email|unique:users,email',
+        'password'  => ['required', 'min:6', 'confirmed', 'regex:/^(?=.*[A-Z])(?=.*[\W_]).+$/'],
+        'langue'    => 'required|in:fr,en,nl',
+    ]);
+
+    $user = \App\Models\User::create([
+        'login'     => $data['login'],
+        'firstname' => $data['firstname'],
+        'lastname'  => $data['lastname'],
+        'name'      => $data['firstname'] . ' ' . $data['lastname'],
+        'email'     => $data['email'],
+        'password'  => \Illuminate\Support\Facades\Hash::make($data['password']),
+        'langue'    => $data['langue'],
+    ]);
+
+    $role = \App\Models\Role::firstOrCreate(['role' => 'membre']);
+    $user->roles()->attach($role->id);
+
+    \Illuminate\Support\Facades\Mail::to($user->email)->send(new \App\Mail\WelcomeMail($user));
+
+    return response()->json(['message' => 'Compte créé'], 201);
+});
+
 Route::post('/login', function (Request $request) {
     $request->validate([
         'email'    => 'required|email',

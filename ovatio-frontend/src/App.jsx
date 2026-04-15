@@ -8,8 +8,6 @@ import ShowsPage        from './pages/ShowsPage'
 import ShowDetailPage   from './pages/ShowDetailPage'
 import ReservationsPage from './pages/ReservationsPage'
 import SessionsPage     from './pages/SessionsPage'
-import RegisterPage     from './pages/RegisterPage'
-
 export default function App() {
   return (
     <AuthProvider>
@@ -47,7 +45,6 @@ export default function App() {
                 </div>
               } />
 
-              <Route path="/register" element={<RegisterPage />} />
               </Routes>
           </main>
 
