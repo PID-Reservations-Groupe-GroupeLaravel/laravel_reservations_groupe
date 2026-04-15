@@ -56,25 +56,23 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::apiResource('artists', ArtistApiController::class);
 
-    // Routes ADMIN
-    Route::middleware('admin')->prefix('admin')->group(function () {
-        Route::get('/dashboard', function () {
-            return response()->json([
-                'message' => 'Bienvenue sur le dashboard admin',
-                'users'   => \App\Models\User::count(),
-                'shows'   => \App\Models\Show::count(),
-            ]);
-        });
-
-        Route::get('/users', function () {
-            return \App\Models\User::with('roles')->get();
-        });
+  // Routes ADMIN
+Route::middleware('admin')->prefix('admin')->group(function () {
+    Route::get('/dashboard', function () {
+        return response()->json([
+            'users' => \App\Models\User::count(),
+            'shows' => \App\Models\Show::count(),
+        ]);
     });
-
-    // Routes PRODUCTEUR
-    Route::middleware('producer')->prefix('producer')->group(function () {
-        Route::get('/dashboard', function () {
-            return response()->json(['message' => 'Bienvenue sur le dashboard producteur']);
-        });
+    Route::get('/users', function () {
+        return \App\Models\User::with('roles')->get();
     });
+});
+
+// Routes PRODUCTEUR
+Route::middleware('producer')->prefix('producer')->group(function () {
+    Route::get('/dashboard', function () {
+        return response()->json(['message' => 'Dashboard producteur']);
+    });
+});
 });
