@@ -4,120 +4,201 @@ export default function CookiesPage() {
   const { prefs, acceptAll, declineAll, savePrefs, reset } = useCookies()
 
   return (
-    <div className="max-w-3xl mx-auto px-4 py-12">
-      <h1 className="text-3xl font-bold text-ovatio-blue mb-2">Politique de cookies</h1>
-      <p className="text-gray-500 text-sm mb-8">Dernière mise à jour : avril 2026</p>
+    <div className="min-h-screen" style={{ background: '#f7f9fc' }}>
+      {/* Hero */}
+      <div
+        className="py-16 px-6 text-center"
+        style={{ background: 'linear-gradient(135deg, #000666 0%, #1a237e 100%)' }}
+      >
+        <p
+          className="text-xs font-bold uppercase tracking-[0.25em] mb-3"
+          style={{ color: '#fdd400', fontFamily: 'Manrope, sans-serif' }}
+        >
+          RGPD &amp; Transparence
+        </p>
+        <h1
+          className="text-4xl font-extrabold text-white mb-3"
+          style={{ fontFamily: '"Plus Jakarta Sans", sans-serif' }}
+        >
+          Politique de cookies
+        </h1>
+        <p
+          className="text-sm max-w-xl mx-auto"
+          style={{ color: 'rgba(255,255,255,0.6)', fontFamily: 'Manrope, sans-serif' }}
+        >
+          Dernière mise à jour : avril 2026
+        </p>
+      </div>
 
-      <section className="prose prose-sm max-w-none text-gray-700 space-y-6">
-        <div>
-          <h2 className="text-lg font-semibold text-gray-900 mb-2">Qu'est-ce qu'un cookie ?</h2>
+      <div className="max-w-3xl mx-auto px-6 py-12 space-y-10">
+
+        {/* Section */}
+        <Section title="Qu'est-ce qu'un cookie ?">
           <p>
             Un cookie est un petit fichier texte déposé sur votre appareil lors de votre visite sur
             notre site. Il permet de mémoriser vos préférences et d'améliorer votre expérience de
             navigation.
           </p>
-        </div>
+        </Section>
 
-        <div>
-          <h2 className="text-lg font-semibold text-gray-900 mb-2">Cookies utilisés par Ovatio</h2>
-          <table className="w-full text-sm border border-gray-200 rounded-lg overflow-hidden">
-            <thead className="bg-gray-50">
-              <tr>
-                <th className="text-left px-4 py-2 font-medium text-gray-600">Nom</th>
-                <th className="text-left px-4 py-2 font-medium text-gray-600">Finalité</th>
-                <th className="text-left px-4 py-2 font-medium text-gray-600">Durée</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-200">
-              <tr>
-                <td className="px-4 py-2 font-mono text-xs">ovatio_token</td>
-                <td className="px-4 py-2">Authentification (token API)</td>
-                <td className="px-4 py-2">Session</td>
-              </tr>
-              <tr>
-                <td className="px-4 py-2 font-mono text-xs">ovatio_user</td>
-                <td className="px-4 py-2">Données de l'utilisateur connecté</td>
-                <td className="px-4 py-2">Session</td>
-              </tr>
-              <tr>
-                <td className="px-4 py-2 font-mono text-xs">ovatio_cookie_consent</td>
-                <td className="px-4 py-2">Mémorisation de votre choix de cookies</td>
-                <td className="px-4 py-2">1 an</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+        {/* Tableau cookies */}
+        <Section title="Cookies utilisés par Ovatio">
+          <div className="overflow-hidden rounded-xl" style={{ background: '#ffffff', boxShadow: '0 2px 20px rgba(0,0,0,0.04)' }}>
+            <table className="w-full text-sm">
+              <thead>
+                <tr style={{ background: '#f2f4f7' }}>
+                  <th className="text-left px-5 py-3 text-xs font-bold uppercase tracking-wider" style={{ color: '#454652', fontFamily: 'Manrope, sans-serif' }}>Nom</th>
+                  <th className="text-left px-5 py-3 text-xs font-bold uppercase tracking-wider" style={{ color: '#454652', fontFamily: 'Manrope, sans-serif' }}>Finalité</th>
+                  <th className="text-left px-5 py-3 text-xs font-bold uppercase tracking-wider" style={{ color: '#454652', fontFamily: 'Manrope, sans-serif' }}>Durée</th>
+                </tr>
+              </thead>
+              <tbody>
+                {[
+                  { name: 'ovatio_token',          purpose: 'Authentification (token API)',             duration: 'Session' },
+                  { name: 'ovatio_user',            purpose: "Données de l'utilisateur connecté",        duration: 'Session' },
+                  { name: 'ovatio_cookie_consent',  purpose: 'Mémorisation de votre choix de cookies',   duration: '1 an' },
+                ].map((row, i) => (
+                  <tr key={row.name} style={{ borderTop: i > 0 ? '1px solid #f2f4f7' : undefined }}>
+                    <td className="px-5 py-3 font-mono text-xs" style={{ color: '#000666' }}>{row.name}</td>
+                    <td className="px-5 py-3 text-sm" style={{ color: '#454652', fontFamily: 'Manrope, sans-serif' }}>{row.purpose}</td>
+                    <td className="px-5 py-3 text-sm" style={{ color: '#767683', fontFamily: 'Manrope, sans-serif' }}>{row.duration}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </Section>
 
-        <div>
-          <h2 className="text-lg font-semibold text-gray-900 mb-2">Base légale (RGPD)</h2>
+        <Section title="Base légale (RGPD)">
           <p>
             Conformément au Règlement Général sur la Protection des Données (RGPD), nous collectons
             votre consentement avant de déposer tout cookie non strictement nécessaire au
             fonctionnement du site.
           </p>
-        </div>
+        </Section>
 
-        <div>
-          <h2 className="text-lg font-semibold text-gray-900 mb-2">Vos droits</h2>
+        <Section title="Vos droits">
           <p>
             Vous pouvez à tout moment modifier votre choix ci-dessous. Pour exercer vos droits
             d'accès, de rectification ou de suppression, contactez-nous à{' '}
-            <a href="mailto:contact@ovatio.be" className="text-blue-600 hover:underline">
+            <a href="mailto:contact@ovatio.be" style={{ color: '#000666' }} className="font-semibold hover:underline">
               contact@ovatio.be
-            </a>
-            .
+            </a>.
           </p>
+        </Section>
+
+        {/* Gestion consentement */}
+        <div
+          className="rounded-2xl p-8"
+          style={{ background: '#ffffff', boxShadow: '0 4px 40px rgba(0,6,102,0.06)' }}
+        >
+          <h2
+            className="text-lg font-bold mb-6"
+            style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', color: '#191c1e' }}
+          >
+            Gérer mes préférences
+          </h2>
+
+          {/* Nécessaires */}
+          <div
+            className="flex items-center justify-between py-4"
+            style={{ borderBottom: '1px solid #f2f4f7' }}
+          >
+            <div>
+              <p className="text-sm font-semibold" style={{ fontFamily: 'Manrope, sans-serif', color: '#191c1e' }}>
+                Nécessaires
+              </p>
+              <p className="text-xs mt-0.5" style={{ fontFamily: 'Manrope, sans-serif', color: '#767683' }}>
+                Requis pour le fonctionnement du site.
+              </p>
+            </div>
+            <span className="text-xs font-bold" style={{ color: '#000666', fontFamily: 'Manrope, sans-serif' }}>
+              Toujours actif
+            </span>
+          </div>
+
+          {[
+            { key: 'analytiques', label: 'Analytiques', desc: 'Statistiques anonymes de navigation.' },
+            { key: 'marketing',   label: 'Marketing',   desc: 'Publicités personnalisées.' },
+          ].map(({ key, label, desc }, i, arr) => (
+            <div
+              key={key}
+              className="flex items-center justify-between py-4"
+              style={{ borderBottom: i < arr.length - 1 ? '1px solid #f2f4f7' : undefined }}
+            >
+              <div>
+                <p className="text-sm font-semibold" style={{ fontFamily: 'Manrope, sans-serif', color: '#191c1e' }}>
+                  {label}
+                </p>
+                <p className="text-xs mt-0.5" style={{ fontFamily: 'Manrope, sans-serif', color: '#767683' }}>
+                  {desc}
+                </p>
+              </div>
+              <button
+                onClick={() => savePrefs({ ...prefs, [key]: !prefs?.[key] })}
+                className="relative inline-flex h-6 w-11 items-center rounded-full transition-colors shrink-0"
+                style={{ background: prefs?.[key] ? '#000666' : '#e0e3e6' }}
+              >
+                <span
+                  className="inline-block h-4 w-4 rounded-full bg-white transition-transform"
+                  style={{ transform: prefs?.[key] ? 'translateX(1.5rem)' : 'translateX(0.25rem)' }}
+                />
+              </button>
+            </div>
+          ))}
+
+          <div className="flex flex-wrap gap-3 mt-6">
+            <button
+              onClick={acceptAll}
+              className="px-5 py-2.5 text-sm font-bold rounded-xl hover:opacity-90 transition-opacity"
+              style={{
+                fontFamily: '"Plus Jakarta Sans", sans-serif',
+                background: 'linear-gradient(135deg, #000666, #1a237e)',
+                color: '#ffffff',
+              }}
+            >
+              Tout accepter
+            </button>
+            <button
+              onClick={declineAll}
+              className="px-5 py-2.5 text-sm font-semibold rounded-xl transition-colors"
+              style={{
+                fontFamily: 'Manrope, sans-serif',
+                background: '#f2f4f7',
+                color: '#454652',
+              }}
+            >
+              Tout refuser
+            </button>
+            <button
+              onClick={reset}
+              className="px-5 py-2.5 text-sm font-semibold hover:underline transition"
+              style={{ fontFamily: 'Manrope, sans-serif', color: '#ba1a1a' }}
+            >
+              Réinitialiser
+            </button>
+          </div>
         </div>
-      </section>
-
-      {/* Gestion du consentement */}
-     <div className="mt-10 p-6 bg-gray-50 border border-gray-200 rounded-xl space-y-4">
-  <h2 className="text-base font-semibold text-gray-900">Gérer mes préférences</h2>
-
-  <div className="flex items-center justify-between border-b pb-3">
-    <div>
-      <p className="text-sm font-medium text-gray-900">Nécessaires</p>
-      <p className="text-xs text-gray-500">Requis pour le fonctionnement du site.</p>
-    </div>
-    <span className="text-xs text-green-600 font-semibold">Toujours actif</span>
-  </div>
-
-  {[
-    { key: 'analytiques', label: 'Analytiques', desc: 'Statistiques anonymes de navigation.' },
-    { key: 'marketing',   label: 'Marketing',   desc: 'Publicités personnalisées.' },
-  ].map(({ key, label, desc }) => (
-    <div key={key} className="flex items-center justify-between border-b pb-3 last:border-0">
-      <div>
-        <p className="text-sm font-medium text-gray-900">{label}</p>
-        <p className="text-xs text-gray-500">{desc}</p>
       </div>
-      <button
-        onClick={() => savePrefs({ ...prefs, [key]: !prefs?.[key] })}
-        className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-          prefs?.[key] ? 'bg-ovatio-blue' : 'bg-gray-300'
-        }`}>
-        <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-          prefs?.[key] ? 'translate-x-6' : 'translate-x-1'
-        }`} />
-      </button>
     </div>
-  ))}
+  )
+}
 
-  <div className="flex flex-wrap gap-3 pt-2">
-    <button onClick={acceptAll}
-      className="px-4 py-2 text-sm bg-ovatio-blue text-white rounded-lg hover:bg-blue-700 transition font-semibold">
-      Tout accepter
-    </button>
-    <button onClick={declineAll}
-      className="px-4 py-2 text-sm border border-gray-400 text-gray-700 rounded-lg hover:bg-gray-100 transition">
-      Tout refuser
-    </button>
-    <button onClick={reset}
-      className="px-4 py-2 text-sm text-red-600 hover:underline transition">
-      Réinitialiser
-    </button>
-  </div>
-</div>
+function Section({ title, children }) {
+  return (
+    <div>
+      <h2
+        className="text-base font-bold mb-3"
+        style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', color: '#191c1e' }}
+      >
+        {title}
+      </h2>
+      <div
+        className="text-sm leading-relaxed"
+        style={{ fontFamily: 'Manrope, sans-serif', color: '#454652' }}
+      >
+        {children}
+      </div>
     </div>
   )
 }
