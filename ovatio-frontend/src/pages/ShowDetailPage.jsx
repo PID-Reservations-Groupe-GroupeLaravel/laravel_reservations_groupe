@@ -67,7 +67,15 @@ export default function ShowDetailPage() {
 
   if (loading) return <Spinner />
   if (error)   return <p className="text-center text-red-500 mt-16">{error}</p>
-  if (!show)   return null
+  if (!show)   return (
+    <div className="text-center py-24">
+      <div className="text-6xl mb-4">🎭</div>
+      <h2 className="text-2xl font-bold text-gray-700">Spectacle introuvable</h2>
+      <a href="/shows" className="text-blue-600 hover:underline mt-4 inline-block">
+        Retour aux spectacles
+      </a>
+    </div>
+  )
 
   return (
     <div className="max-w-4xl mx-auto px-4 py-8">
