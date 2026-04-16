@@ -24,6 +24,17 @@ export default function ReservationsPage() {
 
   useEffect(() => { fetchReservations() }, [])
 
+  // Payer une réservation
+  const handlePay = async (id) => {
+    if (!window.confirm('Simuler le paiement de cette réservation ?')) return
+    try {
+      await api.post(`/reservations/${id}/pay`)
+      fetchReservations()
+    } catch {
+      alert('Impossible de confirmer le paiement.')
+    }
+  }
+
   // Annuler une réservation
   const handleCancel = async (id) => {
     if (!window.confirm('Annuler cette réservation ?')) return
@@ -72,6 +83,7 @@ export default function ReservationsPage() {
               key={r.id}
               reservation={r}
               onCancel={handleCancel}
+              onPay={handlePay}
               onTicket={handleTicket}
               ticketMsg={ticketMsg[r.id]}
             />
@@ -82,7 +94,7 @@ export default function ReservationsPage() {
   )
 }
 
-function ReservationCard({ reservation: r, onCancel, onTicket, ticketMsg }) {
+function ReservationCard({ reservation: r, onCancel, onPay, onTicket, ticketMsg }) {
   const statusClass = STATUS_COLORS[r.status] ?? 'bg-gray-100 text-gray-700'
 
   return (
@@ -140,21 +152,29 @@ function ReservationCard({ reservation: r, onCancel, onTicket, ticketMsg }) {
       )}
 
       {/* Actions */}
-      <div className="flex gap-3 mt-4">
+      <div className="flex gap-3 mt-4 flex-wrap">
+        {r.status === 'En attente' && (
+          <>
+            <button
+              onClick={() => onPay(r.id)}
+              className="bg-green-600 text-white text-sm px-4 py-2 rounded-lg hover:bg-green-700 transition font-semibold"
+            >
+              💳 Payer
+            </button>
+            <button
+              onClick={() => onCancel(r.id)}
+              className="bg-red-600 text-white text-sm px-4 py-2 rounded-lg hover:bg-red-700 transition"
+            >
+              Annuler
+            </button>
+          </>
+        )}
         {r.status === 'Payée' && (
           <button
             onClick={() => onTicket(r.id)}
             className="bg-ovatio-blue text-white text-sm px-4 py-2 rounded-lg hover:bg-ovatio-light transition"
           >
             🎟️ Générer ticket
-          </button>
-        )}
-        {r.status === 'En attente' && (
-          <button
-            onClick={() => onCancel(r.id)}
-            className="bg-red-600 text-white text-sm px-4 py-2 rounded-lg hover:bg-red-700 transition"
-          >
-            Annuler
           </button>
         )}
       </div>
