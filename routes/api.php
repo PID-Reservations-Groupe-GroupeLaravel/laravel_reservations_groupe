@@ -61,6 +61,7 @@ Route::post('/register', function (Request $request) {
             'confirmed',
         ],
         'langue'    => ['sometimes', 'string', 'size:2'],
+        'photo'     => ['nullable', 'image', 'max:2048'],
     ], [
         'login.unique'      => 'Ce pseudo est déjà utilisé.',
         'email.unique'      => 'Cette adresse email est déjà utilisée.',
@@ -76,6 +77,7 @@ Route::post('/register', function (Request $request) {
         'email'     => $request->email,
         'password'  => Hash::make($request->password),
         'langue'    => $request->langue ?? 'fr',
+        'photo'     => $request->hasFile('photo') ? $request->file('photo')->store('photos', 'public') : null,
     ]);
 
     // Assigner le rôle "member"
@@ -103,6 +105,7 @@ Route::post('/register', function (Request $request) {
             'name'      => $user->name,
             'email'     => $user->email,
             'langue'    => $user->langue,
+            'photo'     => $user->photo ? asset('storage/' . $user->photo) : null,
             'roles'     => $user->roles()->pluck('role'),
         ],
     ], 201);
