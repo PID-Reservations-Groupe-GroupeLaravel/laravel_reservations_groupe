@@ -32,6 +32,14 @@ export default function Navbar() {
               <Link to="/sessions" className="hover:text-blue-200 transition">
                 Sessions
               </Link>
+              {!user.roles?.includes('producer') && !user.roles?.includes('admin') && (
+                <Link
+                  to="/devenir-producteur"
+                  className="bg-yellow-400 text-yellow-900 font-semibold px-3 py-1 rounded-lg text-xs hover:bg-yellow-300 transition"
+                >
+                  🎬 Devenir Producteur
+                </Link>
+              )}
               <div className="flex items-center gap-3 ml-4 border-l border-blue-400 pl-4">
                 <span className="text-blue-200 text-xs">
                   {user.firstname ?? user.name}
