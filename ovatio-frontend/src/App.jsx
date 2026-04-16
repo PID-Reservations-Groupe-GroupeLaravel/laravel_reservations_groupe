@@ -1,27 +1,35 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { AuthProvider } from './contexts/AuthContext'
+import { CookieProvider } from './contexts/CookieContext'
 import Navbar from './components/Navbar'
+import CookieBanner from './components/CookieBanner'
 import PrivateRoute from './components/PrivateRoute'
 
-import LoginPage        from './pages/LoginPage'
-import ShowsPage        from './pages/ShowsPage'
-import ShowDetailPage   from './pages/ShowDetailPage'
-import ReservationsPage from './pages/ReservationsPage'
-import SessionsPage     from './pages/SessionsPage'
+import LoginPage            from './pages/LoginPage'
+import RegisterPage         from './pages/RegisterPage'
+import ShowsPage            from './pages/ShowsPage'
+import ShowDetailPage       from './pages/ShowDetailPage'
+import ReservationsPage     from './pages/ReservationsPage'
+import SessionsPage         from './pages/SessionsPage'
+import CookiesPage          from './pages/CookiesPage'
+import BecomeProducerPage   from './pages/BecomeProducerPage'
 
 export default function App() {
   return (
-    <AuthProvider>
-      <BrowserRouter>
-        <div className="min-h-screen flex flex-col">
-          <Navbar />
+    <CookieProvider>
+      <AuthProvider>
+        <BrowserRouter>
+          <div className="min-h-screen flex flex-col">
+            <Navbar />
+            <CookieBanner />
           <main className="flex-1">
             <Routes>
               {/* Page d'accueil → spectacles */}
               <Route path="/" element={<Navigate to="/shows" replace />} />
 
               {/* Auth */}
-              <Route path="/login" element={<LoginPage />} />
+              <Route path="/login"    element={<LoginPage />} />
+              <Route path="/register" element={<RegisterPage />} />
 
               {/* Public */}
               <Route path="/shows"      element={<ShowsPage />} />
@@ -45,14 +53,17 @@ export default function App() {
                   </a>
                 </div>
               } />
+              <Route path="/cookies" element={<CookiesPage />} />
+              <Route path="/devenir-producteur" element={<BecomeProducerPage />} />
             </Routes>
           </main>
 
           <footer className="bg-ovatio-blue text-blue-200 text-center text-xs py-4 mt-8">
             Ovatio — Projet PID ICC 2025-2026
           </footer>
-        </div>
-      </BrowserRouter>
-    </AuthProvider>
+          </div>
+        </BrowserRouter>
+      </AuthProvider>
+    </CookieProvider>
   )
 }
