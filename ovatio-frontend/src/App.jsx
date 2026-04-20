@@ -13,6 +13,7 @@ import ReservationsPage     from './pages/ReservationsPage'
 import SessionsPage         from './pages/SessionsPage'
 import CookiesPage          from './pages/CookiesPage'
 import BecomeProducerPage   from './pages/BecomeProducerPage'
+import AboutPage            from './pages/AboutPage'
 
 export default function App() {
   return (
@@ -55,6 +56,7 @@ export default function App() {
               } />
               <Route path="/cookies" element={<CookiesPage />} />
               <Route path="/devenir-producteur" element={<BecomeProducerPage />} />
+              <Route path="/a-propos" element={<AboutPage />} />
             </Routes>
           </main>
 
