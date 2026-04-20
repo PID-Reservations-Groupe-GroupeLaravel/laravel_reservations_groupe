@@ -3,5 +3,23 @@
 @tailwind utilities;
 
 body {
-  @apply bg-gray-50 text-gray-800 font-sans;
+  background-color: #f7f9fc;
+  color: #191c1e;
+  font-family: 'Manrope', sans-serif;
+}
+
+/* Signature gradient helper */
+.signature-gradient {
+  background: linear-gradient(135deg, #000666 0%, #1a237e 100%);
+}
+
+/* Glassmorphism helper */
+.glass-effect {
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+/* Ambient shadow helper */
+.stage-glow {
+  box-shadow: 0px 20px 40px rgba(25, 28, 30, 0.06);
 }
