@@ -25,7 +25,7 @@ export default function ShowsPage() {
       {shows.length === 0 ? (
         <p className="text-gray-400 text-center py-16">Aucun spectacle disponible.</p>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {shows.map((show) => (
             <ShowCard key={show.id} show={show} />
           ))}
@@ -41,7 +41,7 @@ function ShowCard({ show }) {
       {/* Image poster */}
       {show.poster_url ? (
         <img
-          src={`/storage/posters/${show.poster_url}`}
+          src={`/images/${show.poster_url}`}
           alt={show.title}
           className="w-full h-48 object-cover"
           onError={(e) => { e.target.style.display = 'none' }}
