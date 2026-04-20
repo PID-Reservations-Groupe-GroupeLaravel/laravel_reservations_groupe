@@ -4,7 +4,7 @@ export default {
   theme: {
     extend: {
       colors: {
-        // Legacy aliases
+        // Legacy aliases (keep for backwards compat)
         ovatio: {
           blue:  '#000666',
           light: '#1a237e',
