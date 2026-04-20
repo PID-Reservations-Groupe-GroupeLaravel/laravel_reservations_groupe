@@ -34,7 +34,7 @@ export default function Navbar() {
         <div className="hidden md:flex items-center gap-8">
           <Link
             to="/shows"
-            className="text-sm font-semibold transition-colors hover:text-primary"
+            className="text-sm font-semibold transition-colors"
             style={{ fontFamily: 'Manrope, sans-serif', color: '#454652' }}
           >
             Spectacles
@@ -43,8 +43,6 @@ export default function Navbar() {
             to="/a-propos"
             className="text-sm font-semibold transition-colors"
             style={{ fontFamily: 'Manrope, sans-serif', color: '#454652' }}
-            onMouseEnter={e => e.target.style.color = '#000666'}
-            onMouseLeave={e => e.target.style.color = '#454652'}
           >
             À propos
           </Link>
@@ -53,8 +51,6 @@ export default function Navbar() {
               to="/devenir-producteur"
               className="text-sm font-semibold transition-colors"
               style={{ fontFamily: 'Manrope, sans-serif', color: '#454652' }}
-              onMouseEnter={e => e.target.style.color = '#000666'}
-              onMouseLeave={e => e.target.style.color = '#454652'}
             >
               Devenir Producteur
             </Link>
@@ -64,8 +60,6 @@ export default function Navbar() {
               to="/reservations"
               className="text-sm font-semibold transition-colors"
               style={{ fontFamily: 'Manrope, sans-serif', color: '#454652' }}
-              onMouseEnter={e => e.target.style.color = '#000666'}
-              onMouseLeave={e => e.target.style.color = '#454652'}
             >
               Mes réservations
             </Link>
@@ -76,7 +70,6 @@ export default function Navbar() {
         <div className="hidden md:flex items-center gap-3">
           {user ? (
             <>
-              {/* User pill */}
               <div
                 className="flex items-center gap-2 px-3 py-1.5 rounded-full text-sm"
                 style={{ background: '#f2f4f7', fontFamily: 'Manrope, sans-serif', color: '#191c1e' }}
@@ -101,12 +94,8 @@ export default function Navbar() {
               {user.roles?.includes('admin') && (
                 <Link
                   to="/admin"
-                  className="text-xs font-bold px-3 py-2 rounded-xl transition"
-                  style={{
-                    fontFamily: 'Manrope, sans-serif',
-                    background: '#eceef1',
-                    color: '#000666',
-                  }}
+                  className="text-xs font-bold px-3 py-2 rounded-xl"
+                  style={{ fontFamily: 'Manrope, sans-serif', background: '#eceef1', color: '#000666' }}
                 >
                   Back-office
                 </Link>
@@ -114,7 +103,7 @@ export default function Navbar() {
 
               <button
                 onClick={handleLogout}
-                className="text-xs font-semibold px-4 py-2 rounded-xl transition-opacity hover:opacity-80"
+                className="text-xs font-semibold px-4 py-2 rounded-xl hover:opacity-80 transition-opacity"
                 style={{
                   fontFamily: 'Manrope, sans-serif',
                   background: 'linear-gradient(135deg, #000666, #1a237e)',
@@ -128,18 +117,14 @@ export default function Navbar() {
             <>
               <Link
                 to="/register"
-                className="text-xs font-bold px-4 py-2 rounded-xl transition-all"
-                style={{
-                  fontFamily: 'Manrope, sans-serif',
-                  background: '#f2f4f7',
-                  color: '#000666',
-                }}
+                className="text-xs font-bold px-4 py-2 rounded-xl"
+                style={{ fontFamily: 'Manrope, sans-serif', background: '#f2f4f7', color: '#000666' }}
               >
                 S'inscrire
               </Link>
               <Link
                 to="/login"
-                className="text-xs font-bold px-4 py-2 rounded-xl transition-opacity hover:opacity-90"
+                className="text-xs font-bold px-4 py-2 rounded-xl hover:opacity-90 transition-opacity"
                 style={{
                   fontFamily: '"Plus Jakarta Sans", sans-serif',
                   background: 'linear-gradient(135deg, #000666, #1a237e)',
@@ -169,10 +154,7 @@ export default function Navbar() {
 
       {/* Mobile menu */}
       {menuOpen && (
-        <div
-          className="md:hidden px-6 pb-6 pt-2 space-y-3"
-          style={{ borderTop: '1px solid rgba(198,197,212,0.3)' }}
-        >
+        <div className="md:hidden px-6 pb-6 pt-2 space-y-3" style={{ borderTop: '1px solid rgba(198,197,212,0.3)' }}>
           <MobileLink to="/shows" onClick={() => setMenuOpen(false)}>Spectacles</MobileLink>
           <MobileLink to="/a-propos" onClick={() => setMenuOpen(false)}>À propos</MobileLink>
           {user ? (
@@ -183,7 +165,7 @@ export default function Navbar() {
               )}
               <button
                 onClick={() => { setMenuOpen(false); handleLogout() }}
-                className="w-full text-left text-sm font-semibold py-2"
+                className="block text-sm font-semibold py-2"
                 style={{ fontFamily: 'Manrope, sans-serif', color: '#ba1a1a' }}
               >
                 Déconnexion
