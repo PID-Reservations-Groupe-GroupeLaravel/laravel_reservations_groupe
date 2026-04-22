@@ -35,6 +35,23 @@ Route::get('/shows/{id}/representations', function ($id) {
     return response()->json($representations);
 })->whereNumber('id');
 
+// GET /shows/{id}/reviews — avis validés d'un spectacle
+Route::get('/shows/{id}/reviews', function ($id) {
+    $reviews = \App\Models\Review::with('user')
+        ->where('show_id', $id)
+        ->where('validated', 1)
+        ->latest()
+        ->get()
+        ->map(fn($r) => [
+            'id'        => $r->id,
+            'score'     => $r->score,
+            'comment'   => $r->comment,
+            'user_name' => $r->user?->name ?? ($r->user?->firstname . ' ' . $r->user?->lastname),
+            'created_at'=> $r->created_at?->diffForHumans(),
+        ]);
+    return response()->json($reviews);
+})->whereNumber('id');
+
 // GET /prices
 Route::get('/prices', function () {
     $prices = Price::all()->map(fn($p) => [
