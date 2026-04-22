@@ -103,10 +103,10 @@ export default function LoginPage() {
                   style={{ fontFamily: 'Manrope, sans-serif', color: '#454652' }}>
                   Mot de passe
                 </label>
-                <button type="button" className="text-xs hover:underline"
+                <Link to="/forgot-password" className="text-xs hover:underline"
                   style={{ fontFamily: 'Manrope, sans-serif', color: '#000666' }}>
                   Oublié ?
-                </button>
+                </Link>
               </div>
               <div className="flex items-center rounded-xl px-4 py-3 gap-3"
                 style={{ background: '#f2f4f7' }}>
