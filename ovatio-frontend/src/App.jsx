@@ -1,18 +1,21 @@
-import { BrowserRouter, Routes, Route, Navigate, Outlet, useLocation } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, Navigate, Outlet } from 'react-router-dom'
 import { AuthProvider } from './contexts/AuthContext'
 import { CookieProvider } from './contexts/CookieContext'
 import Navbar from './components/Navbar'
 import CookieBanner from './components/CookieBanner'
 import PrivateRoute from './components/PrivateRoute'
 
-import LoginPage        from './pages/LoginPage'
-import RegisterPage     from './pages/RegisterPage'
-import ShowsPage        from './pages/ShowsPage'
-import ShowDetailPage   from './pages/ShowDetailPage'
-import ReservationsPage from './pages/ReservationsPage'
-import SessionsPage     from './pages/SessionsPage'
-import CookiesPage      from './pages/CookiesPage'
+import LoginPage          from './pages/LoginPage'
+import RegisterPage       from './pages/RegisterPage'
+import ForgotPasswordPage from './pages/ForgotPasswordPage'
+import ShowsPage          from './pages/ShowsPage'
+import ShowDetailPage     from './pages/ShowDetailPage'
+import ReservationsPage   from './pages/ReservationsPage'
+import SessionsPage       from './pages/SessionsPage'
+import CookiesPage        from './pages/CookiesPage'
 import BecomeProducerPage from './pages/BecomeProducerPage'
+import AboutPage          from './pages/AboutPage'
+import AdminPage          from './pages/AdminPage'
 
 /* ─── Layout WITH Navbar + Footer (toutes les pages sauf auth) ─── */
 function AppLayout() {
@@ -65,7 +68,7 @@ function AppLayout() {
   )
 }
 
-/* ─── Layout sans Navbar (Login / Register) ─── */
+/* ─── Layout sans Navbar (Login / Register / Forgot-password) ─── */
 function AuthLayout() {
   return (
     <>
@@ -84,8 +87,9 @@ export default function App() {
 
             {/* Pages AUTH — sans Navbar ni Footer */}
             <Route element={<AuthLayout />}>
-              <Route path="/login"    element={<LoginPage />} />
-              <Route path="/register" element={<RegisterPage />} />
+              <Route path="/login"           element={<LoginPage />} />
+              <Route path="/register"        element={<RegisterPage />} />
+              <Route path="/forgot-password" element={<ForgotPasswordPage />} />
             </Route>
 
             {/* Pages APP — avec Navbar + Footer */}
@@ -94,6 +98,7 @@ export default function App() {
               <Route path="/shows"     element={<ShowsPage />} />
               <Route path="/shows/:id" element={<ShowDetailPage />} />
               <Route path="/cookies"   element={<CookiesPage />} />
+              <Route path="/about"     element={<AboutPage />} />
               <Route path="/devenir-producteur" element={<BecomeProducerPage />} />
 
               <Route path="/reservations" element={
@@ -101,6 +106,9 @@ export default function App() {
               } />
               <Route path="/sessions" element={
                 <PrivateRoute><SessionsPage /></PrivateRoute>
+              } />
+              <Route path="/admin" element={
+                <PrivateRoute><AdminPage /></PrivateRoute>
               } />
 
               {/* 404 */}
