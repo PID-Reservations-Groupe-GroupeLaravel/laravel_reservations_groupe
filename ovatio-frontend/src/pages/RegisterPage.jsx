@@ -111,20 +111,6 @@ export default function RegisterPage() {
             Accédez aux meilleurs spectacles de Bruxelles, réservez en quelques clics et rejoignez une communauté de passionnés.
           </p>
 
-          {/* Avatars */}
-          <div className="flex items-center gap-3">
-            <div className="flex -space-x-2">
-              {['#4caf50', '#2196f3', '#ff9800'].map((c, i) => (
-                <div key={i} className="w-8 h-8 rounded-full border-2 border-white flex items-center justify-center text-xs text-white font-bold"
-                  style={{ background: c }}>
-                  {['A', 'B', 'C'][i]}
-                </div>
-              ))}
-            </div>
-            <p className="text-xs" style={{ color: 'rgba(255,255,255,0.6)', fontFamily: 'Manrope, sans-serif' }}>
-              +2500 Membres actifs
-            </p>
-          </div>
         </div>
 
         <p className="text-xs" style={{ color: 'rgba(255,255,255,0.3)', fontFamily: 'Manrope, sans-serif' }}>
