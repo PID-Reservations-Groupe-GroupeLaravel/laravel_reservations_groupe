@@ -7,7 +7,10 @@ import LoginPage        from './pages/LoginPage'
 import ShowsPage        from './pages/ShowsPage'
 import ShowDetailPage   from './pages/ShowDetailPage'
 import ReservationsPage from './pages/ReservationsPage'
-import SessionsPage     from './pages/SessionsPage'
+import SessionsPage        from './pages/SessionsPage'
+import ForgotPasswordPage from './pages/ForgotPasswordPage'
+import AboutPage        from './pages/AboutPage'
+
 
 export default function App() {
   return (
@@ -21,7 +24,8 @@ export default function App() {
               <Route path="/" element={<Navigate to="/shows" replace />} />
 
               {/* Auth */}
-              <Route path="/login" element={<LoginPage />} />
+              <Route path="/login"            element={<LoginPage />} />
+              <Route path="/forgot-password"  element={<ForgotPasswordPage />} />
 
               {/* Public */}
               <Route path="/shows"      element={<ShowsPage />} />
@@ -34,6 +38,7 @@ export default function App() {
               <Route path="/sessions" element={
                 <PrivateRoute><SessionsPage /></PrivateRoute>
               } />
+              <Route path="/about" element={<AboutPage />} />
 
               {/* 404 */}
               <Route path="*" element={
