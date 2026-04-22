@@ -9,6 +9,9 @@ export default function Navbar() {
 
   const handleLogout = () => { logout(); navigate('/login') }
 
+  const isAdmin    = user?.roles?.includes('admin')
+  const isProducer = user?.roles?.includes('producer')
+
   return (
     <nav
       className="sticky top-0 z-50"
@@ -34,34 +37,44 @@ export default function Navbar() {
         <div className="hidden md:flex items-center gap-8">
           <Link
             to="/shows"
-            className="text-sm font-semibold transition-colors"
+            className="text-sm font-semibold transition-colors hover:text-[#000666]"
             style={{ fontFamily: 'Manrope, sans-serif', color: '#454652' }}
           >
             Spectacles
           </Link>
           <Link
-            to="/a-propos"
-            className="text-sm font-semibold transition-colors"
+            to="/about"
+            className="text-sm font-semibold transition-colors hover:text-[#000666]"
             style={{ fontFamily: 'Manrope, sans-serif', color: '#454652' }}
           >
             À propos
           </Link>
-          {!user && (
-            <Link
-              to="/devenir-producteur"
-              className="text-sm font-semibold transition-colors"
-              style={{ fontFamily: 'Manrope, sans-serif', color: '#454652' }}
-            >
-              Devenir Producteur
-            </Link>
-          )}
           {user && (
             <Link
               to="/reservations"
-              className="text-sm font-semibold transition-colors"
+              className="text-sm font-semibold transition-colors hover:text-[#000666]"
               style={{ fontFamily: 'Manrope, sans-serif', color: '#454652' }}
             >
               Mes réservations
+            </Link>
+          )}
+          {/* Devenir producteur — visible si connecté ET pas encore producteur/admin */}
+          {user && !isProducer && !isAdmin && (
+            <Link
+              to="/devenir-producteur"
+              className="text-sm font-semibold transition-colors"
+              style={{ fontFamily: 'Manrope, sans-serif', color: '#000666' }}
+            >
+              Devenir producteur ✦
+            </Link>
+          )}
+          {!user && (
+            <Link
+              to="/devenir-producteur"
+              className="text-sm font-semibold transition-colors hover:text-[#000666]"
+              style={{ fontFamily: 'Manrope, sans-serif', color: '#454652' }}
+            >
+              Devenir producteur
             </Link>
           )}
         </div>
@@ -81,7 +94,7 @@ export default function Navbar() {
                   {(user.firstname ?? user.name ?? 'U')[0].toUpperCase()}
                 </div>
                 <span className="font-semibold text-xs">{user.firstname ?? user.name}</span>
-                {user.roles?.includes('admin') && (
+                {isAdmin && (
                   <span
                     className="text-xs font-bold px-1.5 py-0.5 rounded-full"
                     style={{ background: '#fdd400', color: '#6f5c00' }}
@@ -89,9 +102,17 @@ export default function Navbar() {
                     admin
                   </span>
                 )}
+                {isProducer && !isAdmin && (
+                  <span
+                    className="text-xs font-bold px-1.5 py-0.5 rounded-full"
+                    style={{ background: '#e8f5e9', color: '#1b5e20' }}
+                  >
+                    producteur
+                  </span>
+                )}
               </div>
 
-              {user.roles?.includes('admin') && (
+              {(isAdmin || isProducer) && (
                 <Link
                   to="/admin"
                   className="text-xs font-bold px-3 py-2 rounded-xl"
@@ -156,11 +177,14 @@ export default function Navbar() {
       {menuOpen && (
         <div className="md:hidden px-6 pb-6 pt-2 space-y-3" style={{ borderTop: '1px solid rgba(198,197,212,0.3)' }}>
           <MobileLink to="/shows" onClick={() => setMenuOpen(false)}>Spectacles</MobileLink>
-          <MobileLink to="/a-propos" onClick={() => setMenuOpen(false)}>À propos</MobileLink>
+          <MobileLink to="/about" onClick={() => setMenuOpen(false)}>À propos</MobileLink>
           {user ? (
             <>
               <MobileLink to="/reservations" onClick={() => setMenuOpen(false)}>Mes réservations</MobileLink>
-              {user.roles?.includes('admin') && (
+              {!isProducer && !isAdmin && (
+                <MobileLink to="/devenir-producteur" onClick={() => setMenuOpen(false)}>Devenir producteur ✦</MobileLink>
+              )}
+              {(isAdmin || isProducer) && (
                 <MobileLink to="/admin" onClick={() => setMenuOpen(false)}>Back-office</MobileLink>
               )}
               <button
@@ -173,7 +197,7 @@ export default function Navbar() {
             </>
           ) : (
             <>
-              <MobileLink to="/devenir-producteur" onClick={() => setMenuOpen(false)}>Devenir Producteur</MobileLink>
+              <MobileLink to="/devenir-producteur" onClick={() => setMenuOpen(false)}>Devenir producteur</MobileLink>
               <MobileLink to="/register" onClick={() => setMenuOpen(false)}>S'inscrire</MobileLink>
               <MobileLink to="/login" onClick={() => setMenuOpen(false)}>Connexion</MobileLink>
             </>
