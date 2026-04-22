@@ -3,11 +3,13 @@ import { AuthProvider } from './contexts/AuthContext'
 import Navbar from './components/Navbar'
 import PrivateRoute from './components/PrivateRoute'
 
-import LoginPage        from './pages/LoginPage'
-import ShowsPage        from './pages/ShowsPage'
-import ShowDetailPage   from './pages/ShowDetailPage'
-import ReservationsPage from './pages/ReservationsPage'
-import SessionsPage     from './pages/SessionsPage'
+import LoginPage          from './pages/LoginPage'
+import ShowsPage          from './pages/ShowsPage'
+import ShowDetailPage     from './pages/ShowDetailPage'
+import ReservationsPage   from './pages/ReservationsPage'
+import SessionsPage       from './pages/SessionsPage'
+import AdminPage          from './pages/AdminPage'
+import ForgotPasswordPage from './pages/ForgotPasswordPage'
 
 export default function App() {
   return (
@@ -34,6 +36,9 @@ export default function App() {
               <Route path="/sessions" element={
                 <PrivateRoute><SessionsPage /></PrivateRoute>
               } />
+              <Route path="/admin" element={<AdminPage />} />
+              <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+
 
               {/* 404 */}
               <Route path="*" element={
