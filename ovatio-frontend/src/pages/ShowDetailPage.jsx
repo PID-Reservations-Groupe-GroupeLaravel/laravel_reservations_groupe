@@ -298,10 +298,58 @@ export default function ShowDetailPage() {
                     onClick={() => setShowAllReviews(v => !v)}
                     className="mt-5 flex items-center gap-2 text-sm font-bold hover:opacity-70 transition-opacity"
                     style={{ color: '#000666', fontFamily: 'Manrope, sans-serif', background: 'none', border: 'none', cursor: 'pointer' }}>
-                    {showAllReviews
-                      ? 'Voir moins d\'avis ↑'
-                      : `Voir les ${reviews.length - 2} autres avis →`}
+                    {showAllReviews ? 'Voir moins d\'avis ↑' : `Voir les ${reviews.length - 2} autres avis →`}
                   </button>
+                )}
+
+                {/* Laisser un avis */}
+                <div className="mt-8 pt-6" style={{ borderTop: '1px solid #eceef1' }}>
+                  {user ? (
+                    <AddReviewForm showId={id} onAdded={(r) => setReviews(prev => [r, ...prev])} />
+                  ) : (
+                    <div className="rounded-2xl p-5 text-center"
+                      style={{ background: '#f5f6fa', border: '1px dashed #c6c5d4' }}>
+                      <p className="text-sm mb-3" style={{ color: '#767683', fontFamily: 'Manrope, sans-serif' }}>
+                        Vous avez vu ce spectacle ?
+                      </p>
+                      <Link to="/login"
+                        className="text-sm font-bold hover:opacity-80 transition-opacity"
+                        style={{ color: '#000666', fontFamily: '"Plus Jakarta Sans", sans-serif' }}>
+                        Connectez-vous pour laisser un avis →
+                      </Link>
+                    </div>
+                  )}
+                </div>
+              </section>
+            )}
+
+            {/* Section avis si aucun review mais user connecté */}
+            {reviews.length === 0 && (
+              <section>
+                <h2 className="text-2xl font-bold mb-5"
+                  style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', color: '#0a0d2e' }}>
+                  Avis des spectateurs
+                </h2>
+                <div className="rounded-2xl p-6 text-center mb-4"
+                  style={{ background: '#fff', boxShadow: '0 2px 12px rgba(0,6,102,0.06)' }}>
+                  <p className="text-sm" style={{ color: '#888', fontFamily: 'Manrope, sans-serif' }}>
+                    Aucun avis pour ce spectacle pour le moment.
+                  </p>
+                </div>
+                {user ? (
+                  <AddReviewForm showId={id} onAdded={(r) => setReviews([r])} />
+                ) : (
+                  <div className="rounded-2xl p-5 text-center"
+                    style={{ background: '#f5f6fa', border: '1px dashed #c6c5d4' }}>
+                    <p className="text-sm mb-3" style={{ color: '#767683', fontFamily: 'Manrope, sans-serif' }}>
+                      Vous avez vu ce spectacle ?
+                    </p>
+                    <Link to="/login"
+                      className="text-sm font-bold hover:opacity-80 transition-opacity"
+                      style={{ color: '#000666', fontFamily: '"Plus Jakarta Sans", sans-serif' }}>
+                      Connectez-vous pour laisser un avis →
+                    </Link>
+                  </div>
                 )}
               </section>
             )}
@@ -530,6 +578,84 @@ export default function ShowDetailPage() {
         </div>
       </div>
     </div>
+  )
+}
+
+/* ─── Formulaire avis (membres connectés) ────────────────────────── */
+function AddReviewForm({ showId, onAdded }) {
+  const [score, setScore]     = useState(0)
+  const [hover, setHover]     = useState(0)
+  const [comment, setComment] = useState('')
+  const [sending, setSending] = useState(false)
+  const [sent, setSent]       = useState(false)
+  const [err, setErr]         = useState('')
+
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+    if (score === 0) { setErr('Veuillez choisir une note.'); return }
+    setSending(true); setErr('')
+    try {
+      const res = await api.post(`/shows/${showId}/reviews`, { score, comment })
+      onAdded(res.data)
+      setSent(true)
+      setComment(''); setScore(0)
+    } catch {
+      setErr('Erreur lors de l\'envoi. Réessayez.')
+    } finally { setSending(false) }
+  }
+
+  if (sent) return (
+    <div className="rounded-2xl px-5 py-4 text-sm"
+      style={{ background: '#d4f5e2', color: '#1a5c35', fontFamily: 'Manrope, sans-serif' }}>
+      ✓ Votre avis a été soumis et sera visible après validation.
+    </div>
+  )
+
+  return (
+    <form onSubmit={handleSubmit} className="rounded-2xl p-5 space-y-4"
+      style={{ background: '#fff', boxShadow: '0 2px 12px rgba(0,6,102,0.06)' }}>
+      <p className="text-sm font-bold"
+        style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', color: '#0a0d2e' }}>
+        Laisser un avis
+      </p>
+
+      {/* Étoiles interactives */}
+      <div className="flex items-center gap-1">
+        {[1, 2, 3, 4, 5].map(i => (
+          <button key={i} type="button"
+            onMouseEnter={() => setHover(i)}
+            onMouseLeave={() => setHover(0)}
+            onClick={() => setScore(i)}
+            style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, fontSize: '1.5rem',
+              color: i <= (hover || score) ? '#fdd400' : '#e0e3e6', lineHeight: 1 }}>
+            ★
+          </button>
+        ))}
+        {score > 0 && (
+          <span className="text-xs ml-2" style={{ color: '#888', fontFamily: 'Manrope, sans-serif' }}>
+            {['', 'Mauvais', 'Passable', 'Bien', 'Très bien', 'Excellent'][score]}
+          </span>
+        )}
+      </div>
+
+      <textarea
+        value={comment}
+        onChange={e => setComment(e.target.value)}
+        placeholder="Partagez votre expérience..."
+        rows={3}
+        required
+        className="w-full rounded-xl px-4 py-3 text-sm outline-none resize-none"
+        style={{ background: '#f5f6fa', border: '1px solid #eceef1', fontFamily: 'Manrope, sans-serif', color: '#0a0d2e' }}
+      />
+
+      {err && <p className="text-xs" style={{ color: '#93000a', fontFamily: 'Manrope, sans-serif' }}>{err}</p>}
+
+      <button type="submit" disabled={sending}
+        className="px-5 py-2.5 rounded-xl text-sm font-bold text-white hover:opacity-90 transition-opacity disabled:opacity-50"
+        style={{ background: 'linear-gradient(135deg, #000666, #1a237e)', fontFamily: '"Plus Jakarta Sans", sans-serif', border: 'none', cursor: 'pointer' }}>
+        {sending ? 'Envoi...' : 'Publier mon avis'}
+      </button>
+    </form>
   )
 }
 

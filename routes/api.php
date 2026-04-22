@@ -52,6 +52,30 @@ Route::get('/shows/{id}/reviews', function ($id) {
     return response()->json($reviews);
 })->whereNumber('id');
 
+// POST /shows/{id}/reviews — poster un avis (membre connecté)
+Route::middleware('auth:sanctum')->post('/shows/{id}/reviews', function (Request $request, $id) {
+    $request->validate([
+        'score'   => 'required|integer|min:1|max:5',
+        'comment' => 'required|string|min:5|max:1000',
+    ]);
+
+    $review = \App\Models\Review::create([
+        'user_id'   => $request->user()->id,
+        'show_id'   => $id,
+        'score'     => $request->score,
+        'comment'   => $request->comment,
+        'validated' => 0,
+    ]);
+
+    return response()->json([
+        'id'         => $review->id,
+        'score'      => $review->score,
+        'comment'    => $review->comment,
+        'user_name'  => $request->user()->name ?? ($request->user()->firstname . ' ' . $request->user()->lastname),
+        'created_at' => 'À l\'instant',
+    ], 201);
+})->whereNumber('id');
+
 // GET /prices
 Route::get('/prices', function () {
     $prices = Price::all()->map(fn($p) => [
