@@ -88,11 +88,11 @@ export default function RegisterPage() {
           style={{ background: 'radial-gradient(circle, #7986cb, transparent 70%)' }} />
 
         {/* Logo */}
-        <div>
+        <Link to="/shows" className="inline-block">
           <h2 className="text-2xl font-bold text-white" style={{ fontFamily: '"Plus Jakarta Sans", sans-serif' }}>
             Ovatio<span style={{ color: '#fdd400' }}>.be</span>
           </h2>
-        </div>
+        </Link>
 
         {/* Tagline */}
         <div>

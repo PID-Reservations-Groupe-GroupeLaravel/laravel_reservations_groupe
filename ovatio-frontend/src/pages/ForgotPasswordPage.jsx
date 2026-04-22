@@ -26,7 +26,7 @@ export default function ForgotPasswordPage() {
     <div className="min-h-screen flex items-center justify-center px-4"
       style={{ background: 'linear-gradient(135deg, #000666 0%, #1a237e 100%)' }}>
       <div className="w-full max-w-sm">
-        <div className="text-center mb-8">
+        <Link to="/shows" className="block text-center mb-8">
           <h1 className="text-3xl font-bold text-white" style={{ fontFamily: '"Plus Jakarta Sans", sans-serif' }}>
             Ovatio<span style={{ color: '#fdd400' }}>.be</span>
           </h1>
@@ -34,7 +34,7 @@ export default function ForgotPasswordPage() {
             style={{ color: 'rgba(255,255,255,0.5)', fontFamily: 'Manrope, sans-serif' }}>
             La Scène Curatée
           </p>
-        </div>
+        </Link>
 
         <div className="rounded-3xl p-8" style={{ background: '#ffffff', boxShadow: '0 25px 50px rgba(0,0,0,0.3)' }}>
           <h2 className="text-xl font-bold mb-1" style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', color: '#191c1e' }}>

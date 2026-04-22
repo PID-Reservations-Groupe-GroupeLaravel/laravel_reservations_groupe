@@ -43,7 +43,7 @@ export default function LoginPage() {
       <div className="relative w-full max-w-sm z-10">
 
         {/* Logo */}
-        <div className="text-center mb-8">
+        <Link to="/shows" className="block text-center mb-8">
           <h1 className="text-3xl font-bold text-white tracking-tight"
             style={{ fontFamily: '"Plus Jakarta Sans", sans-serif' }}>
             Ovatio<span style={{ color: '#fdd400' }}>.be</span>
@@ -52,7 +52,7 @@ export default function LoginPage() {
             style={{ color: 'rgba(255,255,255,0.5)', fontFamily: 'Manrope, sans-serif' }}>
             La Scène Curatée
           </p>
-        </div>
+        </Link>
 
         {/* Card */}
         <div className="rounded-3xl p-8" style={{ background: 'white', boxShadow: '0 25px 50px rgba(0,0,0,0.3)' }}>
