@@ -197,7 +197,6 @@ Route::middleware('auth:sanctum')->group(function () {
         return response()->json(['message' => 'Réservation créée avec succès.'], 201);
     });
 
-
     // GET /reservations → liste des réservations de l'utilisateur connecté
     Route::get('/reservations', function (Request $request) {
         $reservations = Reservation::with([
@@ -303,7 +302,6 @@ Route::middleware('auth:sanctum')->group(function () {
             'phone'        => 'nullable|string|max:20',
         ]);
 
-        // Envoyer email à l'admin (ou juste logger la demande)
         try {
             Mail::raw(
                 "Nouvelle demande producteur de : {$request->user()->name}\n" .
@@ -356,5 +354,39 @@ Route::middleware('auth:sanctum')->group(function () {
             ->delete();
 
         return response()->json(['message' => 'Tous les autres appareils ont été déconnectés.']);
+    });
+
+    // ─── Producteur : modération des avis ────────────────────────────────────
+    Route::middleware('producer')->prefix('producer')->group(function () {
+
+        // GET /producer/avis → avis sur les spectacles du producteur
+        Route::get('/avis', function (Request $request) {
+            $user = $request->user();
+            $avis = \App\Models\Review::with(['user', 'show'])
+                ->whereHas('show', fn($q) => $q->where('producer_id', $user->id))
+                ->orderByDesc('created_at')
+                ->get()
+                ->map(fn($a) => [
+                    'id'         => $a->id,
+                    'user_name'  => $a->user?->name ?? ($a->user?->firstname . ' ' . $a->user?->lastname),
+                    'show_title' => $a->show?->title,
+                    'rating'     => $a->rating,
+                    'comment'    => $a->comment,
+                    'status'     => $a->status ?? 'pending',
+                ]);
+            return response()->json($avis);
+        });
+
+        // POST /producer/avis/{id}/approve → valider un avis
+        Route::post('/avis/{id}/approve', function ($id) {
+            \App\Models\Review::findOrFail($id)->update(['status' => 'approved']);
+            return response()->json(['message' => 'Avis validé.']);
+        });
+
+        // POST /producer/avis/{id}/reject → rejeter un avis
+        Route::post('/avis/{id}/reject', function ($id) {
+            \App\Models\Review::findOrFail($id)->update(['status' => 'rejected']);
+            return response()->json(['message' => 'Avis rejeté.']);
+        });
     });
 });
