@@ -48,7 +48,7 @@ export default function ShowDetailPage() {
         price_id: parseInt(selectedPrice),
         quantity: parseInt(quantity),
       })
-      setSuccess('Réservation créée avec succès ! Rendez-vous dans Mes réservations.')
+      setSuccess('Réservation créée ! Retrouvez-la dans Mes réservations.')
       setSelectedRepr('')
       setSelectedPrice('')
       setQuantity(1)
@@ -68,196 +68,249 @@ export default function ShowDetailPage() {
   )
   if (!show) return (
     <div className="flex flex-col items-center justify-center py-32 gap-4">
-      <span className="material-symbols-outlined text-6xl" style={{ color: '#c6c5d4' }}>theaters</span>
       <p className="text-sm" style={{ color: '#767683', fontFamily: 'Manrope, sans-serif' }}>Spectacle introuvable.</p>
       <Link to="/shows" className="text-sm font-bold" style={{ color: '#000666' }}>← Retour aux spectacles</Link>
     </div>
   )
 
   const posterUrl = show.poster_url ? `/images/${show.poster_url}` : null
+  const selectedPriceObj = prices.find(p => p.id === parseInt(selectedPrice))
 
   return (
     <div style={{ background: '#f7f9fc', minHeight: '100vh' }}>
 
-      {/* ── HERO avec image en fond ── */}
-      <div className="relative overflow-hidden" style={{ minHeight: '480px' }}>
+      {/* ── HERO image plein écran ── */}
+      <div className="relative overflow-hidden" style={{ height: '520px' }}>
 
-        {/* Image de fond */}
         {posterUrl ? (
           <img
             src={posterUrl}
             alt={show.title}
             className="absolute inset-0 w-full h-full object-cover"
-            style={{ filter: 'brightness(0.35) saturate(1.2)' }}
+            style={{ filter: 'brightness(0.3) saturate(1.3)' }}
           />
         ) : (
-          <div
-            className="absolute inset-0"
-            style={{ background: 'linear-gradient(135deg, #000666 0%, #1a237e 100%)' }}
-          />
+          <div className="absolute inset-0"
+            style={{ background: 'linear-gradient(135deg, #000666 0%, #1a237e 100%)' }} />
         )}
 
-        {/* Gradient overlay en bas pour transition douce */}
-        <div
-          className="absolute inset-0"
+        {/* Dégradé bas → fond page */}
+        <div className="absolute inset-0" style={{
+          background: 'linear-gradient(to bottom, rgba(0,0,0,0.1) 0%, rgba(0,6,102,0.55) 55%, #f7f9fc 100%)'
+        }} />
+
+        {/* Lumières */}
+        <div className="absolute pointer-events-none" style={{
+          top: '-15%', left: '-10%', width: '45%', height: '70%',
+          background: '#fdd400', borderRadius: '50%', filter: 'blur(160px)', opacity: 0.07
+        }} />
+        <div className="absolute pointer-events-none" style={{
+          bottom: '5%', right: '-5%', width: '35%', height: '55%',
+          background: '#8690ee', borderRadius: '50%', filter: 'blur(140px)', opacity: 0.09
+        }} />
+
+        {/* Bouton retour */}
+        <Link to="/shows"
+          className="absolute top-7 left-6 flex items-center gap-1.5 text-xs font-semibold px-3 py-2 rounded-full"
           style={{
-            background: 'linear-gradient(to bottom, rgba(0,6,102,0.3) 0%, rgba(0,6,102,0.6) 60%, #f7f9fc 100%)',
+            background: 'rgba(255,255,255,0.12)',
+            backdropFilter: 'blur(10px)',
+            color: 'rgba(255,255,255,0.9)',
+            fontFamily: 'Manrope, sans-serif',
+            border: '1px solid rgba(255,255,255,0.15)',
           }}
-        />
+        >
+          ← Catalogue
+        </Link>
 
-        {/* Lumières ambiantes */}
-        <div className="absolute pointer-events-none"
-          style={{ top: '-10%', left: '-10%', width: '40%', height: '60%',
-            background: '#fdd400', borderRadius: '50%', filter: 'blur(140px)', opacity: 0.08 }} />
-        <div className="absolute pointer-events-none"
-          style={{ bottom: '10%', right: '-5%', width: '35%', height: '50%',
-            background: '#8690ee', borderRadius: '50%', filter: 'blur(130px)', opacity: 0.1 }} />
-
-        {/* Contenu hero */}
-        <div className="relative max-w-7xl mx-auto px-6 pt-16 pb-24 flex flex-col justify-end" style={{ minHeight: '480px' }}>
-
-          {/* Lien retour */}
-          <Link
-            to="/shows"
-            className="absolute top-8 left-6 flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-full"
-            style={{
-              background: 'rgba(255,255,255,0.15)',
-              backdropFilter: 'blur(8px)',
-              color: 'rgba(255,255,255,0.85)',
-              fontFamily: 'Manrope, sans-serif',
-            }}
-          >
-            <span className="material-symbols-outlined" style={{ fontSize: '0.9rem' }}>arrow_back</span>
-            Catalogue
-          </Link>
-
-          {/* Badge statut */}
+        {/* Infos hero (bas gauche) */}
+        <div className="absolute bottom-10 left-6 right-6 max-w-7xl mx-auto">
           <span
-            className="inline-block text-xs font-black uppercase tracking-[0.2em] px-3 py-1.5 rounded-full mb-4 w-fit"
+            className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-widest px-3 py-1.5 rounded-full mb-4"
             style={{
-              background: show.status === 'CONFIRME' ? 'rgba(0,255,120,0.2)' : 'rgba(253,212,0,0.25)',
-              color: show.status === 'CONFIRME' ? '#a7f3d0' : '#fdd400',
-              border: show.status === 'CONFIRME' ? '1px solid rgba(0,255,120,0.3)' : '1px solid rgba(253,212,0,0.3)',
+              background: show.status === 'CONFIRME' ? 'rgba(0,220,100,0.18)' : 'rgba(253,212,0,0.2)',
+              color: show.status === 'CONFIRME' ? '#6effc0' : '#fdd400',
+              border: show.status === 'CONFIRME' ? '1px solid rgba(0,220,100,0.25)' : '1px solid rgba(253,212,0,0.25)',
               fontFamily: 'Manrope, sans-serif',
             }}
           >
-            <span className="material-symbols-outlined align-middle" style={{ fontSize: '0.85rem', marginRight: '4px' }}>
-              {show.status === 'CONFIRME' ? 'check_circle' : 'schedule'}
-            </span>
-            {show.status === 'CONFIRME' ? 'Confirmé' : 'À confirmer'}
+            {show.status === 'CONFIRME' ? '✓ Confirmé' : '⏳ À confirmer'}
           </span>
 
-          {/* Titre */}
           <h1
-            className="text-4xl md:text-5xl font-extrabold text-white mb-3 leading-tight"
+            className="text-4xl md:text-5xl font-extrabold text-white leading-tight"
             style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', letterSpacing: '-0.02em' }}
           >
             {show.title}
           </h1>
-
-          {/* Description courte si disponible */}
-          {show.description && (
-            <p
-              className="text-base max-w-2xl leading-relaxed"
-              style={{ color: 'rgba(255,255,255,0.65)', fontFamily: 'Manrope, sans-serif' }}
-            >
-              {show.description.length > 180 ? show.description.slice(0, 180) + '…' : show.description}
-            </p>
-          )}
         </div>
       </div>
 
-      {/* ── CONTENU principal ── */}
-      <div className="max-w-7xl mx-auto px-6 pb-20" style={{ marginTop: '-2rem' }}>
-        <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
+      {/* ── CORPS PRINCIPAL ── */}
+      <div className="max-w-7xl mx-auto px-6 pb-24" style={{ marginTop: '-1rem' }}>
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-10">
 
-          {/* ── Représentations (3/5) ── */}
-          <div className="lg:col-span-3">
-            <h2
-              className="text-xl font-bold mb-5"
-              style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', color: '#191c1e' }}
-            >
-              Représentations
-            </h2>
+          {/* ══ GAUCHE — Infos spectacle (3/5) ══ */}
+          <div className="lg:col-span-3 space-y-8">
 
-            {representations.length === 0 ? (
-              <div
-                className="rounded-2xl p-8 text-center"
-                style={{ background: '#ffffff', boxShadow: '0 4px 24px rgba(0,6,102,0.06)' }}
-              >
-                <span className="material-symbols-outlined text-4xl block mb-3" style={{ color: '#c6c5d4' }}>event_busy</span>
-                <p className="text-sm" style={{ color: '#767683', fontFamily: 'Manrope, sans-serif' }}>
-                  Aucune représentation disponible pour le moment.
+            {/* Synopsis */}
+            {show.description && (
+              <section>
+                <h2 className="text-lg font-bold mb-3 flex items-center gap-2"
+                  style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', color: '#191c1e' }}>
+                  <span style={{ width: 3, height: 20, background: '#000666', borderRadius: 2, display: 'inline-block' }} />
+                  Synopsis
+                </h2>
+                <p className="text-sm leading-relaxed"
+                  style={{ color: '#454652', fontFamily: 'Manrope, sans-serif', lineHeight: 1.8 }}>
+                  {show.description}
                 </p>
-              </div>
-            ) : (
-              <ul className="space-y-3">
-                {representations.map((r) => (
-                  <li
-                    key={r.id}
-                    className="rounded-2xl p-5 flex items-center justify-between gap-4"
-                    style={{ background: '#ffffff', boxShadow: '0 4px 24px rgba(0,6,102,0.06)' }}
-                  >
-                    <div className="flex items-center gap-3">
+              </section>
+            )}
+
+            {/* Artistes */}
+            {show.artists && show.artists.length > 0 && (
+              <section>
+                <h2 className="text-lg font-bold mb-4 flex items-center gap-2"
+                  style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', color: '#191c1e' }}>
+                  <span style={{ width: 3, height: 20, background: '#000666', borderRadius: 2, display: 'inline-block' }} />
+                  Artistes
+                </h2>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  {show.artists.map((artist, i) => (
+                    <div key={i}
+                      className="flex items-center gap-3 rounded-2xl p-4"
+                      style={{ background: '#ffffff', boxShadow: '0 2px 12px rgba(0,6,102,0.06)' }}>
                       <div
-                        className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0"
+                        className="w-10 h-10 rounded-xl flex items-center justify-center text-white font-bold text-sm shrink-0"
                         style={{ background: 'linear-gradient(135deg, #000666, #1a237e)' }}
                       >
-                        <span className="material-symbols-outlined text-white" style={{ fontSize: '1.1rem' }}>calendar_month</span>
+                        {(artist.firstname ?? artist.name ?? '?')[0].toUpperCase()}
                       </div>
                       <div>
-                        <p className="text-sm font-bold" style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', color: '#191c1e' }}>
-                          {new Date(r.schedule ?? r.date_start).toLocaleDateString('fr-BE', {
-                            weekday: 'long', day: 'numeric', month: 'long', year: 'numeric',
-                          })}
+                        <p className="text-sm font-semibold" style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', color: '#191c1e' }}>
+                          {artist.firstname} {artist.lastname ?? ''}
                         </p>
-                        {r.location && (
-                          <p className="text-xs mt-0.5 flex items-center gap-1" style={{ color: '#767683', fontFamily: 'Manrope, sans-serif' }}>
-                            <span className="material-symbols-outlined" style={{ fontSize: '0.85rem' }}>location_on</span>
-                            {r.location?.name ?? r.location}
+                        {artist.type && (
+                          <p className="text-xs mt-0.5 capitalize" style={{ color: '#767683', fontFamily: 'Manrope, sans-serif' }}>
+                            {artist.type}
                           </p>
                         )}
                       </div>
                     </div>
-                    <span
-                      className="text-xs font-semibold px-2.5 py-1 rounded-full shrink-0"
-                      style={{ background: '#f2f4f7', color: '#454652', fontFamily: 'Manrope, sans-serif' }}
-                    >
-                      {new Date(r.schedule ?? r.date_start).toLocaleTimeString('fr-BE', { hour: '2-digit', minute: '2-digit' })}
-                    </span>
-                  </li>
-                ))}
-              </ul>
+                  ))}
+                </div>
+              </section>
+            )}
+
+            {/* Représentations */}
+            <section>
+              <h2 className="text-lg font-bold mb-4 flex items-center gap-2"
+                style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', color: '#191c1e' }}>
+                <span style={{ width: 3, height: 20, background: '#000666', borderRadius: 2, display: 'inline-block' }} />
+                Représentations
+              </h2>
+
+              {representations.length === 0 ? (
+                <div className="rounded-2xl p-8 text-center"
+                  style={{ background: '#ffffff', boxShadow: '0 2px 12px rgba(0,6,102,0.06)' }}>
+                  <p className="text-sm" style={{ color: '#767683', fontFamily: 'Manrope, sans-serif' }}>
+                    Aucune représentation disponible pour le moment.
+                  </p>
+                </div>
+              ) : (
+                <ul className="space-y-3">
+                  {representations.map((r) => {
+                    const date = new Date(r.schedule ?? r.date_start)
+                    return (
+                      <li key={r.id}
+                        className="flex items-center justify-between gap-4 rounded-2xl p-4"
+                        style={{ background: '#ffffff', boxShadow: '0 2px 12px rgba(0,6,102,0.06)' }}>
+                        <div className="flex items-center gap-3">
+                          <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 text-white text-xs font-bold"
+                            style={{ background: 'linear-gradient(135deg, #000666, #1a237e)' }}>
+                            {date.getDate()}
+                          </div>
+                          <div>
+                            <p className="text-sm font-semibold"
+                              style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', color: '#191c1e' }}>
+                              {date.toLocaleDateString('fr-BE', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
+                            </p>
+                            {r.location && (
+                              <p className="text-xs mt-0.5" style={{ color: '#767683', fontFamily: 'Manrope, sans-serif' }}>
+                                📍 {r.location?.name ?? r.location}
+                              </p>
+                            )}
+                          </div>
+                        </div>
+                        <span className="text-xs font-semibold px-3 py-1 rounded-full shrink-0"
+                          style={{ background: '#f2f4f7', color: '#454652', fontFamily: 'Manrope, sans-serif' }}>
+                          {date.toLocaleTimeString('fr-BE', { hour: '2-digit', minute: '2-digit' })}
+                        </span>
+                      </li>
+                    )
+                  })}
+                </ul>
+              )}
+            </section>
+
+            {/* Producteur */}
+            {show.producer && (
+              <section>
+                <h2 className="text-lg font-bold mb-3 flex items-center gap-2"
+                  style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', color: '#191c1e' }}>
+                  <span style={{ width: 3, height: 20, background: '#000666', borderRadius: 2, display: 'inline-block' }} />
+                  Producteur
+                </h2>
+                <div className="flex items-center gap-3 rounded-2xl p-4 w-fit"
+                  style={{ background: '#ffffff', boxShadow: '0 2px 12px rgba(0,6,102,0.06)' }}>
+                  <div className="w-10 h-10 rounded-xl flex items-center justify-center text-white font-bold shrink-0"
+                    style={{ background: 'linear-gradient(135deg, #fdd400, #f9a825)', color: '#6f5c00' }}>
+                    {(show.producer.name ?? show.producer.firstname ?? 'P')[0].toUpperCase()}
+                  </div>
+                  <div>
+                    <p className="text-sm font-semibold" style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', color: '#191c1e' }}>
+                      {show.producer.name ?? `${show.producer.firstname} ${show.producer.lastname}`}
+                    </p>
+                    <p className="text-xs mt-0.5" style={{ color: '#767683', fontFamily: 'Manrope, sans-serif' }}>Producteur</p>
+                  </div>
+                </div>
+              </section>
             )}
           </div>
 
-          {/* ── Formulaire réservation (2/5) ── */}
+          {/* ══ DROITE — Réservation (2/5) ══ */}
           <div className="lg:col-span-2">
-            <div
-              className="rounded-2xl p-6 sticky top-24"
-              style={{ background: '#ffffff', boxShadow: '0 8px 32px rgba(0,6,102,0.1)' }}
-            >
-              <h2
-                className="text-lg font-bold mb-5"
-                style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', color: '#191c1e' }}
-              >
+            <div className="rounded-2xl p-6 sticky top-24"
+              style={{ background: '#ffffff', boxShadow: '0 8px 40px rgba(0,6,102,0.10)' }}>
+
+              {/* Prix indicatif */}
+              {prices.length > 0 && (
+                <div className="flex items-baseline gap-1 mb-5">
+                  <span className="text-2xl font-black" style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', color: '#000666' }}>
+                    À partir de {Math.min(...prices.map(p => p.price))} €
+                  </span>
+                  <span className="text-xs" style={{ color: '#767683', fontFamily: 'Manrope, sans-serif' }}>/place</span>
+                </div>
+              )}
+
+              <h2 className="text-base font-bold mb-5 pb-4"
+                style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', color: '#191c1e', borderBottom: '1px solid #eceef1' }}>
                 Réserver une place
               </h2>
 
               {!user ? (
-                <div className="text-center py-4">
-                  <div
-                    className="w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-4"
-                    style={{ background: '#f2f4f7' }}
-                  >
-                    <span className="material-symbols-outlined" style={{ fontSize: '1.5rem', color: '#000666' }}>lock</span>
+                <div className="text-center py-6">
+                  <div className="w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-4"
+                    style={{ background: '#f2f4f7' }}>
+                    <span style={{ fontSize: '1.5rem' }}>🔒</span>
                   </div>
-                  <p className="text-sm mb-4" style={{ color: '#767683', fontFamily: 'Manrope, sans-serif' }}>
+                  <p className="text-sm mb-5" style={{ color: '#767683', fontFamily: 'Manrope, sans-serif' }}>
                     Connectez-vous pour réserver vos places.
                   </p>
                   <button
                     onClick={() => navigate('/login')}
-                    className="w-full py-3 rounded-xl text-white font-semibold text-sm hover:opacity-90 transition-opacity"
+                    className="w-full py-3 rounded-xl text-white font-bold text-sm hover:opacity-90 transition-opacity"
                     style={{ background: 'linear-gradient(135deg, #000666, #1a237e)', fontFamily: '"Plus Jakarta Sans", sans-serif' }}
                   >
                     Se connecter →
@@ -266,10 +319,9 @@ export default function ShowDetailPage() {
               ) : (
                 <form onSubmit={handleReserve} className="space-y-4">
                   {success && (
-                    <div className="rounded-xl px-4 py-3 text-sm flex items-start gap-2"
+                    <div className="rounded-xl px-4 py-3 text-sm"
                       style={{ background: '#d4f5e2', color: '#1a5c35', fontFamily: 'Manrope, sans-serif' }}>
-                      <span className="material-symbols-outlined shrink-0" style={{ fontSize: '1rem', marginTop: '1px' }}>check_circle</span>
-                      {success}
+                      ✓ {success}
                     </div>
                   )}
                   {formError && (
@@ -283,29 +335,21 @@ export default function ShowDetailPage() {
                   <div>
                     <label className="block text-xs font-semibold uppercase tracking-wider mb-2"
                       style={{ fontFamily: 'Manrope, sans-serif', color: '#454652' }}>
-                      Représentation
+                      Date
                     </label>
-                    <select
-                      value={selectedRepr}
-                      onChange={(e) => setSelectedRepr(e.target.value)}
-                      required
-                      className="w-full rounded-xl px-4 py-3 text-sm outline-none"
-                      style={{
-                        background: '#f2f4f7',
-                        border: 'none',
-                        fontFamily: 'Manrope, sans-serif',
-                        color: '#191c1e',
-                      }}
-                    >
+                    <select value={selectedRepr} onChange={(e) => setSelectedRepr(e.target.value)} required
+                      className="w-full rounded-xl px-4 py-3 text-sm outline-none cursor-pointer"
+                      style={{ background: '#f2f4f7', border: 'none', fontFamily: 'Manrope, sans-serif', color: '#191c1e' }}>
                       <option value="">Choisir une date</option>
-                      {representations.map((r) => (
-                        <option key={r.id} value={r.id}>
-                          {new Date(r.schedule ?? r.date_start).toLocaleDateString('fr-BE', {
-                            day: 'numeric', month: 'long', year: 'numeric',
-                          })}
-                          {r.location ? ` — ${r.location?.name ?? r.location}` : ''}
-                        </option>
-                      ))}
+                      {representations.map((r) => {
+                        const d = new Date(r.schedule ?? r.date_start)
+                        return (
+                          <option key={r.id} value={r.id}>
+                            {d.toLocaleDateString('fr-BE', { day: 'numeric', month: 'long', year: 'numeric' })}
+                            {r.location ? ` — ${r.location?.name ?? r.location}` : ''}
+                          </option>
+                        )
+                      })}
                     </select>
                   </div>
 
@@ -315,18 +359,9 @@ export default function ShowDetailPage() {
                       style={{ fontFamily: 'Manrope, sans-serif', color: '#454652' }}>
                       Tarif
                     </label>
-                    <select
-                      value={selectedPrice}
-                      onChange={(e) => setSelectedPrice(e.target.value)}
-                      required
-                      className="w-full rounded-xl px-4 py-3 text-sm outline-none"
-                      style={{
-                        background: '#f2f4f7',
-                        border: 'none',
-                        fontFamily: 'Manrope, sans-serif',
-                        color: '#191c1e',
-                      }}
-                    >
+                    <select value={selectedPrice} onChange={(e) => setSelectedPrice(e.target.value)} required
+                      className="w-full rounded-xl px-4 py-3 text-sm outline-none cursor-pointer"
+                      style={{ background: '#f2f4f7', border: 'none', fontFamily: 'Manrope, sans-serif', color: '#191c1e' }}>
                       <option value="">Choisir un tarif</option>
                       {prices.map((p) => (
                         <option key={p.id} value={p.id}>
@@ -340,62 +375,58 @@ export default function ShowDetailPage() {
                   <div>
                     <label className="block text-xs font-semibold uppercase tracking-wider mb-2"
                       style={{ fontFamily: 'Manrope, sans-serif', color: '#454652' }}>
-                      Nombre de places
+                      Places
                     </label>
-                    <div className="flex items-center gap-3 rounded-xl px-4 py-3" style={{ background: '#f2f4f7' }}>
+                    <div className="flex items-center rounded-xl overflow-hidden"
+                      style={{ background: '#f2f4f7' }}>
                       <button type="button"
                         onClick={() => setQuantity(q => Math.max(1, parseInt(q) - 1))}
-                        className="w-7 h-7 rounded-lg flex items-center justify-center font-bold text-sm hover:opacity-70 transition-opacity"
-                        style={{ background: '#ffffff', color: '#000666' }}
-                      >
+                        className="px-4 py-3 text-lg font-bold hover:bg-gray-200 transition-colors"
+                        style={{ color: '#000666', background: 'transparent', border: 'none', cursor: 'pointer' }}>
                         −
                       </button>
                       <span className="flex-1 text-center text-sm font-bold"
                         style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', color: '#191c1e' }}>
-                        {quantity}
+                        {quantity} place{quantity > 1 ? 's' : ''}
                       </span>
                       <button type="button"
                         onClick={() => setQuantity(q => Math.min(10, parseInt(q) + 1))}
-                        className="w-7 h-7 rounded-lg flex items-center justify-center font-bold text-sm hover:opacity-70 transition-opacity"
-                        style={{ background: '#ffffff', color: '#000666' }}
-                      >
+                        className="px-4 py-3 text-lg font-bold hover:bg-gray-200 transition-colors"
+                        style={{ color: '#000666', background: 'transparent', border: 'none', cursor: 'pointer' }}>
                         +
                       </button>
                     </div>
-                    <p className="text-xs mt-1" style={{ color: '#767683', fontFamily: 'Manrope, sans-serif' }}>
-                      Maximum 10 places par commande
-                    </p>
                   </div>
 
-                  {/* Total estimé */}
-                  {selectedPrice && (
-                    <div className="rounded-xl px-4 py-3 flex items-center justify-between"
-                      style={{ background: 'linear-gradient(135deg, rgba(0,6,102,0.05), rgba(26,35,126,0.08))' }}>
-                      <span className="text-xs font-semibold" style={{ color: '#454652', fontFamily: 'Manrope, sans-serif' }}>Total estimé</span>
-                      <span className="text-base font-black" style={{ color: '#000666', fontFamily: '"Plus Jakarta Sans", sans-serif' }}>
-                        {(prices.find(p => p.id === parseInt(selectedPrice))?.price * quantity).toFixed(2)} €
+                  {/* Total */}
+                  {selectedPriceObj && (
+                    <div className="rounded-xl px-5 py-4 flex items-center justify-between"
+                      style={{ background: 'linear-gradient(135deg, rgba(0,6,102,0.04), rgba(26,35,126,0.07))' }}>
+                      <div>
+                        <p className="text-xs" style={{ color: '#767683', fontFamily: 'Manrope, sans-serif' }}>Total</p>
+                        <p className="text-xs mt-0.5" style={{ color: '#454652', fontFamily: 'Manrope, sans-serif' }}>
+                          {quantity} × {selectedPriceObj.price} €
+                        </p>
+                      </div>
+                      <span className="text-xl font-black" style={{ color: '#000666', fontFamily: '"Plus Jakarta Sans", sans-serif' }}>
+                        {(selectedPriceObj.price * quantity).toFixed(2)} €
                       </span>
                     </div>
                   )}
 
-                  <button
-                    type="submit"
-                    disabled={submitting}
-                    className="w-full py-3.5 rounded-xl text-white font-bold text-sm hover:opacity-90 transition-opacity disabled:opacity-50 flex items-center justify-center gap-2"
-                    style={{ background: 'linear-gradient(135deg, #000666, #1a237e)', fontFamily: '"Plus Jakarta Sans", sans-serif' }}
-                  >
+                  <button type="submit" disabled={submitting}
+                    className="w-full py-4 rounded-xl text-white font-bold text-sm hover:opacity-90 transition-opacity disabled:opacity-50 flex items-center justify-center gap-2"
+                    style={{ background: 'linear-gradient(135deg, #000666, #1a237e)', fontFamily: '"Plus Jakarta Sans", sans-serif' }}>
                     {submitting ? (
-                      <>
-                        <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                        Réservation...
-                      </>
+                      <><div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" /> Réservation...</>
                     ) : (
-                      <>
-                        <span className="material-symbols-outlined" style={{ fontSize: '1rem' }}>confirmation_number</span>
-                        Confirmer la réservation
-                      </>
+                      '🎟 Confirmer la réservation'
                     )}
                   </button>
+
+                  <p className="text-center text-xs" style={{ color: '#767683', fontFamily: 'Manrope, sans-serif' }}>
+                    Paiement sécurisé · Annulation possible avant paiement
+                  </p>
                 </form>
               )}
             </div>
