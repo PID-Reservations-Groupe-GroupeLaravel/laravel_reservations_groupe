@@ -9,7 +9,8 @@ import ShowDetailPage   from './pages/ShowDetailPage'
 import ReservationsPage from './pages/ReservationsPage'
 import SessionsPage        from './pages/SessionsPage'
 import ForgotPasswordPage from './pages/ForgotPasswordPage'
-import AboutPage        from './pages/AboutPage'
+import RegisterPage      from './pages/RegisterPage'
+import AboutPage         from './pages/AboutPage'
 
 
 export default function App() {
@@ -25,6 +26,7 @@ export default function App() {
 
               {/* Auth */}
               <Route path="/login"            element={<LoginPage />} />
+              <Route path="/register"         element={<RegisterPage />} />
               <Route path="/forgot-password"  element={<ForgotPasswordPage />} />
 
               {/* Public */}

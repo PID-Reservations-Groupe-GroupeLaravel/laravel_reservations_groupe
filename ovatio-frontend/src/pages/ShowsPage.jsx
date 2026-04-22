@@ -91,7 +91,7 @@ function ShowCard({ show }) {
         style={{ height: '220px', background: 'linear-gradient(135deg, #000666, #1a237e)' }}>
         {show.poster_url ? (
           <img
-            src={`/storage/posters/${show.poster_url}`}
+            src={`/images/${show.poster_url}`}
             alt={show.title}
             className="w-full h-full object-cover"
             style={{ transform: hovered ? 'scale(1.06)' : 'scale(1)', transition: 'transform 0.5s ease' }}
