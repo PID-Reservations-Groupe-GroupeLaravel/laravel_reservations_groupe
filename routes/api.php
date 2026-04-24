@@ -343,21 +343,96 @@ Route::middleware('auth:sanctum')->group(function () {
             'phone'        => 'nullable|string|max:20',
         ]);
 
-        try {
-            Mail::raw(
-                "Nouvelle demande producteur de : {$request->user()->name}\n" .
-                "Compagnie : {$request->company_name}\n" .
-                "Description : {$request->description}\n" .
-                "BCE/SIRET : {$request->siret}\n" .
-                "Site : {$request->website}\n" .
-                "Tél : {$request->phone}",
-                fn($m) => $m->to('admin@ovatio.be')->subject('Demande producteur – Ovatio')
-            );
-        } catch (\Exception $e) {
-            // Ne pas bloquer si l'email échoue
-        }
+        DB::table('producer_requests')->insert([
+            'user_id'      => $request->user()->id,
+            'company_name' => $request->company_name,
+            'description'  => $request->description,
+            'siret'        => $request->siret,
+            'website'      => $request->website,
+            'phone'        => $request->phone,
+            'status'       => 'pending',
+            'created_at'   => now(),
+            'updated_at'   => now(),
+        ]);
 
         return response()->json(['message' => 'Demande envoyée avec succès.'], 201);
+    });
+
+    // ─── Admin ───────────────────────────────────────────────────────────────
+    Route::middleware('admin')->prefix('admin')->group(function () {
+
+        // GET /admin/demandes → liste des demandes producteur
+        Route::get('/demandes', function () {
+            $demandes = DB::table('producer_requests')
+                ->join('users', 'producer_requests.user_id', '=', 'users.id')
+                ->select(
+                    'producer_requests.*',
+                    'users.firstname', 'users.lastname', 'users.name as user_name', 'users.email'
+                )
+                ->orderBy('producer_requests.created_at', 'desc')
+                ->get()
+                ->map(fn($d) => [
+                    'id'           => $d->id,
+                    'user_id'      => $d->user_id,
+                    'user_name'    => $d->user_name ?? ($d->firstname . ' ' . $d->lastname),
+                    'user_email'   => $d->email,
+                    'company_name' => $d->company_name,
+                    'description'  => $d->description,
+                    'siret'        => $d->siret,
+                    'website'      => $d->website,
+                    'phone'        => $d->phone,
+                    'status'       => $d->status,
+                    'rejection_reason' => $d->rejection_reason,
+                    'created_at'   => \Carbon\Carbon::parse($d->created_at)->diffForHumans(),
+                ]);
+            return response()->json($demandes);
+        });
+
+        // POST /admin/demandes/{id}/approve → approuver, assigner rôle producteur
+        Route::post('/demandes/{id}/approve', function ($id) {
+            $demande = DB::table('producer_requests')->where('id', $id)->firstOrFail();
+            DB::table('producer_requests')->where('id', $id)->update([
+                'status'     => 'approved',
+                'updated_at' => now(),
+            ]);
+            $producerRole = Role::firstWhere('role', 'producer');
+            if ($producerRole) {
+                $user = User::find($demande->user_id);
+                $user?->roles()->syncWithoutDetaching([$producerRole->id]);
+            }
+            return response()->json(['message' => 'Demande approuvée. Rôle producteur assigné.']);
+        });
+
+        // POST /admin/demandes/{id}/reject → refuser avec motif obligatoire
+        Route::post('/demandes/{id}/reject', function (Request $request, $id) {
+            $request->validate([
+                'reason' => 'required|string|min:10',
+            ], [
+                'reason.required' => 'Le motif de refus est obligatoire.',
+                'reason.min'      => 'Le motif doit faire au moins 10 caractères.',
+            ]);
+            DB::table('producer_requests')->where('id', $id)->update([
+                'status'           => 'rejected',
+                'rejection_reason' => $request->reason,
+                'updated_at'       => now(),
+            ]);
+            return response()->json(['message' => 'Demande refusée.']);
+        });
+
+        // GET /admin/members → liste des membres
+        Route::get('/members', function () {
+            $members = User::with('roles')
+                ->get()
+                ->map(fn($u) => [
+                    'id'        => $u->id,
+                    'name'      => $u->name ?? ($u->firstname . ' ' . $u->lastname),
+                    'email'     => $u->email,
+                    'login'     => $u->login,
+                    'roles'     => $u->roles->pluck('role'),
+                    'created_at'=> $u->created_at?->diffForHumans(),
+                ]);
+            return response()->json($members);
+        });
     });
 
     // ─── Sessions ────────────────────────────────────────────────────────────
