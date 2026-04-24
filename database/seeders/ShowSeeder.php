@@ -55,7 +55,7 @@ class ShowSeeder extends Seeder
             'slug'        => 'cible-mouvante',
             'title'       => 'Cible mouvante',
             'description' => "Dans une societe en proie a une inquietude diffuse, les adultes developpent une peur feroce envers des enfants de 10 a 12 ans, suspectes d'actes de violence et de terrorisme. Inspiree du texte de Marius von Mayenburg, cette piece d'anticipation sociale interroge nos mecanismes de bouc emissaire et la fragilite de nos certitudes face a l'inconnu. Un huis clos saisissant dans la tradition d'Orwell et de Bret Easton Ellis.",
-            'poster_url'  => null,
+            'poster_url'  => 'cible-mouvante.jpg',
             'duration'    => 90,
             'created_in'  => 2012,
             'user_id'     => $user?->id,
