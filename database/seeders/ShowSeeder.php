@@ -41,7 +41,7 @@ class ShowSeeder extends Seeder
         Show::create([
             'slug'        => 'ayiti',
             'title'       => 'Ayiti',
-            'description' => "Un homme est bloque a l'aeroport de Port-au-Prince. Questionne par les douaniers, il doit justifier son identite, son histoire, ses origines. Seul en scene, Daniel Marcelin incarne avec une intensite bouleversante l'histoire d'Haiti, ses heros, ses tyrans, ses revoltes et son peuple. Un voyage entre le paradis des touristes et la realite d'un peuple qui se bat pour exister.",
+            'description' => "Seul en scene, Daniel Marcelin retrace l'histoire d'Haiti a travers un recit a la fois intime et engage. Coincé dans un aeroport, il revisite ses origines, questionne son identite et partage une reflexion profonde sur l'exil, l'heritage et la resilience d'un peuple. Du temps de la colonisation aux crises contemporaines, le spectacle oscille entre humour, emotion et critique historique pour offrir une experience a la fois pedagogique et profondement humaine.",
             'poster_url'  => 'ayiti.jpg',
             'duration'    => 90,
             'created_in'  => 2010,
@@ -54,7 +54,7 @@ class ShowSeeder extends Seeder
         Show::create([
             'slug'        => 'cible-mouvante',
             'title'       => 'Cible mouvante',
-            'description' => "Dans une societe en proie a une inquietude diffuse, les adultes developpent une peur feroce envers des enfants de 10 a 12 ans, suspectes d'actes de violence et de terrorisme. Inspiree du texte de Marius von Mayenburg, cette piece d'anticipation sociale interroge nos mecanismes de bouc emissaire et la fragilite de nos certitudes face a l'inconnu. Un huis clos saisissant dans la tradition d'Orwell et de Bret Easton Ellis.",
+            'description' => "Oeuvre scenique contemporaine qui explore les notions d'instabilite, de transformation et d'adaptation dans un monde en perpetuel changement. A travers une mise en scene dynamique melant mouvement, corps et espace, le spectacle interroge la place de l'individu face a des reperes qui se deplacent constamment. Les interpretes incarnent cette quete d'equilibre fragile, ou chaque geste devient une tentative de s'ancrer dans une realite incertaine. Entre tension et fluidite, une reflexion sensible sur notre capacite a evoluer et a nous reinventer.",
             'poster_url'  => 'cible-mouvante.jpg',
             'duration'    => 90,
             'created_in'  => 2012,
@@ -67,7 +67,7 @@ class ShowSeeder extends Seeder
         Show::create([
             'slug'        => 'ceci-nest-pas-un-chanteur-belge',
             'title'       => "Ceci n'est pas un chanteur belge",
-            'description' => "Non peut-etre ?! Entre Magritte et Maigret, Claude Semal revient avec quatorze nouvelles chansons melees a des textes humoristiques et poetiques. Un spectacle qui navigue entre tendresse et ironie, ou la belgitude s'assume avec fierte et autodérision. Une soiree inclassable qui melange chanson, slam et comedie pour celebrer l'ame belge dans toute sa complexite.",
+            'description' => "Claude Semal joue habilement avec les codes de la chanson et du theatre pour proposer une satire mordante de l'identite belge. A travers une succession de textes, de chansons et de prises de parole engagees, il deconstruit les cliches et interroge les contradictions d'une societe en quete de sens. Inspire par l'univers surrealiste de Magritte, le spectacle oscille entre humour, provocation et reflexion politique, invitant le spectateur a remettre en question les apparences et ce qui definit reellement une identite nationale et culturelle.",
             'poster_url'  => 'claudebelgesaison220.jpg',
             'duration'    => 80,
             'created_in'  => 2014,
@@ -80,7 +80,7 @@ class ShowSeeder extends Seeder
         Show::create([
             'slug'        => 'manneke',
             'title'       => 'Manneke... !',
-            'description' => "A tour de role, Pierre incarne avec un talent cameleonesque ses oncles, tantes, grands-parents et surtout sa mere — figure centrale d'un portrait de famille aussi hilarant que touchant. Un seul-en-scene virtuose qui oscille entre comedie pure et moments d'une emotion inattendue, nous plongeant dans l'intimite d'une famille bruxelloise attachante et universelle.",
+            'description' => "Pierre Wayburn raconte l'histoire d'un homme a travers ses souvenirs d'enfance et sa relation avec sa mere. Ancre dans une Belgique populaire et chaleureuse, le recit mele humour, tendresse et moments de vie profondement humains. A travers des anecdotes du quotidien et des scenes empreintes d'emotion, le spectacle dresse le portrait d'une famille hors du commun, marquee par la simplicite et la force des liens affectifs. Une ode a la memoire, a l'amour filial et aux racines, qui resonne avec sincerite aupres de tous les publics.",
             'poster_url'  => 'wayburn.jpg',
             'duration'    => 70,
             'created_in'  => 2011,
