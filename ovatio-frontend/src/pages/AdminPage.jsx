@@ -1162,7 +1162,7 @@ function AvisTab({ t }) {
             </div>
             <div className="flex items-center gap-2">
               <span style={{ color: '#fdd400', fontSize: '0.9rem' }}>{'★'.repeat(a.score ?? 0)}</span>
-              <StatusBadge status={a.validated === true ? 'approved' : a.validated === -1 ? 'rejected' : 'pending'} t={t} />
+              <StatusBadge status={a.validated === 1 ? 'approved' : a.validated === -1 ? 'rejected' : 'pending'} t={t} />
             </div>
           </div>
 
@@ -1171,7 +1171,7 @@ function AvisTab({ t }) {
             {a.comment}
           </p>
 
-          {a.validated !== true && a.validated !== -1 && (
+          {a.validated !== 1 && a.validated !== -1 && (
             <div className="flex gap-3">
               <button onClick={() => handleApprove(a.id)}
                 className="flex items-center gap-2 text-sm font-semibold px-5 py-2.5 rounded-xl"
@@ -1185,8 +1185,8 @@ function AvisTab({ t }) {
               </button>
             </div>
           )}
-          {(a.validated === true || a.validated === -1) && (
-            <StatusBadge status={a.validated === true ? 'approved' : 'rejected'} t={t} />
+          {(a.validated === 1 || a.validated === -1) && (
+            <StatusBadge status={a.validated === 1 ? 'approved' : 'rejected'} t={t} />
           )}
         </div>
       ))}

@@ -26,6 +26,8 @@ return new class extends Migration
 
             // Commentaire optionnel
             $table->text('comment')->nullable();
+
+            $table->timestamps();
         });
     }
 

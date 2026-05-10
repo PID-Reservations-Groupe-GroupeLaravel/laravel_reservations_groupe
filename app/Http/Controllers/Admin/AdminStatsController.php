@@ -11,7 +11,7 @@ class AdminStatsController extends Controller
     {
         $revenue = DB::table('representation_reservation')
             ->join('reservations', 'reservations.id', '=', 'representation_reservation.reservation_id')
-            ->where('reservations.status', 'Payee')
+            ->where('reservations.status', 'Payée')
             ->sum(DB::raw('representation_reservation.quantity * representation_reservation.unit_price'));
 
         $ticketCount = DB::table('representation_reservation')->sum('quantity');

@@ -141,7 +141,7 @@ Route::middleware('auth:sanctum')->post('/shows/{id}/reviews', function (Request
         'show_id'   => $id,
         'score'     => $request->score,
         'comment'   => $request->comment,
-        'validated' => 0,
+        'validated' => null,
     ]);
 
     return response()->json([

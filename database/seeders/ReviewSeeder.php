@@ -32,18 +32,20 @@ class ReviewSeeder extends Seeder
         }
 
         Review::create([
-            'user_id' => $user->id,
-            'show_id' => $show1->id,
-            'score' => 5,
-            'comment' => 'Excellent spectacle !',
+            'user_id'   => $user->id,
+            'show_id'   => $show1->id,
+            'score'     => 5,
+            'comment'   => 'Excellent spectacle, une soirée inoubliable !',
+            'validated' => 1,
         ]);
 
         if ($show2) {
             Review::create([
-                'user_id' => $user->id,
-                'show_id' => $show2->id,
-                'score' => 3,
-                'comment' => 'Sympa mais un peu long.',
+                'user_id'   => $user->id,
+                'show_id'   => $show2->id,
+                'score'     => 3,
+                'comment'   => 'Sympa mais un peu long.',
+                'validated' => 1,
             ]);
         }
     }

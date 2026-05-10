@@ -24,6 +24,7 @@ class Show extends Model
         'location_id',
         'price_id',
         'bookable',
+        'status',
     ];
 
     protected $table = 'shows';
