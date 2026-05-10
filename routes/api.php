@@ -21,6 +21,29 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Str;
 
+// ─── Stripe Webhook (public, pas de token requis) ────────────────────────────
+Route::post('/stripe/webhook', function (\Illuminate\Http\Request $request) {
+    $payload = $request->getContent();
+    $sig     = $request->header('Stripe-Signature');
+    $secret  = config('services.stripe.webhook_secret');
+
+    try {
+        $event = \Stripe\Webhook::constructEvent($payload, $sig, $secret);
+    } catch (\Exception $e) {
+        return response()->json(['error' => 'Invalid signature'], 400);
+    }
+
+    if ($event->type === 'checkout.session.completed') {
+        $session       = $event->data->object;
+        $reservationId = $session->metadata->reservation_id ?? null;
+        if ($reservationId) {
+            Reservation::where('id', $reservationId)->update(['status' => 'Payée']);
+        }
+    }
+
+    return response()->json(['status' => 'ok']);
+});
+
 // Routes publiques — spectacles (pas de token requis)
 Route::get('/shows', [ShowApiController::class, 'index']);
 Route::get('/shows/{id}', [ShowApiController::class, 'show'])->whereNumber('id');
@@ -292,6 +315,48 @@ Route::middleware('auth:sanctum')->group(function () {
         $reservation->save();
 
         return response()->json(['message' => 'Paiement confirmé.']);
+    });
+
+    // POST /reservations/{id}/checkout → créer une session Stripe Checkout
+    Route::post('/reservations/{id}/checkout', function (Request $request, $id) {
+        $reservation = Reservation::with('representations.show')
+            ->where('id', $id)
+            ->where('user_id', $request->user()->id)
+            ->firstOrFail();
+
+        if ($reservation->status !== 'En attente') {
+            return response()->json(['message' => 'Seules les réservations en attente peuvent être payées.'], 422);
+        }
+
+        \Stripe\Stripe::setApiKey(config('services.stripe.secret'));
+
+        $lineItems = $reservation->representations->map(function ($rep) {
+            $title    = $rep->show?->title ?? 'Spectacle';
+            $quantity = $rep->pivot->quantity ?? 1;
+            $price    = (int) round(($rep->pivot->unit_price ?? 0) * 100);
+
+            return [
+                'price_data' => [
+                    'currency'     => 'eur',
+                    'unit_amount'  => $price,
+                    'product_data' => ['name' => $title],
+                ],
+                'quantity' => $quantity,
+            ];
+        })->values()->toArray();
+
+        $frontendUrl = env('FRONTEND_URL', 'http://localhost:3001');
+
+        $session = \Stripe\Checkout\Session::create([
+            'payment_method_types' => ['card'],
+            'line_items'           => $lineItems,
+            'mode'                 => 'payment',
+            'success_url'          => $frontendUrl . '/reservations?payment=success',
+            'cancel_url'           => $frontendUrl . '/reservations?payment=cancel',
+            'metadata'             => ['reservation_id' => $reservation->id],
+        ]);
+
+        return response()->json(['url' => $session->url]);
     });
 
     // DELETE /reservations/{id} → annuler une réservation (statut En attente uniquement)

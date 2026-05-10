@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import api from '../api/axios'
 
 const STATUS_COLORS = {
@@ -13,6 +14,9 @@ export default function ReservationsPage() {
   const [error, setError]               = useState('')
   const [cancelId, setCancelId]         = useState(null)
   const [ticketMsg, setTicketMsg]       = useState({})
+  const [searchParams, setSearchParams] = useSearchParams()
+
+  const paymentStatus = searchParams.get('payment')
 
   const fetchReservations = () => {
     setLoading(true)
@@ -24,14 +28,13 @@ export default function ReservationsPage() {
 
   useEffect(() => { fetchReservations() }, [])
 
-  // Payer une réservation
-  const handlePay = async (id) => {
-    if (!window.confirm('Simuler le paiement de cette réservation ?')) return
+  // Stripe Checkout
+  const handleCheckout = async (id) => {
     try {
-      await api.post(`/reservations/${id}/pay`)
-      fetchReservations()
-    } catch {
-      alert('Impossible de confirmer le paiement.')
+      const res = await api.post(`/reservations/${id}/checkout`)
+      window.location.href = res.data.url
+    } catch (err) {
+      alert(err.response?.data?.message ?? 'Impossible de lancer le paiement Stripe.')
     }
   }
 
@@ -71,6 +74,30 @@ export default function ReservationsPage() {
       <h1 className="text-3xl font-bold text-ovatio-blue mb-2">Mes réservations</h1>
       <p className="text-gray-500 mb-8">Gérez vos réservations de spectacles</p>
 
+      {paymentStatus === 'success' && (
+        <div className="mb-6 rounded-xl px-5 py-4 text-sm font-semibold flex items-center gap-3"
+          style={{ background: '#e8f5e9', color: '#2e7d32', border: '1px solid #a5d6a7' }}>
+          <span>✅</span>
+          <span>Paiement confirmé ! Votre réservation est maintenant payée.</span>
+          <button onClick={() => setSearchParams({})}
+            style={{ marginLeft: 'auto', background: 'none', border: 'none', cursor: 'pointer', color: '#2e7d32', fontSize: '1rem' }}>
+            ×
+          </button>
+        </div>
+      )}
+
+      {paymentStatus === 'cancel' && (
+        <div className="mb-6 rounded-xl px-5 py-4 text-sm font-semibold flex items-center gap-3"
+          style={{ background: '#ffdad6', color: '#93000a', border: '1px solid #ffb4ab' }}>
+          <span>❌</span>
+          <span>Paiement annulé. Votre réservation reste en attente.</span>
+          <button onClick={() => setSearchParams({})}
+            style={{ marginLeft: 'auto', background: 'none', border: 'none', cursor: 'pointer', color: '#93000a', fontSize: '1rem' }}>
+            ×
+          </button>
+        </div>
+      )}
+
       {reservations.length === 0 ? (
         <div className="text-center py-20 text-gray-400">
           <div className="text-6xl mb-4">🎭</div>
@@ -83,7 +110,7 @@ export default function ReservationsPage() {
               key={r.id}
               reservation={r}
               onCancel={handleCancel}
-              onPay={handlePay}
+              onPay={handleCheckout}
               onTicket={handleTicket}
               ticketMsg={ticketMsg[r.id]}
             />
@@ -159,7 +186,7 @@ function ReservationCard({ reservation: r, onCancel, onPay, onTicket, ticketMsg 
               onClick={() => onPay(r.id)}
               className="bg-green-600 text-white text-sm px-4 py-2 rounded-lg hover:bg-green-700 transition font-semibold"
             >
-              💳 Payer
+              💳 Payer via Stripe
             </button>
             <button
               onClick={() => onCancel(r.id)}
