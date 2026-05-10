@@ -15,7 +15,8 @@ class UserResource extends JsonResource
             'lastname'  => $this->lastname,
             'email'     => $this->email,
             'langue'    => $this->langue,
-            'roles'     => $this->roles->pluck('role'),
+            'roles'       => $this->roles->pluck('role'),
+            'is_disabled' => (bool) $this->is_disabled,
         ];
     }
 }
