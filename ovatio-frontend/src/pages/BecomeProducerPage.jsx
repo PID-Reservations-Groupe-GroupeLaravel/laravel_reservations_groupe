@@ -19,7 +19,9 @@ export default function BecomeProducerPage() {
   const [loading, setLoading]         = useState(false)
   const [success, setSuccess]         = useState(false)
   const [error, setError]             = useState('')
-  const [requestStatus, setRequestStatus] = useState(null) // 'pending' | 'rejected' | 'none' | null
+  const [fieldErrors, setFieldErrors] = useState({})
+  const [touched, setTouched]         = useState({})
+  const [requestStatus, setRequestStatus] = useState(null)
   const [rejectedReason, setRejectedReason] = useState('')
   const [statusLoading, setStatusLoading]   = useState(true)
 
@@ -37,11 +39,57 @@ export default function BecomeProducerPage() {
       .finally(() => setStatusLoading(false))
   }, [user])
 
-  const set = (field) => (e) => setForm({ ...form, [field]: e.target.value })
+  const SIRET_RE  = /^(BE\s*0\d{3}[\s.\-]?\d{3}[\s.\-]?\d{3}|\d{14})$/i
+  const PHONE_RE  = /^\+?[\d\s\-().]{7,20}$/
+  const URL_RE    = /^https?:\/\/.+\..+/i
+
+  const validate = (values) => {
+    const errs = {}
+    if (!values.company_name.trim())
+      errs.company_name = t('producer.errRequired')
+    else if (values.company_name.trim().length < 2)
+      errs.company_name = t('producer.errMinName')
+
+    if (!values.description.trim())
+      errs.description = t('producer.errRequired')
+    else if (values.description.trim().length < 20)
+      errs.description = t('producer.errMinDesc')
+
+    if (values.siret && !SIRET_RE.test(values.siret.trim()))
+      errs.siret = t('producer.errSiret')
+
+    if (values.website && !URL_RE.test(values.website.trim()))
+      errs.website = t('producer.errUrl')
+
+    if (values.phone && !PHONE_RE.test(values.phone.trim()))
+      errs.phone = t('producer.errPhone')
+
+    return errs
+  }
+
+  const set = (field) => (e) => {
+    const val = e.target.value
+    setForm(prev => ({ ...prev, [field]: val }))
+    if (touched[field]) {
+      const errs = validate({ ...form, [field]: val })
+      setFieldErrors(prev => ({ ...prev, [field]: errs[field] }))
+    }
+  }
+
+  const blur = (field) => () => {
+    setTouched(prev => ({ ...prev, [field]: true }))
+    const errs = validate(form)
+    setFieldErrors(prev => ({ ...prev, [field]: errs[field] }))
+  }
 
   const handleSubmit = async (e) => {
     e.preventDefault()
     setError('')
+    const allTouched = { company_name: true, siret: true, description: true, website: true, phone: true }
+    setTouched(allTouched)
+    const errs = validate(form)
+    setFieldErrors(errs)
+    if (Object.keys(errs).length > 0) return
     setLoading(true)
     try {
       await api.post('/producer/apply', form)
@@ -182,7 +230,9 @@ export default function BecomeProducerPage() {
             </div>
           )}
 
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-5" noValidate>
+
+            {/* Nom de la compagnie */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 {t('producer.companyName')} <span className="text-red-500">*</span>
@@ -191,49 +241,88 @@ export default function BecomeProducerPage() {
                 type="text"
                 value={form.company_name}
                 onChange={set('company_name')}
-                required
+                onBlur={blur('company_name')}
                 placeholder="Théâtre du Soleil"
-                className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className={`w-full border rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 transition ${
+                  fieldErrors.company_name
+                    ? 'border-red-400 focus:ring-red-300 bg-red-50'
+                    : 'border-gray-300 focus:ring-blue-500'
+                }`}
               />
+              {fieldErrors.company_name && (
+                <p className="text-red-500 text-xs mt-1">{fieldErrors.company_name}</p>
+              )}
             </div>
 
+            {/* SIRET / BCE */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 {t('producer.siret')}
+                <span className="text-gray-400 font-normal text-xs ml-2">{t('producer.siretHint')}</span>
               </label>
               <input
                 type="text"
                 value={form.siret}
                 onChange={set('siret')}
+                onBlur={blur('siret')}
                 placeholder="BE 0123.456.789"
-                className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className={`w-full border rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 transition ${
+                  fieldErrors.siret
+                    ? 'border-red-400 focus:ring-red-300 bg-red-50'
+                    : 'border-gray-300 focus:ring-blue-500'
+                }`}
               />
+              {fieldErrors.siret && (
+                <p className="text-red-500 text-xs mt-1">{fieldErrors.siret}</p>
+              )}
             </div>
 
+            {/* Description */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                {t('producer.description')} <span className="text-red-500">*</span>
-              </label>
+              <div className="flex justify-between items-center mb-1">
+                <label className="block text-sm font-medium text-gray-700">
+                  {t('producer.description')} <span className="text-red-500">*</span>
+                </label>
+                <span className={`text-xs ${form.description.length < 20 ? 'text-gray-400' : 'text-green-600'}`}>
+                  {form.description.length} / 20 min.
+                </span>
+              </div>
               <textarea
                 value={form.description}
                 onChange={set('description')}
-                required
+                onBlur={blur('description')}
                 rows={4}
                 placeholder={t('producer.descPlaceholder')}
-                className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+                className={`w-full border rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 resize-none transition ${
+                  fieldErrors.description
+                    ? 'border-red-400 focus:ring-red-300 bg-red-50'
+                    : 'border-gray-300 focus:ring-blue-500'
+                }`}
               />
+              {fieldErrors.description && (
+                <p className="text-red-500 text-xs mt-1">{fieldErrors.description}</p>
+              )}
             </div>
 
+            {/* Website + Téléphone */}
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">{t('producer.website')}</label>
                 <input
-                  type="url"
+                  type="text"
                   value={form.website}
                   onChange={set('website')}
+                  onBlur={blur('website')}
                   placeholder="https://macompagnie.be"
-                  className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className={`w-full border rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 transition ${
+                    fieldErrors.website
+                      ? 'border-red-400 focus:ring-red-300 bg-red-50'
+                      : 'border-gray-300 focus:ring-blue-500'
+                  }`}
                 />
+                {fieldErrors.website && (
+                  <p className="text-red-500 text-xs mt-1">{fieldErrors.website}</p>
+                )}
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">{t('producer.phone')}</label>
@@ -241,9 +330,17 @@ export default function BecomeProducerPage() {
                   type="tel"
                   value={form.phone}
                   onChange={set('phone')}
+                  onBlur={blur('phone')}
                   placeholder="+32 2 000 00 00"
-                  className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className={`w-full border rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 transition ${
+                    fieldErrors.phone
+                      ? 'border-red-400 focus:ring-red-300 bg-red-50'
+                      : 'border-gray-300 focus:ring-blue-500'
+                  }`}
                 />
+                {fieldErrors.phone && (
+                  <p className="text-red-500 text-xs mt-1">{fieldErrors.phone}</p>
+                )}
               </div>
             </div>
 
