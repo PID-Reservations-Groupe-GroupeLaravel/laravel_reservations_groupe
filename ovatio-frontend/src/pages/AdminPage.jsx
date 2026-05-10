@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
+import { useLanguage } from '../contexts/LanguageContext'
 import api from '../api/axios'
 
 const styleTab = (active) => ({
@@ -17,6 +18,7 @@ const styleTab = (active) => ({
 
 export default function AdminPage() {
   const { user } = useAuth()
+  const { t } = useLanguage()
   const navigate = useNavigate()
 
   const isAdmin    = user?.roles?.includes('admin')
@@ -40,12 +42,10 @@ export default function AdminPage() {
           style={{ background: 'linear-gradient(135deg, #000666 0%, #1a237e 100%)' }}>
           <h1 className="text-3xl font-bold mb-1"
             style={{ fontFamily: '"Plus Jakarta Sans", sans-serif' }}>
-            {isAdmin ? 'Administration' : 'Tableau producteur'}
+            {isAdmin ? t('admin.adminTitle') : t('admin.producerTitle')}
           </h1>
           <p style={{ color: 'rgba(255,255,255,0.65)', fontFamily: 'Manrope, sans-serif', fontSize: '0.875rem' }}>
-            {isAdmin
-              ? 'Gérez les demandes producteurs et les membres de la plateforme.'
-              : 'Modérez les avis laissés sur vos spectacles.'}
+            {isAdmin ? t('admin.adminDesc') : t('admin.producerDesc')}
           </p>
         </div>
 
@@ -54,34 +54,38 @@ export default function AdminPage() {
           {isAdmin && (
             <>
               <button style={styleTab(tab === 'demandes')} onClick={() => setTab('demandes')}>
-                Demandes producteurs
+                {t('admin.tabDemandes')}
               </button>
               <button style={styleTab(tab === 'membres')} onClick={() => setTab('membres')}>
-                Membres
+                {t('admin.tabMembers')}
+              </button>
+              <button style={styleTab(tab === 'producteurs')} onClick={() => setTab('producteurs')}>
+                {t('admin.tabProducers')}
               </button>
               <button style={styleTab(tab === 'artistes')} onClick={() => setTab('artistes')}>
-                Artistes
+                {t('admin.tabArtists')}
               </button>
             </>
           )}
           {isProducer && (
             <>
               <button style={styleTab(tab === 'spectacles')} onClick={() => setTab('spectacles')}>
-                Mes spectacles
+                {t('admin.tabShows')}
               </button>
               <button style={styleTab(tab === 'avis')} onClick={() => setTab('avis')}>
-                Modération des avis
+                {t('admin.tabReviews')}
               </button>
             </>
           )}
         </div>
 
         {/* Contenu */}
-        {tab === 'demandes'   && isAdmin    && <DemandesTab />}
-        {tab === 'membres'    && isAdmin    && <MembresTab />}
-        {tab === 'artistes'   && isAdmin    && <ArtistesTab />}
-        {tab === 'spectacles' && isProducer && <SpectaclesTab />}
-        {tab === 'avis'       && isProducer && <AvisTab />}
+        {tab === 'demandes'    && isAdmin    && <DemandesTab t={t} />}
+        {tab === 'membres'     && isAdmin    && <MembresTab t={t} />}
+        {tab === 'producteurs' && isAdmin    && <ProducteursTab t={t} />}
+        {tab === 'artistes'    && isAdmin    && <ArtistesTab t={t} />}
+        {tab === 'spectacles'  && isProducer && <SpectaclesTab t={t} />}
+        {tab === 'avis'        && isProducer && <AvisTab t={t} />}
       </div>
     </div>
   )
@@ -90,7 +94,7 @@ export default function AdminPage() {
 /* ═══════════════════════════════════════════════════════
    ONGLET DEMANDES PRODUCTEURS
 ═══════════════════════════════════════════════════════ */
-function DemandesTab() {
+function DemandesTab({ t }) {
   const [demandes, setDemandes]   = useState([])
   const [loading, setLoading]     = useState(true)
   const [error, setError]         = useState('')
@@ -102,7 +106,7 @@ function DemandesTab() {
   useEffect(() => {
     api.get('/admin/demandes')
       .then(res => setDemandes(res.data))
-      .catch(() => setError('Impossible de charger les demandes.'))
+      .catch(() => setError(t('admin.loadDemandesError')))
       .finally(() => setLoading(false))
   }, [])
 
@@ -110,12 +114,12 @@ function DemandesTab() {
     try {
       await api.post(`/admin/demandes/${id}/approve`)
       setDemandes(prev => prev.map(d => d.id === id ? { ...d, status: 'approved' } : d))
-    } catch { alert("Erreur lors de l'approbation.") }
+    } catch { alert(t('admin.approveError')) }
   }
 
   const handleRejectSubmit = async () => {
     if (!reason.trim() || reason.trim().length < 10) {
-      setReasonErr('Le motif doit faire au moins 10 caractères.')
+      setReasonErr(t('admin.rejectMinLength'))
       return
     }
     try {
@@ -134,16 +138,18 @@ function DemandesTab() {
 
   const filtered = demandes.filter(d => filter === 'all' ? true : d.status === filter)
 
+  const filters = [
+    { key: 'pending',  label: t('admin.filterPending'),  color: '#f57f17', bg: '#fff8e1' },
+    { key: 'approved', label: t('admin.filterApproved'), color: '#2e7d32', bg: '#e8f5e9' },
+    { key: 'rejected', label: t('admin.filterRejected'), color: '#c62828', bg: '#ffebee' },
+    { key: 'all',      label: t('admin.filterAll'),      color: '#454652', bg: '#f2f4f7' },
+  ]
+
   return (
     <>
       {/* Filtres */}
       <div className="flex gap-2 mb-6 flex-wrap">
-        {[
-          { key: 'pending',  label: 'En attente', color: '#f57f17', bg: '#fff8e1' },
-          { key: 'approved', label: 'Approuvées', color: '#2e7d32', bg: '#e8f5e9' },
-          { key: 'rejected', label: 'Refusées',   color: '#c62828', bg: '#ffebee' },
-          { key: 'all',      label: 'Toutes',     color: '#454652', bg: '#f2f4f7' },
-        ].map(f => (
+        {filters.map(f => (
           <button key={f.key} onClick={() => setFilter(f.key)}
             className="text-xs font-bold px-4 py-2 rounded-full"
             style={{
@@ -163,7 +169,7 @@ function DemandesTab() {
       {filtered.length === 0 && (
         <div className="text-center py-16 rounded-2xl"
           style={{ background: '#fff', color: '#767683', fontFamily: 'Manrope, sans-serif' }}>
-          Aucune demande dans cette catégorie.
+          {t('admin.noDemandes')}
         </div>
       )}
 
@@ -189,7 +195,7 @@ function DemandesTab() {
                   </p>
                 </div>
               </div>
-              <StatusBadge status={d.status} />
+              <StatusBadge status={d.status} t={t} />
             </div>
 
             {/* Description */}
@@ -225,7 +231,7 @@ function DemandesTab() {
             {d.status === 'rejected' && d.rejection_reason && (
               <div className="rounded-xl px-4 py-3 mb-4 text-sm"
                 style={{ background: '#fff0f0', color: '#c62828', fontFamily: 'Manrope, sans-serif', borderLeft: '3px solid #c62828' }}>
-                <strong>Motif de refus :</strong> {d.rejection_reason}
+                <strong>{t('admin.rejectionReason')}</strong> {d.rejection_reason}
               </div>
             )}
 
@@ -235,12 +241,12 @@ function DemandesTab() {
                 <button onClick={() => handleApprove(d.id)}
                   className="flex items-center gap-2 text-sm font-semibold px-5 py-2.5 rounded-xl"
                   style={{ background: '#000666', color: '#fff', border: 'none', cursor: 'pointer', fontFamily: 'Manrope, sans-serif' }}>
-                  ✓ Approuver
+                  {t('admin.approveBtn')}
                 </button>
                 <button onClick={() => { setRejectId(d.id); setReason(''); setReasonErr('') }}
                   className="flex items-center gap-2 text-sm px-5 py-2.5 rounded-xl"
                   style={{ background: '#ffdad6', color: '#93000a', border: 'none', cursor: 'pointer', fontFamily: 'Manrope, sans-serif' }}>
-                  ✕ Refuser
+                  {t('admin.rejectBtn')}
                 </button>
               </div>
             )}
@@ -256,15 +262,15 @@ function DemandesTab() {
             style={{ background: '#fff', boxShadow: '0 24px 64px rgba(0,0,0,0.2)' }}>
             <h3 className="text-lg font-bold mb-2"
               style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', color: '#191c1e' }}>
-              Motif de refus
+              {t('admin.rejectModalTitle')}
             </h3>
             <p className="text-sm mb-4" style={{ color: '#767683', fontFamily: 'Manrope, sans-serif' }}>
-              Expliquez au demandeur pourquoi sa demande a été refusée. Ce message lui sera communiqué.
+              {t('admin.rejectModalDesc')}
             </p>
             <textarea
               value={reason}
               onChange={e => { setReason(e.target.value); setReasonErr('') }}
-              placeholder="Ex : Le dossier est incomplet, merci de fournir un numéro BCE valide..."
+              placeholder={t('admin.rejectPlaceholder')}
               rows={4}
               className="w-full rounded-xl px-4 py-3 text-sm outline-none resize-none mb-1"
               style={{ background: '#f2f4f7', border: reasonErr ? '1px solid #c62828' : 'none', fontFamily: 'Manrope, sans-serif', color: '#191c1e' }}
@@ -276,12 +282,12 @@ function DemandesTab() {
               <button onClick={handleRejectSubmit}
                 className="flex-1 py-3 rounded-xl text-sm font-bold text-white"
                 style={{ background: '#c62828', border: 'none', cursor: 'pointer', fontFamily: '"Plus Jakarta Sans", sans-serif' }}>
-                Confirmer le refus
+                {t('admin.confirmReject')}
               </button>
               <button onClick={() => setRejectId(null)}
                 className="flex-1 py-3 rounded-xl text-sm font-semibold"
                 style={{ background: '#f2f4f7', color: '#454652', border: 'none', cursor: 'pointer', fontFamily: 'Manrope, sans-serif' }}>
-                Annuler
+                {t('admin.cancelBtn')}
               </button>
             </div>
           </div>
@@ -294,7 +300,7 @@ function DemandesTab() {
 /* ═══════════════════════════════════════════════════════
    ONGLET MEMBRES
 ═══════════════════════════════════════════════════════ */
-function MembresTab() {
+function MembresTab({ t }) {
   const [members, setMembers]   = useState([])
   const [loading, setLoading]   = useState(true)
   const [error, setError]       = useState('')
@@ -303,7 +309,7 @@ function MembresTab() {
   useEffect(() => {
     api.get('/admin/members')
       .then(res => setMembers(res.data))
-      .catch(() => setError('Impossible de charger les membres.'))
+      .catch(() => setError(t('admin.loadMembersError')))
       .finally(() => setLoading(false))
   }, [])
 
@@ -335,7 +341,7 @@ function MembresTab() {
         <input
           value={search}
           onChange={e => setSearch(e.target.value)}
-          placeholder="Rechercher un membre..."
+          placeholder={t('admin.searchPlaceholder')}
           className="flex-1 outline-none text-sm bg-transparent"
           style={{ fontFamily: 'Manrope, sans-serif', color: '#191c1e' }}
         />
@@ -352,16 +358,16 @@ function MembresTab() {
         {/* Header tableau */}
         <div className="grid grid-cols-12 px-6 py-3 text-xs font-black uppercase tracking-widest"
           style={{ background: '#f7f9fc', color: '#767683', fontFamily: 'Manrope, sans-serif', borderBottom: '1px solid #eceef1' }}>
-          <span className="col-span-3">Membre</span>
-          <span className="col-span-2">Login</span>
-          <span className="col-span-3">Rôles</span>
-          <span className="col-span-2">Inscrit</span>
-          <span className="col-span-2 text-right">Action</span>
+          <span className="col-span-3">{t('admin.colMember')}</span>
+          <span className="col-span-2">{t('admin.colLogin')}</span>
+          <span className="col-span-3">{t('admin.colRoles')}</span>
+          <span className="col-span-2">{t('admin.colJoined')}</span>
+          <span className="col-span-2 text-right">{t('admin.colAction')}</span>
         </div>
 
         {filtered.length === 0 && (
           <div className="py-12 text-center text-sm" style={{ color: '#767683', fontFamily: 'Manrope, sans-serif' }}>
-            Aucun membre trouvé.
+            {t('admin.noMembers')}
           </div>
         )}
 
@@ -400,13 +406,19 @@ function MembresTab() {
                 <span key={role}
                   className="text-xs font-bold px-2 py-0.5 rounded-full"
                   style={{
-                    background: role === 'admin' ? '#fdd400' : role === 'producer' ? '#e8f5e9' : '#f2f4f7',
-                    color: role === 'admin' ? '#6f5c00' : role === 'producer' ? '#2e7d32' : '#454652',
+                    background: role === 'admin' ? '#fdd400' : role === 'producer' ? '#e0f2fe' : '#f2f4f7',
+                    color:      role === 'admin' ? '#6f5c00' : role === 'producer' ? '#0369a1' : '#454652',
                     fontFamily: 'Manrope, sans-serif',
                   }}>
                   {role}
                 </span>
               ))}
+              {m.is_producer && !(m.roles ?? []).includes('producer') && (
+                <span className="text-xs font-bold px-2 py-0.5 rounded-full"
+                  style={{ background: '#e0f2fe', color: '#0369a1', fontFamily: 'Manrope, sans-serif' }}>
+                  producteur
+                </span>
+              )}
             </div>
 
             {/* Date */}
@@ -425,7 +437,7 @@ function MembresTab() {
                   padding: '4px 12px', borderRadius: '8px',
                   fontFamily: 'Manrope, sans-serif', fontSize: '0.75rem', fontWeight: 600,
                 }}>
-                {m.is_disabled ? 'Réactiver' : 'Désactiver'}
+                {m.is_disabled ? t('admin.enable') : t('admin.disable')}
               </button>
             </div>
           </div>
@@ -433,8 +445,164 @@ function MembresTab() {
       </div>
 
       <p className="text-xs mt-3 text-right" style={{ color: '#767683', fontFamily: 'Manrope, sans-serif' }}>
-        {filtered.length} membre{filtered.length > 1 ? 's' : ''}
-        {search ? ` trouvé${filtered.length > 1 ? 's' : ''}` : ' au total'}
+        {filtered.length} {search
+          ? t('admin.memberFound').replace('{n}', '').replace('{s}', filtered.length > 1 ? 's' : '')
+          : t('admin.memberCount').replace('{n}', '').replace('{s}', filtered.length > 1 ? 's' : '')
+        }
+      </p>
+    </>
+  )
+}
+
+/* ═══════════════════════════════════════════════════════
+   ONGLET PRODUCTEURS
+═══════════════════════════════════════════════════════ */
+function ProducteursTab({ t }) {
+  const [producers, setProducers] = useState([])
+  const [loading, setLoading]     = useState(true)
+  const [error, setError]         = useState('')
+  const [search, setSearch]       = useState('')
+
+  useEffect(() => {
+    api.get('/admin/producers')
+      .then(res => setProducers(res.data))
+      .catch(() => setError(t('admin.loadProducersError')))
+      .finally(() => setLoading(false))
+  }, [])
+
+  const handleToggleDisable = async (id, isDisabled) => {
+    const endpoint = isDisabled ? `/admin/users/${id}/enable` : `/admin/users/${id}/disable`
+    try {
+      await api.post(endpoint)
+      setProducers(prev => prev.map(p => p.id === id ? { ...p, is_disabled: !isDisabled } : p))
+    } catch (err) {
+      alert(err.response?.data?.message ?? 'Erreur.')
+    }
+  }
+
+  if (loading) return <Spinner />
+  if (error)   return <ErrorMsg msg={error} />
+
+  const filtered = producers.filter(p =>
+    (p.name ?? '').toLowerCase().includes(search.toLowerCase()) ||
+    (p.email ?? '').toLowerCase().includes(search.toLowerCase()) ||
+    (p.company_name ?? '').toLowerCase().includes(search.toLowerCase())
+  )
+
+  return (
+    <>
+      {/* Barre de recherche */}
+      <div className="mb-6 flex items-center gap-3 rounded-xl px-4 py-3"
+        style={{ background: '#fff', boxShadow: '0 2px 12px rgba(0,6,102,0.06)' }}>
+        <span style={{ color: '#767683', fontSize: '1rem' }}>🔍</span>
+        <input
+          value={search}
+          onChange={e => setSearch(e.target.value)}
+          placeholder={t('admin.searchProducerPlaceholder')}
+          className="flex-1 outline-none text-sm bg-transparent"
+          style={{ fontFamily: 'Manrope, sans-serif', color: '#191c1e' }}
+        />
+        {search && (
+          <button onClick={() => setSearch('')}
+            style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#767683', fontSize: '1rem' }}>
+            ×
+          </button>
+        )}
+      </div>
+
+      {filtered.length === 0 && (
+        <div className="text-center py-16 rounded-2xl"
+          style={{ background: '#fff', color: '#767683', fontFamily: 'Manrope, sans-serif' }}>
+          {t('admin.noProducers')}
+        </div>
+      )}
+
+      <div className="space-y-4">
+        {filtered.map(p => (
+          <div key={p.id} className="rounded-2xl p-6"
+            style={{ background: '#fff', boxShadow: '0 4px 24px rgba(0,6,102,0.07)' }}>
+
+            <div className="flex items-start justify-between mb-4">
+              <div className="flex items-center gap-3">
+                <div className="w-11 h-11 rounded-xl flex items-center justify-center font-bold text-white shrink-0"
+                  style={{ background: 'linear-gradient(135deg, #0369a1, #0284c7)' }}>
+                  {(p.company_name ?? p.name ?? 'P')[0].toUpperCase()}
+                </div>
+                <div>
+                  <h3 className="font-bold text-base"
+                    style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', color: '#191c1e' }}>
+                    {p.company_name}
+                  </h3>
+                  <p className="text-xs mt-0.5" style={{ color: '#767683', fontFamily: 'Manrope, sans-serif' }}>
+                    {p.name} · {p.email}
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="text-xs font-bold px-2 py-0.5 rounded-full"
+                  style={{ background: '#f2f4f7', color: '#454652', fontFamily: 'Manrope, sans-serif' }}>
+                  membre
+                </span>
+                <span className="text-xs font-bold px-2 py-0.5 rounded-full"
+                  style={{ background: '#e0f2fe', color: '#0369a1', fontFamily: 'Manrope, sans-serif' }}>
+                  producteur
+                </span>
+              </div>
+            </div>
+
+            {/* Infos complémentaires */}
+            <div className="flex flex-wrap gap-3 mb-4">
+              {p.login && (
+                <code className="text-xs px-2 py-1 rounded-lg"
+                  style={{ background: '#f2f4f7', color: '#454652', fontFamily: 'monospace' }}>
+                  {p.login}
+                </code>
+              )}
+              {p.siret && (
+                <span className="text-xs px-3 py-1 rounded-full"
+                  style={{ background: '#f2f4f7', color: '#454652', fontFamily: 'Manrope, sans-serif' }}>
+                  BCE/SIRET : {p.siret}
+                </span>
+              )}
+              {p.website && (
+                <a href={p.website} target="_blank" rel="noreferrer"
+                  className="text-xs px-3 py-1 rounded-full hover:opacity-80"
+                  style={{ background: '#f2f4f7', color: '#000666', fontFamily: 'Manrope, sans-serif' }}>
+                  {p.website}
+                </a>
+              )}
+              {p.phone && (
+                <span className="text-xs px-3 py-1 rounded-full"
+                  style={{ background: '#f2f4f7', color: '#454652', fontFamily: 'Manrope, sans-serif' }}>
+                  {p.phone}
+                </span>
+              )}
+              <span className="text-xs px-3 py-1 rounded-full"
+                style={{ background: '#e8f5e9', color: '#2e7d32', fontFamily: 'Manrope, sans-serif' }}>
+                ✓ {t('admin.approvedSince')} {p.approved_at}
+              </span>
+            </div>
+
+            {/* Action */}
+            <div className="flex justify-end">
+              <button
+                onClick={() => handleToggleDisable(p.id, p.is_disabled)}
+                style={{
+                  background: p.is_disabled ? '#e8f5e9' : '#ffdad6',
+                  color:      p.is_disabled ? '#2e7d32' : '#93000a',
+                  border: 'none', cursor: 'pointer',
+                  padding: '4px 14px', borderRadius: '8px',
+                  fontFamily: 'Manrope, sans-serif', fontSize: '0.75rem', fontWeight: 600,
+                }}>
+                {p.is_disabled ? t('admin.enable') : t('admin.disable')}
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <p className="text-xs mt-3 text-right" style={{ color: '#767683', fontFamily: 'Manrope, sans-serif' }}>
+        {filtered.length} {t('admin.producerCount')}
       </p>
     </>
   )
@@ -443,7 +611,7 @@ function MembresTab() {
 /* ═══════════════════════════════════════════════════════
    ONGLET MES SPECTACLES (producteur)
 ═══════════════════════════════════════════════════════ */
-function SpectaclesTab() {
+function SpectaclesTab({ t }) {
   const [shows, setShows]     = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError]     = useState('')
@@ -451,7 +619,7 @@ function SpectaclesTab() {
   useEffect(() => {
     api.get('/producer/shows')
       .then(res => setShows(res.data))
-      .catch(() => setError('Impossible de charger vos spectacles.'))
+      .catch(() => setError(t('admin.loadShowsError')))
       .finally(() => setLoading(false))
   }, [])
 
@@ -471,7 +639,7 @@ function SpectaclesTab() {
   if (shows.length === 0) return (
     <div className="text-center py-16 rounded-2xl"
       style={{ background: '#fff', color: '#767683', fontFamily: 'Manrope, sans-serif' }}>
-      Aucun spectacle associé à votre compte.
+      {t('admin.noShows')}
     </div>
   )
 
@@ -482,9 +650,9 @@ function SpectaclesTab() {
 
         <div className="grid grid-cols-12 px-6 py-3 text-xs font-black uppercase tracking-widest"
           style={{ background: '#f7f9fc', color: '#767683', fontFamily: 'Manrope, sans-serif', borderBottom: '1px solid #eceef1' }}>
-          <span className="col-span-7">Spectacle</span>
-          <span className="col-span-3">Statut</span>
-          <span className="col-span-2 text-right">Action</span>
+          <span className="col-span-7">{t('admin.colShow')}</span>
+          <span className="col-span-3">{t('admin.colStatus')}</span>
+          <span className="col-span-2 text-right">{t('admin.colAction')}</span>
         </div>
 
         {shows.map((s, i) => (
@@ -511,7 +679,7 @@ function SpectaclesTab() {
                   color:      s.bookable ? '#2e7d32' : '#f57f17',
                   fontFamily: 'Manrope, sans-serif',
                 }}>
-                {s.bookable ? '✓ Confirmé' : '⏳ À confirmer'}
+                {s.bookable ? t('admin.showConfirmed') : t('admin.showToConfirm')}
               </span>
             </div>
 
@@ -524,7 +692,7 @@ function SpectaclesTab() {
                   padding: '6px 14px', borderRadius: '8px',
                   fontFamily: 'Manrope, sans-serif', fontSize: '0.75rem', fontWeight: 600,
                 }}>
-                {s.bookable ? 'Retirer' : 'Confirmer'}
+                {s.bookable ? t('admin.removeBtn') : t('admin.confirmBtn')}
               </button>
             </div>
           </div>
@@ -532,7 +700,7 @@ function SpectaclesTab() {
       </div>
 
       <p className="text-xs mt-3 text-right" style={{ color: '#767683', fontFamily: 'Manrope, sans-serif' }}>
-        {shows.length} spectacle{shows.length > 1 ? 's' : ''} au total
+        {shows.length} {t('admin.showCount').replace('{n}', '').replace('{s}', shows.length > 1 ? 's' : '')}
       </p>
     </>
   )
@@ -541,7 +709,7 @@ function SpectaclesTab() {
 /* ═══════════════════════════════════════════════════════
    ONGLET AVIS (producteur)
 ═══════════════════════════════════════════════════════ */
-function AvisTab() {
+function AvisTab({ t }) {
   const [avis, setAvis]       = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError]     = useState('')
@@ -549,7 +717,7 @@ function AvisTab() {
   useEffect(() => {
     api.get('/producer/avis')
       .then(res => setAvis(res.data))
-      .catch(() => setError('Impossible de charger les avis.'))
+      .catch(() => setError(t('admin.loadReviewsError')))
       .finally(() => setLoading(false))
   }, [])
 
@@ -573,7 +741,7 @@ function AvisTab() {
   if (avis.length === 0) return (
     <div className="text-center py-16 rounded-2xl"
       style={{ background: '#fff', color: '#767683', fontFamily: 'Manrope, sans-serif' }}>
-      Aucun avis en attente de modération.
+      {t('admin.noReviews')}
     </div>
   )
 
@@ -592,7 +760,7 @@ function AvisTab() {
               <div>
                 <p className="text-sm font-bold"
                   style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', color: '#191c1e' }}>
-                  {a.user_name ?? 'Anonyme'}
+                  {a.user_name ?? t('admin.anonymous')}
                 </p>
                 <p className="text-xs mt-0.5" style={{ color: '#767683', fontFamily: 'Manrope, sans-serif' }}>
                   {a.show_title}
@@ -601,7 +769,7 @@ function AvisTab() {
             </div>
             <div className="flex items-center gap-2">
               <span style={{ color: '#fdd400', fontSize: '0.9rem' }}>{'★'.repeat(a.score ?? 0)}</span>
-              <StatusBadge status={a.validated === true ? 'approved' : a.validated === -1 ? 'rejected' : 'pending'} />
+              <StatusBadge status={a.validated === true ? 'approved' : a.validated === -1 ? 'rejected' : 'pending'} t={t} />
             </div>
           </div>
 
@@ -615,17 +783,17 @@ function AvisTab() {
               <button onClick={() => handleApprove(a.id)}
                 className="flex items-center gap-2 text-sm font-semibold px-5 py-2.5 rounded-xl"
                 style={{ background: '#000666', color: '#fff', border: 'none', cursor: 'pointer', fontFamily: 'Manrope, sans-serif' }}>
-                ✓ Valider
+                {t('admin.validateBtn')}
               </button>
               <button onClick={() => handleReject(a.id)}
                 className="flex items-center gap-2 text-sm px-5 py-2.5 rounded-xl"
                 style={{ background: '#ffdad6', color: '#93000a', border: 'none', cursor: 'pointer', fontFamily: 'Manrope, sans-serif' }}>
-                ✕ Rejeter
+                {t('admin.rejectReviewBtn')}
               </button>
             </div>
           )}
           {(a.validated === true || a.validated === -1) && (
-            <StatusBadge status={a.validated === true ? 'approved' : 'rejected'} />
+            <StatusBadge status={a.validated === true ? 'approved' : 'rejected'} t={t} />
           )}
         </div>
       ))}
@@ -636,7 +804,7 @@ function AvisTab() {
 /* ═══════════════════════════════════════════════════════
    ONGLET ARTISTES
 ═══════════════════════════════════════════════════════ */
-function ArtistesTab() {
+function ArtistesTab({ t }) {
   const [artists, setArtists]   = useState([])
   const [loading, setLoading]   = useState(true)
   const [error, setError]       = useState('')
@@ -648,7 +816,7 @@ function ArtistesTab() {
     setLoading(true)
     api.get('/artists')
       .then(res => setArtists(res.data.data ?? res.data))
-      .catch(() => setError('Impossible de charger les artistes.'))
+      .catch(() => setError(t('admin.loadArtistsError')))
       .finally(() => setLoading(false))
   }
 
@@ -668,7 +836,7 @@ function ArtistesTab() {
       setForm({ firstname: '', lastname: '', country: '' })
       setEditId(null)
     } catch (err) {
-      alert(err.response?.data?.message ?? 'Erreur lors de la sauvegarde.')
+      alert(err.response?.data?.message ?? t('admin.saveError'))
     } finally {
       setSaving(false)
     }
@@ -680,11 +848,11 @@ function ArtistesTab() {
   }
 
   const handleDelete = async (id) => {
-    if (!window.confirm('Supprimer cet artiste ?')) return
+    if (!window.confirm(t('admin.deleteConfirm'))) return
     try {
       await api.delete(`/artists/${id}`)
       setArtists(prev => prev.filter(a => a.id !== id))
-    } catch { alert('Erreur lors de la suppression.') }
+    } catch { alert(t('admin.deleteError')) }
   }
 
   if (loading) return <Spinner />
@@ -703,21 +871,21 @@ function ArtistesTab() {
         style={{ background: '#fff', boxShadow: '0 4px 24px rgba(0,6,102,0.07)' }}>
         <h3 className="text-sm font-bold mb-4"
           style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', color: '#191c1e' }}>
-          {editId ? 'Modifier l\'artiste' : 'Ajouter un artiste'}
+          {editId ? t('admin.editArtist') : t('admin.addArtist')}
         </h3>
         <form onSubmit={handleSubmit} className="flex flex-wrap gap-3 items-end">
           <div className="flex-1 min-w-32">
-            <label className="text-xs font-semibold mb-1 block" style={{ color: '#767683', fontFamily: 'Manrope, sans-serif' }}>Prénom</label>
+            <label className="text-xs font-semibold mb-1 block" style={{ color: '#767683', fontFamily: 'Manrope, sans-serif' }}>{t('admin.colFirstname')}</label>
             <input style={inputStyle} value={form.firstname} required
               onChange={e => setForm(p => ({ ...p, firstname: e.target.value }))} />
           </div>
           <div className="flex-1 min-w-32">
-            <label className="text-xs font-semibold mb-1 block" style={{ color: '#767683', fontFamily: 'Manrope, sans-serif' }}>Nom</label>
+            <label className="text-xs font-semibold mb-1 block" style={{ color: '#767683', fontFamily: 'Manrope, sans-serif' }}>{t('admin.colLastname')}</label>
             <input style={inputStyle} value={form.lastname} required
               onChange={e => setForm(p => ({ ...p, lastname: e.target.value }))} />
           </div>
           <div className="flex-1 min-w-32">
-            <label className="text-xs font-semibold mb-1 block" style={{ color: '#767683', fontFamily: 'Manrope, sans-serif' }}>Pays</label>
+            <label className="text-xs font-semibold mb-1 block" style={{ color: '#767683', fontFamily: 'Manrope, sans-serif' }}>{t('admin.colCountry')}</label>
             <input style={inputStyle} value={form.country}
               onChange={e => setForm(p => ({ ...p, country: e.target.value }))} />
           </div>
@@ -726,14 +894,14 @@ function ArtistesTab() {
               style={{ background: '#000666', color: '#fff', border: 'none', cursor: 'pointer',
                 padding: '9px 20px', borderRadius: '8px', fontFamily: 'Manrope, sans-serif',
                 fontSize: '0.875rem', fontWeight: 600, opacity: saving ? 0.7 : 1 }}>
-              {saving ? '…' : editId ? 'Mettre à jour' : 'Ajouter'}
+              {saving ? '…' : editId ? t('admin.updateBtn') : t('admin.addBtn')}
             </button>
             {editId && (
               <button type="button"
                 onClick={() => { setEditId(null); setForm({ firstname: '', lastname: '', country: '' }) }}
                 style={{ background: '#f2f4f7', color: '#454652', border: 'none', cursor: 'pointer',
                   padding: '9px 16px', borderRadius: '8px', fontFamily: 'Manrope, sans-serif', fontSize: '0.875rem' }}>
-                Annuler
+                {t('admin.cancelBtn')}
               </button>
             )}
           </div>
@@ -745,15 +913,15 @@ function ArtistesTab() {
         style={{ background: '#fff', boxShadow: '0 4px 24px rgba(0,6,102,0.07)' }}>
         <div className="grid grid-cols-12 px-6 py-3 text-xs font-black uppercase tracking-widest"
           style={{ background: '#f7f9fc', color: '#767683', fontFamily: 'Manrope, sans-serif', borderBottom: '1px solid #eceef1' }}>
-          <span className="col-span-4">Prénom</span>
-          <span className="col-span-4">Nom</span>
-          <span className="col-span-2">Pays</span>
-          <span className="col-span-2 text-right">Actions</span>
+          <span className="col-span-4">{t('admin.colFirstname')}</span>
+          <span className="col-span-4">{t('admin.colLastname')}</span>
+          <span className="col-span-2">{t('admin.colCountry')}</span>
+          <span className="col-span-2 text-right">{t('admin.colActions')}</span>
         </div>
 
         {artists.length === 0 && (
           <div className="py-12 text-center text-sm" style={{ color: '#767683', fontFamily: 'Manrope, sans-serif' }}>
-            Aucun artiste enregistré.
+            {t('admin.noArtists')}
           </div>
         )}
 
@@ -775,13 +943,13 @@ function ArtistesTab() {
                 style={{ background: '#e8eaf6', color: '#000666', border: 'none', cursor: 'pointer',
                   padding: '4px 12px', borderRadius: '8px', fontFamily: 'Manrope, sans-serif',
                   fontSize: '0.75rem', fontWeight: 600 }}>
-                Éditer
+                {t('admin.editBtn')}
               </button>
               <button onClick={() => handleDelete(a.id)}
                 style={{ background: '#ffdad6', color: '#93000a', border: 'none', cursor: 'pointer',
                   padding: '4px 12px', borderRadius: '8px', fontFamily: 'Manrope, sans-serif',
                   fontSize: '0.75rem', fontWeight: 600 }}>
-                Supprimer
+                {t('admin.deleteBtn')}
               </button>
             </div>
           </div>
@@ -789,7 +957,7 @@ function ArtistesTab() {
       </div>
 
       <p className="text-xs mt-3 text-right" style={{ color: '#767683', fontFamily: 'Manrope, sans-serif' }}>
-        {artists.length} artiste{artists.length > 1 ? 's' : ''} au total
+        {artists.length} {t('admin.artistCount').replace('{n}', '').replace('{s}', artists.length > 1 ? 's' : '')}
       </p>
     </>
   )
@@ -798,17 +966,17 @@ function ArtistesTab() {
 /* ═══════════════════════════════════════════════════════
    COMPOSANTS PARTAGÉS
 ═══════════════════════════════════════════════════════ */
-function StatusBadge({ status }) {
+function StatusBadge({ status, t }) {
   const map = {
-    pending:  { label: 'En attente', bg: '#fff8e1', color: '#f57f17' },
-    approved: { label: 'Approuvé',   bg: '#e8f5e9', color: '#2e7d32' },
-    rejected: { label: 'Refusé',     bg: '#ffebee', color: '#c62828' },
+    pending:  { labelKey: 'admin.statusPending',  bg: '#fff8e1', color: '#f57f17' },
+    approved: { labelKey: 'admin.statusApproved', bg: '#e8f5e9', color: '#2e7d32' },
+    rejected: { labelKey: 'admin.statusRejected', bg: '#ffebee', color: '#c62828' },
   }
   const s = map[status] ?? map.pending
   return (
     <span className="text-xs font-bold px-3 py-1 rounded-full"
       style={{ background: s.bg, color: s.color, fontFamily: 'Manrope, sans-serif' }}>
-      {s.label}
+      {t(s.labelKey)}
     </span>
   )
 }

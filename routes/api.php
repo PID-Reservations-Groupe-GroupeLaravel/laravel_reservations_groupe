@@ -557,18 +557,56 @@ Route::middleware('auth:sanctum')->group(function () {
 
         // GET /admin/members → liste des membres
         Route::get('/members', function () {
+            $approvedProducerIds = DB::table('producer_requests')
+                ->where('status', 'approved')
+                ->pluck('user_id')
+                ->toArray();
+
             $members = User::with('roles')
                 ->get()
                 ->map(fn($u) => [
-                    'id'        => $u->id,
-                    'name'      => $u->name ?? ($u->firstname . ' ' . $u->lastname),
-                    'email'     => $u->email,
-                    'login'     => $u->login,
+                    'id'          => $u->id,
+                    'name'        => $u->name ?? ($u->firstname . ' ' . $u->lastname),
+                    'email'       => $u->email,
+                    'login'       => $u->login,
                     'roles'       => $u->roles->pluck('role'),
+                    'is_producer' => in_array($u->id, $approvedProducerIds),
                     'is_disabled' => (bool) $u->is_disabled,
                     'created_at'  => $u->created_at?->diffForHumans(),
                 ]);
             return response()->json($members);
+        });
+
+        // GET /admin/producers → liste des producteurs approuvés
+        Route::get('/producers', function () {
+            $producers = DB::table('producer_requests')
+                ->join('users', 'producer_requests.user_id', '=', 'users.id')
+                ->where('producer_requests.status', 'approved')
+                ->select(
+                    'users.id',
+                    'users.firstname', 'users.lastname', 'users.name as user_name',
+                    'users.email', 'users.login', 'users.is_disabled',
+                    'producer_requests.company_name',
+                    'producer_requests.siret',
+                    'producer_requests.website',
+                    'producer_requests.phone',
+                    'producer_requests.updated_at as approved_at',
+                )
+                ->orderBy('producer_requests.updated_at', 'desc')
+                ->get()
+                ->map(fn($p) => [
+                    'id'           => $p->id,
+                    'name'         => $p->user_name ?? ($p->firstname . ' ' . $p->lastname),
+                    'email'        => $p->email,
+                    'login'        => $p->login,
+                    'company_name' => $p->company_name,
+                    'siret'        => $p->siret,
+                    'website'      => $p->website,
+                    'phone'        => $p->phone,
+                    'is_disabled'  => (bool) $p->is_disabled,
+                    'approved_at'  => \Carbon\Carbon::parse($p->approved_at)->diffForHumans(),
+                ]);
+            return response()->json($producers);
         });
     });
 
