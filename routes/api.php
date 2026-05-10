@@ -141,7 +141,7 @@ Route::middleware('auth:sanctum')->post('/shows/{id}/reviews', function (Request
         'show_id'   => $id,
         'score'     => $request->score,
         'comment'   => $request->comment,
-        'validated' => 0,
+        'validated' => null,
     ]);
 
     return response()->json([
@@ -244,11 +244,14 @@ Route::post('/check-email', function (Request $request) {
 Route::post('/login', function (Request $request) {
 
     $request->validate([
-        'email' => 'required|email',
+        'email'    => 'required|string',
         'password' => 'required|string',
     ]);
 
-    $user = User::where('email', $request->email)->first();
+    $identifier = $request->email;
+    $user = User::where('email', $identifier)
+                ->orWhere('login', $identifier)
+                ->first();
 
     if (!$user || !Hash::check($request->password, $user->password)) {
         return response()->json(['message' => 'Invalid credentials'], 401);
@@ -501,6 +504,8 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('users/{user}/disable', [AdminUserController::class, 'disable']);
         Route::post('users/{user}/enable',  [AdminUserController::class, 'enable']);
         Route::apiResource('shows', AdminShowController::class);
+        Route::patch('shows/{id}/confirm', [AdminShowController::class, 'confirm']);
+        Route::patch('shows/{id}/revoke',  [AdminShowController::class, 'revoke']);
         Route::apiResource('representations', AdminRepresentationController::class);
         Route::get('reservations',            [AdminReservationController::class, 'index']);
         Route::patch('reservations/{id}',     [AdminReservationController::class, 'update']);
@@ -686,31 +691,37 @@ Route::middleware('auth:sanctum')->group(function () {
         // GET /producer/data → données de référence (lieux, prix, artistes)
         Route::get('/data', function () {
             return response()->json([
-                'locations' => \App\Models\Location::orderBy('designation')->get(['id', 'designation']),
-                'prices'    => \App\Models\Price::orderBy('type')->get(['id', 'type', 'price']),
-                'artists'   => \App\Models\Artist::orderBy('lastname')->get(['id', 'firstname', 'lastname']),
+                'locations'   => \App\Models\Location::orderBy('designation')->get(['id', 'designation']),
+                'prices'      => \App\Models\Price::orderBy('type')->get(['id', 'type', 'price']),
+                'artists'     => \App\Models\Artist::orderBy('lastname')->get(['id', 'firstname', 'lastname']),
+                'artistTypes' => \App\Models\ArtistType::with(['artist', 'type'])->get()->map(fn($at) => [
+                    'id'    => $at->id,
+                    'label' => trim(($at->artist?->firstname ?? '') . ' ' . ($at->artist?->lastname ?? '')) . ' — ' . ($at->type?->type ?? ''),
+                ]),
             ]);
         });
 
         // GET /producer/shows → spectacles du producteur (enrichis)
         Route::get('/shows', function (Request $request) {
             $shows = \App\Models\Show::where('user_id', $request->user()->id)
-                ->with('location')
+                ->with(['location', 'prices', 'artistTypes'])
                 ->withCount('representations')
                 ->orderByDesc('created_at')
                 ->get()
                 ->map(fn($s) => [
-                    'id'                 => $s->id,
-                    'title'              => $s->title,
-                    'description'        => $s->description,
-                    'poster_url'         => $s->poster_url,
-                    'duration'           => $s->duration,
-                    'created_in'         => $s->created_in,
-                    'location_id'        => $s->location_id,
-                    'location_name'      => $s->location?->designation,
-                    'bookable'           => (bool) $s->bookable,
-                    'status'             => $s->status,
+                    'id'                    => $s->id,
+                    'title'                 => $s->title,
+                    'description'           => $s->description,
+                    'poster_url'            => $s->poster_url,
+                    'duration'              => $s->duration,
+                    'created_in'            => $s->created_in,
+                    'location_id'           => $s->location_id,
+                    'location_name'         => $s->location?->designation,
+                    'bookable'              => (bool) $s->bookable,
+                    'status'                => $s->status,
                     'representations_count' => $s->representations_count,
+                    'price_ids'             => $s->prices->pluck('id'),
+                    'artist_type_ids'       => $s->artistTypes->pluck('id'),
                 ]);
             return response()->json($shows);
         });
@@ -718,13 +729,17 @@ Route::middleware('auth:sanctum')->group(function () {
         // POST /producer/shows → créer un spectacle
         Route::post('/shows', function (Request $request) {
             $data = $request->validate([
-                'title'       => 'required|string|max:255',
-                'description' => 'nullable|string',
-                'poster_url'  => 'nullable|string|max:255',
-                'duration'    => 'required|integer|min:1|max:600',
-                'created_in'  => 'required|integer|min:1900|max:2100',
-                'location_id' => 'nullable|integer|exists:locations,id',
-                'bookable'    => 'boolean',
+                'title'           => 'required|string|max:255',
+                'description'     => 'nullable|string',
+                'poster_url'      => 'nullable|string|max:255',
+                'duration'        => 'required|integer|min:1|max:600',
+                'created_in'      => 'required|integer|min:1900|max:2100',
+                'location_id'     => 'nullable|integer|exists:locations,id',
+                'bookable'        => 'boolean',
+                'price_ids'       => 'nullable|array',
+                'price_ids.*'     => 'integer|exists:prices,id',
+                'artist_type_ids'   => 'nullable|array',
+                'artist_type_ids.*' => 'integer|exists:artist_type,id',
             ]);
 
             $slug = \Illuminate\Support\Str::slug($data['title']) . '-' . time();
@@ -742,19 +757,28 @@ Route::middleware('auth:sanctum')->group(function () {
                 'status'      => 'A_CONFIRMER',
             ]);
 
-            $show->load('location');
+            if (!empty($data['price_ids'])) {
+                $show->prices()->sync($data['price_ids']);
+            }
+            if (!empty($data['artist_type_ids'])) {
+                $show->artistTypes()->sync($data['artist_type_ids']);
+            }
+
+            $show->load(['location', 'prices', 'artistTypes']);
             return response()->json([
-                'id'                 => $show->id,
-                'title'              => $show->title,
-                'description'        => $show->description,
-                'poster_url'         => $show->poster_url,
-                'duration'           => $show->duration,
-                'created_in'         => $show->created_in,
-                'location_id'        => $show->location_id,
-                'location_name'      => $show->location?->designation,
-                'bookable'           => (bool) $show->bookable,
-                'status'             => $show->status,
+                'id'                    => $show->id,
+                'title'                 => $show->title,
+                'description'           => $show->description,
+                'poster_url'            => $show->poster_url,
+                'duration'              => $show->duration,
+                'created_in'            => $show->created_in,
+                'location_id'           => $show->location_id,
+                'location_name'         => $show->location?->designation,
+                'bookable'              => (bool) $show->bookable,
+                'status'                => $show->status,
                 'representations_count' => 0,
+                'price_ids'             => $show->prices->pluck('id'),
+                'artist_type_ids'       => $show->artistTypes->pluck('id'),
             ], 201);
         });
 
@@ -765,29 +789,38 @@ Route::middleware('auth:sanctum')->group(function () {
                 ->firstOrFail();
 
             $data = $request->validate([
-                'title'       => 'required|string|max:255',
-                'description' => 'nullable|string',
-                'poster_url'  => 'nullable|string|max:255',
-                'duration'    => 'required|integer|min:1|max:600',
-                'created_in'  => 'required|integer|min:1900|max:2100',
-                'location_id' => 'nullable|integer|exists:locations,id',
-                'bookable'    => 'boolean',
+                'title'             => 'required|string|max:255',
+                'description'       => 'nullable|string',
+                'poster_url'        => 'nullable|string|max:255',
+                'duration'          => 'required|integer|min:1|max:600',
+                'created_in'        => 'required|integer|min:1900|max:2100',
+                'location_id'       => 'nullable|integer|exists:locations,id',
+                'bookable'          => 'boolean',
+                'price_ids'         => 'nullable|array',
+                'price_ids.*'       => 'integer|exists:prices,id',
+                'artist_type_ids'   => 'nullable|array',
+                'artist_type_ids.*' => 'integer|exists:artist_type,id',
             ]);
 
-            $show->update($data);
-            $show->load('location');
+            $show->update(\Illuminate\Support\Arr::except($data, ['price_ids', 'artist_type_ids']));
+            $show->prices()->sync($data['price_ids'] ?? []);
+            $show->artistTypes()->sync($data['artist_type_ids'] ?? []);
+
+            $show->load(['location', 'prices', 'artistTypes']);
             return response()->json([
-                'id'                 => $show->id,
-                'title'              => $show->title,
-                'description'        => $show->description,
-                'poster_url'         => $show->poster_url,
-                'duration'           => $show->duration,
-                'created_in'         => $show->created_in,
-                'location_id'        => $show->location_id,
-                'location_name'      => $show->location?->designation,
-                'bookable'           => (bool) $show->bookable,
-                'status'             => $show->status,
+                'id'                    => $show->id,
+                'title'                 => $show->title,
+                'description'           => $show->description,
+                'poster_url'            => $show->poster_url,
+                'duration'              => $show->duration,
+                'created_in'            => $show->created_in,
+                'location_id'           => $show->location_id,
+                'location_name'         => $show->location?->designation,
+                'bookable'              => (bool) $show->bookable,
+                'status'                => $show->status,
                 'representations_count' => $show->representations()->count(),
+                'price_ids'             => $show->prices->pluck('id'),
+                'artist_type_ids'       => $show->artistTypes->pluck('id'),
             ]);
         });
 
@@ -800,17 +833,17 @@ Route::middleware('auth:sanctum')->group(function () {
             return response()->json(['message' => 'Spectacle supprimé.']);
         });
 
-        // PATCH /producer/shows/{id}/confirm → confirmer (bookable=1)
+        // PATCH /producer/shows/{id}/confirm → confirmer (bookable=1, status=CONFIRME)
         Route::patch('/shows/{id}/confirm', function (Request $request, $id) {
             $show = \App\Models\Show::where('id', $id)->where('user_id', $request->user()->id)->firstOrFail();
-            $show->update(['bookable' => true]);
+            $show->update(['bookable' => true, 'status' => 'CONFIRME']);
             return response()->json(['message' => 'Spectacle confirmé.']);
         });
 
-        // PATCH /producer/shows/{id}/unconfirm → retirer la confirmation
+        // PATCH /producer/shows/{id}/unconfirm → retirer la confirmation (bookable=0, status=A_CONFIRMER)
         Route::patch('/shows/{id}/unconfirm', function (Request $request, $id) {
             $show = \App\Models\Show::where('id', $id)->where('user_id', $request->user()->id)->firstOrFail();
-            $show->update(['bookable' => false]);
+            $show->update(['bookable' => false, 'status' => 'A_CONFIRMER']);
             return response()->json(['message' => 'Spectacle mis en attente.']);
         });
 
