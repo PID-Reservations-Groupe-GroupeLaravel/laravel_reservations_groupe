@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
+import { useLanguage } from '../contexts/LanguageContext'
 import api from '../api/axios'
 
 const LANGS = [
@@ -10,16 +11,14 @@ const LANGS = [
 ]
 
 function LangSwitcher({ user }) {
-  const stored = localStorage.getItem('langue') ?? user?.langue ?? 'fr'
-  const [lang, setLang] = useState(stored)
+  const { lang, setLanguage, t } = useLanguage()
   const [open, setOpen] = useState(false)
 
   const current = LANGS.find(l => l.code === lang) ?? LANGS[0]
 
   const handleSelect = async (code) => {
-    setLang(code)
+    setLanguage(code)
     setOpen(false)
-    localStorage.setItem('langue', code)
     if (user) {
       try { await api.patch('/profile/langue', { langue: code }) } catch {}
     }
@@ -61,6 +60,7 @@ function LangSwitcher({ user }) {
 
 export default function Navbar() {
   const { user, logout } = useAuth()
+  const { t } = useLanguage()
   const navigate = useNavigate()
   const [menuOpen, setMenuOpen] = useState(false)
 
@@ -97,14 +97,14 @@ export default function Navbar() {
             className="text-sm font-semibold transition-colors hover:text-[#000666]"
             style={{ fontFamily: 'Manrope, sans-serif', color: '#454652' }}
           >
-            Spectacles
+            {t('nav.shows')}
           </Link>
           <Link
             to="/about"
             className="text-sm font-semibold transition-colors hover:text-[#000666]"
             style={{ fontFamily: 'Manrope, sans-serif', color: '#454652' }}
           >
-            À propos
+            {t('nav.about')}
           </Link>
           {user && (
             <Link
@@ -112,7 +112,7 @@ export default function Navbar() {
               className="text-sm font-semibold transition-colors hover:text-[#000666]"
               style={{ fontFamily: 'Manrope, sans-serif', color: '#454652' }}
             >
-              Mes réservations
+              {t('nav.reservations')}
             </Link>
           )}
           <a
@@ -134,7 +134,7 @@ export default function Navbar() {
               className="text-sm font-semibold transition-colors"
               style={{ fontFamily: 'Manrope, sans-serif', color: '#000666' }}
             >
-              Devenir producteur ✦
+              {t('nav.becomeProducer')} ✦
             </Link>
           )}
           {!user && (
@@ -143,7 +143,7 @@ export default function Navbar() {
               className="text-sm font-semibold transition-colors hover:text-[#000666]"
               style={{ fontFamily: 'Manrope, sans-serif', color: '#454652' }}
             >
-              Devenir producteur
+              {t('nav.becomeProducer')}
             </Link>
           )}
         </div>
@@ -188,7 +188,7 @@ export default function Navbar() {
                   className="text-xs font-bold px-3 py-2 rounded-xl"
                   style={{ fontFamily: 'Manrope, sans-serif', background: '#eceef1', color: '#000666' }}
                 >
-                  Back-office
+                  {t('nav.backoffice')}
                 </Link>
               )}
 
@@ -201,7 +201,7 @@ export default function Navbar() {
                   color: '#ffffff',
                 }}
               >
-                Déconnexion
+                {t('nav.logout')}
               </button>
             </>
           ) : (
@@ -211,7 +211,7 @@ export default function Navbar() {
                 className="text-xs font-bold px-4 py-2 rounded-xl"
                 style={{ fontFamily: 'Manrope, sans-serif', background: '#f2f4f7', color: '#000666' }}
               >
-                S'inscrire
+                {t('nav.register')}
               </Link>
               <Link
                 to="/login"
@@ -222,7 +222,7 @@ export default function Navbar() {
                   color: '#ffffff',
                 }}
               >
-                Connexion →
+                {t('nav.login')}
               </Link>
             </>
           )}

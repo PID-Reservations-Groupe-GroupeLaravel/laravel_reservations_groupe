@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate, Outlet } from 'react-router-dom'
 import { AuthProvider } from './contexts/AuthContext'
 import { CookieProvider } from './contexts/CookieContext'
+import { LanguageProvider, useLanguage } from './contexts/LanguageContext'
 import Navbar from './components/Navbar'
 import CookieBanner from './components/CookieBanner'
 import PrivateRoute from './components/PrivateRoute'
@@ -44,26 +45,12 @@ function AppLayout() {
               className="text-sm max-w-xs leading-relaxed"
               style={{ fontFamily: 'Manrope, sans-serif', color: 'rgba(255,255,255,0.55)' }}
             >
-              La scène curatée de Bruxelles. Redéfinir l'élégance de la performance vivante.
+              <FooterTagline />
             </p>
           </div>
           <div className="flex flex-col md:items-end justify-between gap-6">
             <nav className="flex flex-wrap gap-6">
-              {[
-                { label: 'Mentions Légales', to: '/mentions-legales' },
-                { label: 'Contact',          to: '/contact' },
-                { label: 'Presse',           to: '/presse' },
-                { label: 'Newsletter',       to: '/newsletter' },
-              ].map(({ label, to }) => (
-                <a
-                  key={label}
-                  href={to}
-                  className="text-sm hover:text-white transition-colors"
-                  style={{ fontFamily: 'Manrope, sans-serif', color: 'rgba(255,255,255,0.55)' }}
-                >
-                  {label}
-                </a>
-              ))}
+              <FooterLinks />
               <a
                 href="http://localhost:8001/api/rss"
                 target="_blank"
@@ -81,7 +68,7 @@ function AppLayout() {
               className="text-sm font-semibold"
               style={{ fontFamily: 'Manrope, sans-serif', color: '#fdd400' }}
             >
-              © 2026 Ovatio.be — La Scène Curatée
+              <FooterCopyright />
             </p>
           </div>
         </div>
@@ -100,8 +87,38 @@ function AuthLayout() {
   )
 }
 
+function FooterTagline() {
+  const { t } = useLanguage()
+  return <>{t('footer.tagline')}</>
+}
+function FooterCopyright() {
+  const { t } = useLanguage()
+  return <>{t('footer.copyright')}</>
+}
+function FooterLinks() {
+  const { t } = useLanguage()
+  const links = [
+    { key: 'footer.legal',      to: '/mentions-legales' },
+    { key: 'footer.contact',    to: '/contact' },
+    { key: 'footer.press',      to: '/presse' },
+    { key: 'footer.newsletter', to: '/newsletter' },
+  ]
+  return (
+    <>
+      {links.map(({ key, to }) => (
+        <a key={key} href={to}
+          className="text-sm hover:text-white transition-colors"
+          style={{ fontFamily: 'Manrope, sans-serif', color: 'rgba(255,255,255,0.55)' }}>
+          {t(key)}
+        </a>
+      ))}
+    </>
+  )
+}
+
 export default function App() {
   return (
+    <LanguageProvider>
     <CookieProvider>
       <AuthProvider>
         <BrowserRouter>
@@ -171,5 +188,6 @@ export default function App() {
         </BrowserRouter>
       </AuthProvider>
     </CookieProvider>
+    </LanguageProvider>
   )
 }

@@ -352,11 +352,11 @@ function MembresTab() {
         {/* Header tableau */}
         <div className="grid grid-cols-12 px-6 py-3 text-xs font-black uppercase tracking-widest"
           style={{ background: '#f7f9fc', color: '#767683', fontFamily: 'Manrope, sans-serif', borderBottom: '1px solid #eceef1' }}>
-          <span className="col-span-4">Membre</span>
+          <span className="col-span-3">Membre</span>
           <span className="col-span-2">Login</span>
           <span className="col-span-3">Rôles</span>
-          <span className="col-span-2 text-right">Inscrit</span>
-          <span className="col-span-1 text-right">Action</span>
+          <span className="col-span-2">Inscrit</span>
+          <span className="col-span-2 text-right">Action</span>
         </div>
 
         {filtered.length === 0 && (
@@ -372,7 +372,7 @@ function MembresTab() {
               borderBottom: i < filtered.length - 1 ? '1px solid #f2f4f7' : 'none',
             }}>
             {/* Nom + email */}
-            <div className="col-span-4 flex items-center gap-3">
+            <div className="col-span-3 flex items-center gap-3">
               <div className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-white shrink-0"
                 style={{ background: 'linear-gradient(135deg, #000666, #1a237e)' }}>
                 {(m.name ?? 'U')[0].toUpperCase()}
@@ -410,12 +410,12 @@ function MembresTab() {
             </div>
 
             {/* Date */}
-            <div className="col-span-2 text-right text-xs" style={{ color: '#767683', fontFamily: 'Manrope, sans-serif' }}>
+            <div className="col-span-2 text-xs" style={{ color: '#767683', fontFamily: 'Manrope, sans-serif' }}>
               {m.created_at}
             </div>
 
             {/* Action */}
-            <div className="col-span-1 flex justify-end">
+            <div className="col-span-2 flex justify-end">
               <button
                 onClick={() => handleToggleDisable(m.id, m.is_disabled)}
                 style={{
