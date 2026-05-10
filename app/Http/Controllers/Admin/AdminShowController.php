@@ -14,7 +14,24 @@ class AdminShowController extends Controller
         if ($request->filled('title')) {
             $query->where('title', 'like', "%{$request->title}%");
         }
-        return response()->json($query->paginate(20));
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+        return response()->json($query->orderByDesc('created_at')->paginate(20));
+    }
+
+    public function confirm(Request $request, $id)
+    {
+        $show = Show::findOrFail($id);
+        $show->update(['bookable' => true, 'status' => 'CONFIRME']);
+        return response()->json(['message' => 'Spectacle confirmé.', 'show' => $show]);
+    }
+
+    public function revoke(Request $request, $id)
+    {
+        $show = Show::findOrFail($id);
+        $show->update(['bookable' => false, 'status' => 'A_CONFIRMER']);
+        return response()->json(['message' => 'Spectacle révoqué.', 'show' => $show]);
     }
 
     public function show(Show $show)
