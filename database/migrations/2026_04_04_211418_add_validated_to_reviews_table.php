@@ -8,7 +8,8 @@ public function up(): void
 {
 Schema::table('reviews', function (Blueprint $table) {
     if (!Schema::hasColumn('reviews', 'validated')) {
-        $table->boolean('validated')->default(false)->after('comment');
+        // null=en attente, 1=approuvé, -1=rejeté
+        $table->tinyInteger('validated')->nullable()->default(null)->after('comment');
     }
 });
 }

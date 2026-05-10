@@ -15,12 +15,14 @@ class Review extends Model
         'show_id',
         'score',
         'comment',
+        'validated',
+    ];
+
+    protected $casts = [
+        'validated' => 'integer',
     ];
 
     protected $table = 'reviews';
-
-    // Ta migration n'a pas created_at/updated_at => on désactive
-    public $timestamps = false;
 
     /**
      * A review belongs to one user.
