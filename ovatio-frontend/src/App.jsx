@@ -17,6 +17,10 @@ import BecomeProducerPage from './pages/BecomeProducerPage'
 import AboutPage          from './pages/AboutPage'
 import AdminPage          from './pages/AdminPage'
 import OAuthCallbackPage  from './pages/OAuthCallbackPage'
+import MentionsLegalesPage from './pages/MentionsLegalesPage'
+import ContactPage         from './pages/ContactPage'
+import PressePage          from './pages/PressePage'
+import NewsletterPage      from './pages/NewsletterPage'
 
 /* ─── Layout WITH Navbar + Footer (toutes les pages sauf auth) ─── */
 function AppLayout() {
@@ -45,14 +49,19 @@ function AppLayout() {
           </div>
           <div className="flex flex-col md:items-end justify-between gap-6">
             <nav className="flex flex-wrap gap-6">
-              {['Mentions Légales', 'Contact', 'Presse', 'Newsletter'].map(link => (
+              {[
+                { label: 'Mentions Légales', to: '/mentions-legales' },
+                { label: 'Contact',          to: '/contact' },
+                { label: 'Presse',           to: '/presse' },
+                { label: 'Newsletter',       to: '/newsletter' },
+              ].map(({ label, to }) => (
                 <a
-                  key={link}
-                  href="#"
+                  key={label}
+                  href={to}
                   className="text-sm hover:text-white transition-colors"
                   style={{ fontFamily: 'Manrope, sans-serif', color: 'rgba(255,255,255,0.55)' }}
                 >
-                  {link}
+                  {label}
                 </a>
               ))}
               <a
@@ -113,7 +122,11 @@ export default function App() {
               <Route path="/shows/:id" element={<ShowDetailPage />} />
               <Route path="/cookies"   element={<CookiesPage />} />
               <Route path="/about"     element={<AboutPage />} />
-              <Route path="/devenir-producteur" element={<BecomeProducerPage />} />
+              <Route path="/devenir-producteur"  element={<BecomeProducerPage />} />
+              <Route path="/mentions-legales"   element={<MentionsLegalesPage />} />
+              <Route path="/contact"            element={<ContactPage />} />
+              <Route path="/presse"             element={<PressePage />} />
+              <Route path="/newsletter"         element={<NewsletterPage />} />
 
               <Route path="/reservations" element={
                 <PrivateRoute><ReservationsPage /></PrivateRoute>
