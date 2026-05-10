@@ -34,4 +34,21 @@ class AdminUserController extends Controller
         $user->delete();
         return response()->json(['message' => 'Utilisateur supprimé.']);
     }
+
+    public function disable(Request $request, User $user)
+    {
+        if ($user->id === $request->user()->id) {
+            return response()->json([
+                'message' => "Un admin ne peut pas se désactiver lui-même."
+            ], 403);
+        }
+        $user->update(['is_disabled' => true]);
+        return response()->json(['message' => 'Utilisateur désactivé.']);
+    }
+
+    public function enable(User $user)
+    {
+        $user->update(['is_disabled' => false]);
+        return response()->json(['message' => 'Utilisateur réactivé.']);
+    }
 }

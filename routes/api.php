@@ -182,6 +182,12 @@ Route::post('/login', function (Request $request) {
         return response()->json(['message' => 'Invalid credentials'], 401);
     }
 
+    if ($user->is_disabled) {
+        return response()->json([
+            'message' => 'Ce compte a été désactivé par un administrateur.'
+        ], 403);
+    }
+
     $token = $user->createToken('api-token')->plainTextToken;
 
     return response()->json([
@@ -368,6 +374,8 @@ Route::middleware('auth:sanctum')->group(function () {
 
         // ─── CRUD complet (D1) ───────────────────────────────────────────────
         Route::apiResource('users', AdminUserController::class)->only(['index', 'update', 'destroy']);
+        Route::post('users/{user}/disable', [AdminUserController::class, 'disable']);
+        Route::post('users/{user}/enable',  [AdminUserController::class, 'enable']);
         Route::apiResource('shows', AdminShowController::class);
         Route::apiResource('representations', AdminRepresentationController::class);
         Route::get('reservations',            [AdminReservationController::class, 'index']);
@@ -442,8 +450,9 @@ Route::middleware('auth:sanctum')->group(function () {
                     'name'      => $u->name ?? ($u->firstname . ' ' . $u->lastname),
                     'email'     => $u->email,
                     'login'     => $u->login,
-                    'roles'     => $u->roles->pluck('role'),
-                    'created_at'=> $u->created_at?->diffForHumans(),
+                    'roles'       => $u->roles->pluck('role'),
+                    'is_disabled' => (bool) $u->is_disabled,
+                    'created_at'  => $u->created_at?->diffForHumans(),
                 ]);
             return response()->json($members);
         });

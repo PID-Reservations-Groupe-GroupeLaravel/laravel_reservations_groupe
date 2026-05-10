@@ -22,6 +22,7 @@ class User extends Authenticatable
         'password',
         'langue',
         'photo',
+        'is_disabled',
     ];
 
     protected $hidden = [

@@ -59,6 +59,9 @@ export default function AdminPage() {
               <button style={styleTab(tab === 'membres')} onClick={() => setTab('membres')}>
                 Membres
               </button>
+              <button style={styleTab(tab === 'artistes')} onClick={() => setTab('artistes')}>
+                Artistes
+              </button>
             </>
           )}
           {isProducer && (
@@ -69,9 +72,10 @@ export default function AdminPage() {
         </div>
 
         {/* Contenu */}
-        {tab === 'demandes' && isAdmin && <DemandesTab />}
-        {tab === 'membres'  && isAdmin && <MembresTab />}
-        {tab === 'avis'     && isProducer && <AvisTab />}
+        {tab === 'demandes'  && isAdmin    && <DemandesTab />}
+        {tab === 'membres'   && isAdmin    && <MembresTab />}
+        {tab === 'artistes'  && isAdmin    && <ArtistesTab />}
+        {tab === 'avis'      && isProducer && <AvisTab />}
       </div>
     </div>
   )
@@ -297,6 +301,16 @@ function MembresTab() {
       .finally(() => setLoading(false))
   }, [])
 
+  const handleToggleDisable = async (id, isDisabled) => {
+    const endpoint = isDisabled ? `/admin/users/${id}/enable` : `/admin/users/${id}/disable`
+    try {
+      await api.post(endpoint)
+      setMembers(prev => prev.map(m => m.id === id ? { ...m, is_disabled: !isDisabled } : m))
+    } catch (err) {
+      alert(err.response?.data?.message ?? 'Erreur.')
+    }
+  }
+
   if (loading) return <Spinner />
   if (error)   return <ErrorMsg msg={error} />
 
@@ -333,9 +347,10 @@ function MembresTab() {
         <div className="grid grid-cols-12 px-6 py-3 text-xs font-black uppercase tracking-widest"
           style={{ background: '#f7f9fc', color: '#767683', fontFamily: 'Manrope, sans-serif', borderBottom: '1px solid #eceef1' }}>
           <span className="col-span-4">Membre</span>
-          <span className="col-span-3">Login</span>
+          <span className="col-span-2">Login</span>
           <span className="col-span-3">Rôles</span>
           <span className="col-span-2 text-right">Inscrit</span>
+          <span className="col-span-1 text-right">Action</span>
         </div>
 
         {filtered.length === 0 && (
@@ -366,7 +381,7 @@ function MembresTab() {
             </div>
 
             {/* Login */}
-            <div className="col-span-3">
+            <div className="col-span-2">
               <code className="text-xs px-2 py-1 rounded-lg"
                 style={{ background: '#f2f4f7', color: '#454652', fontFamily: 'monospace' }}>
                 {m.login}
@@ -391,6 +406,21 @@ function MembresTab() {
             {/* Date */}
             <div className="col-span-2 text-right text-xs" style={{ color: '#767683', fontFamily: 'Manrope, sans-serif' }}>
               {m.created_at}
+            </div>
+
+            {/* Action */}
+            <div className="col-span-1 flex justify-end">
+              <button
+                onClick={() => handleToggleDisable(m.id, m.is_disabled)}
+                style={{
+                  background: m.is_disabled ? '#e8f5e9' : '#ffdad6',
+                  color: m.is_disabled ? '#2e7d32' : '#93000a',
+                  border: 'none', cursor: 'pointer',
+                  padding: '4px 12px', borderRadius: '8px',
+                  fontFamily: 'Manrope, sans-serif', fontSize: '0.75rem', fontWeight: 600,
+                }}>
+                {m.is_disabled ? 'Réactiver' : 'Désactiver'}
+              </button>
             </div>
           </div>
         ))}
@@ -496,6 +526,168 @@ function AvisTab() {
         </div>
       ))}
     </div>
+  )
+}
+
+/* ═══════════════════════════════════════════════════════
+   ONGLET ARTISTES
+═══════════════════════════════════════════════════════ */
+function ArtistesTab() {
+  const [artists, setArtists]   = useState([])
+  const [loading, setLoading]   = useState(true)
+  const [error, setError]       = useState('')
+  const [form, setForm]         = useState({ firstname: '', lastname: '', country: '' })
+  const [editId, setEditId]     = useState(null)
+  const [saving, setSaving]     = useState(false)
+
+  const load = () => {
+    setLoading(true)
+    api.get('/artists')
+      .then(res => setArtists(res.data.data ?? res.data))
+      .catch(() => setError('Impossible de charger les artistes.'))
+      .finally(() => setLoading(false))
+  }
+
+  useEffect(() => { load() }, [])
+
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+    setSaving(true)
+    try {
+      if (editId) {
+        const res = await api.put(`/artists/${editId}`, form)
+        setArtists(prev => prev.map(a => a.id === editId ? (res.data.data ?? res.data) : a))
+      } else {
+        const res = await api.post('/artists', form)
+        setArtists(prev => [...prev, res.data.data ?? res.data])
+      }
+      setForm({ firstname: '', lastname: '', country: '' })
+      setEditId(null)
+    } catch (err) {
+      alert(err.response?.data?.message ?? 'Erreur lors de la sauvegarde.')
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  const handleEdit = (a) => {
+    setEditId(a.id)
+    setForm({ firstname: a.firstname ?? '', lastname: a.lastname ?? '', country: a.country ?? '' })
+  }
+
+  const handleDelete = async (id) => {
+    if (!window.confirm('Supprimer cet artiste ?')) return
+    try {
+      await api.delete(`/artists/${id}`)
+      setArtists(prev => prev.filter(a => a.id !== id))
+    } catch { alert('Erreur lors de la suppression.') }
+  }
+
+  if (loading) return <Spinner />
+  if (error)   return <ErrorMsg msg={error} />
+
+  const inputStyle = {
+    fontFamily: 'Manrope, sans-serif', fontSize: '0.875rem', color: '#191c1e',
+    background: '#f7f9fc', border: '1px solid #e0e3e6', borderRadius: '8px',
+    padding: '8px 12px', outline: 'none', width: '100%',
+  }
+
+  return (
+    <>
+      {/* Formulaire ajout / édition */}
+      <div className="rounded-2xl p-6 mb-6"
+        style={{ background: '#fff', boxShadow: '0 4px 24px rgba(0,6,102,0.07)' }}>
+        <h3 className="text-sm font-bold mb-4"
+          style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', color: '#191c1e' }}>
+          {editId ? 'Modifier l\'artiste' : 'Ajouter un artiste'}
+        </h3>
+        <form onSubmit={handleSubmit} className="flex flex-wrap gap-3 items-end">
+          <div className="flex-1 min-w-32">
+            <label className="text-xs font-semibold mb-1 block" style={{ color: '#767683', fontFamily: 'Manrope, sans-serif' }}>Prénom</label>
+            <input style={inputStyle} value={form.firstname} required
+              onChange={e => setForm(p => ({ ...p, firstname: e.target.value }))} />
+          </div>
+          <div className="flex-1 min-w-32">
+            <label className="text-xs font-semibold mb-1 block" style={{ color: '#767683', fontFamily: 'Manrope, sans-serif' }}>Nom</label>
+            <input style={inputStyle} value={form.lastname} required
+              onChange={e => setForm(p => ({ ...p, lastname: e.target.value }))} />
+          </div>
+          <div className="flex-1 min-w-32">
+            <label className="text-xs font-semibold mb-1 block" style={{ color: '#767683', fontFamily: 'Manrope, sans-serif' }}>Pays</label>
+            <input style={inputStyle} value={form.country}
+              onChange={e => setForm(p => ({ ...p, country: e.target.value }))} />
+          </div>
+          <div className="flex gap-2">
+            <button type="submit" disabled={saving}
+              style={{ background: '#000666', color: '#fff', border: 'none', cursor: 'pointer',
+                padding: '9px 20px', borderRadius: '8px', fontFamily: 'Manrope, sans-serif',
+                fontSize: '0.875rem', fontWeight: 600, opacity: saving ? 0.7 : 1 }}>
+              {saving ? '…' : editId ? 'Mettre à jour' : 'Ajouter'}
+            </button>
+            {editId && (
+              <button type="button"
+                onClick={() => { setEditId(null); setForm({ firstname: '', lastname: '', country: '' }) }}
+                style={{ background: '#f2f4f7', color: '#454652', border: 'none', cursor: 'pointer',
+                  padding: '9px 16px', borderRadius: '8px', fontFamily: 'Manrope, sans-serif', fontSize: '0.875rem' }}>
+                Annuler
+              </button>
+            )}
+          </div>
+        </form>
+      </div>
+
+      {/* Liste */}
+      <div className="rounded-2xl overflow-hidden"
+        style={{ background: '#fff', boxShadow: '0 4px 24px rgba(0,6,102,0.07)' }}>
+        <div className="grid grid-cols-12 px-6 py-3 text-xs font-black uppercase tracking-widest"
+          style={{ background: '#f7f9fc', color: '#767683', fontFamily: 'Manrope, sans-serif', borderBottom: '1px solid #eceef1' }}>
+          <span className="col-span-4">Prénom</span>
+          <span className="col-span-4">Nom</span>
+          <span className="col-span-2">Pays</span>
+          <span className="col-span-2 text-right">Actions</span>
+        </div>
+
+        {artists.length === 0 && (
+          <div className="py-12 text-center text-sm" style={{ color: '#767683', fontFamily: 'Manrope, sans-serif' }}>
+            Aucun artiste enregistré.
+          </div>
+        )}
+
+        {artists.map((a, i) => (
+          <div key={a.id} className="grid grid-cols-12 px-6 py-4 items-center"
+            style={{ borderBottom: i < artists.length - 1 ? '1px solid #f2f4f7' : 'none' }}>
+            <div className="col-span-4 text-sm font-semibold"
+              style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', color: '#191c1e' }}>
+              {a.firstname}
+            </div>
+            <div className="col-span-4 text-sm" style={{ color: '#454652', fontFamily: 'Manrope, sans-serif' }}>
+              {a.lastname}
+            </div>
+            <div className="col-span-2 text-xs" style={{ color: '#767683', fontFamily: 'Manrope, sans-serif' }}>
+              {a.country ?? '—'}
+            </div>
+            <div className="col-span-2 flex justify-end gap-2">
+              <button onClick={() => handleEdit(a)}
+                style={{ background: '#e8eaf6', color: '#000666', border: 'none', cursor: 'pointer',
+                  padding: '4px 12px', borderRadius: '8px', fontFamily: 'Manrope, sans-serif',
+                  fontSize: '0.75rem', fontWeight: 600 }}>
+                Éditer
+              </button>
+              <button onClick={() => handleDelete(a.id)}
+                style={{ background: '#ffdad6', color: '#93000a', border: 'none', cursor: 'pointer',
+                  padding: '4px 12px', borderRadius: '8px', fontFamily: 'Manrope, sans-serif',
+                  fontSize: '0.75rem', fontWeight: 600 }}>
+                Supprimer
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <p className="text-xs mt-3 text-right" style={{ color: '#767683', fontFamily: 'Manrope, sans-serif' }}>
+        {artists.length} artiste{artists.length > 1 ? 's' : ''} au total
+      </p>
+    </>
   )
 }
 
