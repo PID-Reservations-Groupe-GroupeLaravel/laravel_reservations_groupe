@@ -504,6 +504,8 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('users/{user}/disable', [AdminUserController::class, 'disable']);
         Route::post('users/{user}/enable',  [AdminUserController::class, 'enable']);
         Route::apiResource('shows', AdminShowController::class);
+        Route::patch('shows/{id}/confirm', [AdminShowController::class, 'confirm']);
+        Route::patch('shows/{id}/revoke',  [AdminShowController::class, 'revoke']);
         Route::apiResource('representations', AdminRepresentationController::class);
         Route::get('reservations',            [AdminReservationController::class, 'index']);
         Route::patch('reservations/{id}',     [AdminReservationController::class, 'update']);
@@ -831,17 +833,17 @@ Route::middleware('auth:sanctum')->group(function () {
             return response()->json(['message' => 'Spectacle supprimé.']);
         });
 
-        // PATCH /producer/shows/{id}/confirm → confirmer (bookable=1)
+        // PATCH /producer/shows/{id}/confirm → confirmer (bookable=1, status=CONFIRME)
         Route::patch('/shows/{id}/confirm', function (Request $request, $id) {
             $show = \App\Models\Show::where('id', $id)->where('user_id', $request->user()->id)->firstOrFail();
-            $show->update(['bookable' => true]);
+            $show->update(['bookable' => true, 'status' => 'CONFIRME']);
             return response()->json(['message' => 'Spectacle confirmé.']);
         });
 
-        // PATCH /producer/shows/{id}/unconfirm → retirer la confirmation
+        // PATCH /producer/shows/{id}/unconfirm → retirer la confirmation (bookable=0, status=A_CONFIRMER)
         Route::patch('/shows/{id}/unconfirm', function (Request $request, $id) {
             $show = \App\Models\Show::where('id', $id)->where('user_id', $request->user()->id)->firstOrFail();
-            $show->update(['bookable' => false]);
+            $show->update(['bookable' => false, 'status' => 'A_CONFIRMER']);
             return response()->json(['message' => 'Spectacle mis en attente.']);
         });
 
