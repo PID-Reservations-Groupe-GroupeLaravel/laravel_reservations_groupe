@@ -1,31 +1,41 @@
-const COMMUNIQUES = [
-  {
-    date: 'Avril 2026',
-    titre: 'Ovatio.be lance sa plateforme de réservation de spectacles vivants à Bruxelles',
-    extrait: 'La nouvelle plateforme culturelle bruxelloise Ovatio.be ouvre ses portes et propose une sélection curatée de spectacles de théâtre, danse et musique dans la capitale belge.',
-    tag: 'Lancement',
-  },
-  {
-    date: 'Mars 2026',
-    titre: 'Partenariat avec les salles de spectacle bruxelloises pour une offre culturelle élargie',
-    extrait: 'Ovatio.be annonce un accord de diffusion avec plusieurs salles emblématiques de Bruxelles afin d\'enrichir son catalogue et d\'offrir une expérience de réservation unifiée.',
-    tag: 'Partenariat',
-  },
-  {
-    date: 'Février 2026',
-    titre: 'Ovatio.be, la réponse belge aux grandes plateformes de billetterie culturelle',
-    extrait: 'Dans un contexte de montée en puissance du numérique dans le secteur culturel, Ovatio.be se positionne comme une alternative locale, indépendante et centrée sur les arts vivants.',
-    tag: 'Tribune',
-  },
-]
-
-const TAG_COLORS = {
-  'Lancement':   { bg: '#e8f5e9', color: '#2e7d32' },
-  'Partenariat': { bg: '#e8eaf6', color: '#000666' },
-  'Tribune':     { bg: '#fff8e1', color: '#f57f17' },
-}
+import { useLanguage } from '../contexts/LanguageContext'
 
 export default function PressePage() {
+  const { t } = useLanguage()
+
+  const COMMUNIQUES = [
+    {
+      date: t('press.release1Date'),
+      titre: t('press.release1Title'),
+      extrait: t('press.release1Excerpt'),
+      tag: t('press.tag_launch'),
+    },
+    {
+      date: t('press.release2Date'),
+      titre: t('press.release2Title'),
+      extrait: t('press.release2Excerpt'),
+      tag: t('press.tag_partnership'),
+    },
+    {
+      date: t('press.release3Date'),
+      titre: t('press.release3Title'),
+      extrait: t('press.release3Excerpt'),
+      tag: t('press.tag_tribune'),
+    },
+  ]
+
+  const TAG_COLORS = {
+    [t('press.tag_launch')]:      { bg: '#e8f5e9', color: '#2e7d32' },
+    [t('press.tag_partnership')]: { bg: '#e8eaf6', color: '#000666' },
+    [t('press.tag_tribune')]:     { bg: '#fff8e1', color: '#f57f17' },
+  }
+
+  const KIT_ITEMS = [
+    { icon: '🖼️', labelKey: 'press.kit1Label', descKey: 'press.kit1Desc' },
+    { icon: '📄', labelKey: 'press.kit2Label', descKey: 'press.kit2Desc' },
+    { icon: '📊', labelKey: 'press.kit3Label', descKey: 'press.kit3Desc' },
+  ]
+
   return (
     <div className="min-h-screen" style={{ background: '#f7f9fc' }}>
 
@@ -33,15 +43,15 @@ export default function PressePage() {
         style={{ background: 'linear-gradient(135deg, #000666 0%, #1a237e 100%)' }}>
         <p className="text-xs font-bold uppercase tracking-[0.25em] mb-3"
           style={{ color: '#fdd400', fontFamily: 'Manrope, sans-serif' }}>
-          Médias & journalistes
+          {t('press.badge')}
         </p>
         <h1 className="text-4xl font-extrabold text-white mb-3"
           style={{ fontFamily: '"Plus Jakarta Sans", sans-serif' }}>
-          Espace Presse
+          {t('press.title')}
         </h1>
         <p className="text-sm max-w-xl mx-auto"
           style={{ color: 'rgba(255,255,255,0.6)', fontFamily: 'Manrope, sans-serif' }}>
-          Communiqués, ressources visuelles et contact presse pour les journalistes et blogueurs culturels.
+          {t('press.subtitle')}
         </p>
       </div>
 
@@ -52,37 +62,33 @@ export default function PressePage() {
           style={{ background: '#fff', boxShadow: '0 4px 24px rgba(0,6,102,0.07)', border: '1px solid #eceef1' }}>
           <div>
             <p className="text-xs font-bold uppercase tracking-wider mb-1"
-              style={{ color: '#767683', fontFamily: 'Manrope, sans-serif' }}>Contact presse</p>
+              style={{ color: '#767683', fontFamily: 'Manrope, sans-serif' }}>{t('press.pressContactLabel')}</p>
             <p className="text-base font-bold"
               style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', color: '#191c1e' }}>
-              Service communication Ovatio.be
+              {t('press.pressContactName')}
             </p>
             <p className="text-sm" style={{ color: '#767683', fontFamily: 'Manrope, sans-serif' }}>
-              presse@ovatio.be · Réponse sous 24h
+              {t('press.pressContactInfo')}
             </p>
           </div>
           <a href="mailto:presse@ovatio.be"
             className="px-5 py-2.5 rounded-xl text-sm font-bold text-white hover:opacity-90 transition-opacity shrink-0"
             style={{ background: 'linear-gradient(135deg, #000666, #1a237e)', fontFamily: '"Plus Jakarta Sans", sans-serif' }}>
-            Contacter le service presse →
+            {t('press.pressContactBtn')}
           </a>
         </div>
 
         {/* Kit presse */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-10">
-          {[
-            { icon: '🖼️', label: 'Logos & visuels', desc: 'Pack haute résolution (PNG, SVG)' },
-            { icon: '📄', label: 'Dossier de presse', desc: 'Présentation complète de la plateforme' },
-            { icon: '📊', label: 'Chiffres clés', desc: 'Statistiques et faits marquants 2026' },
-          ].map(({ icon, label, desc }) => (
-            <div key={label} className="rounded-2xl p-5 text-center cursor-pointer hover:shadow-md transition-shadow"
+          {KIT_ITEMS.map(({ icon, labelKey, descKey }) => (
+            <div key={labelKey} className="rounded-2xl p-5 text-center cursor-pointer hover:shadow-md transition-shadow"
               style={{ background: '#fff', boxShadow: '0 2px 12px rgba(0,6,102,0.06)', border: '1px solid #eceef1' }}>
               <div className="text-3xl mb-3">{icon}</div>
               <p className="text-sm font-bold mb-1"
-                style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', color: '#191c1e' }}>{label}</p>
-              <p className="text-xs" style={{ color: '#767683', fontFamily: 'Manrope, sans-serif' }}>{desc}</p>
+                style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', color: '#191c1e' }}>{t(labelKey)}</p>
+              <p className="text-xs" style={{ color: '#767683', fontFamily: 'Manrope, sans-serif' }}>{t(descKey)}</p>
               <p className="text-xs font-bold mt-3" style={{ color: '#000666', fontFamily: 'Manrope, sans-serif' }}>
-                Télécharger →
+                {t('press.download')}
               </p>
             </div>
           ))}
@@ -91,7 +97,7 @@ export default function PressePage() {
         {/* Communiqués */}
         <h2 className="text-2xl font-bold mb-6"
           style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', color: '#0a0d2e' }}>
-          Communiqués de presse
+          {t('press.releasesTitle')}
         </h2>
 
         <div className="space-y-4">

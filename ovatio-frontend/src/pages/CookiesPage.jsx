@@ -1,7 +1,9 @@
 import { useCookies } from '../contexts/CookieContext'
+import { useLanguage } from '../contexts/LanguageContext'
 
 export default function CookiesPage() {
   const { prefs, acceptAll, declineAll, savePrefs, reset } = useCookies()
+  const { t } = useLanguage()
 
   return (
     <div className="min-h-screen" style={{ background: '#f7f9fc' }}>
@@ -14,49 +16,44 @@ export default function CookiesPage() {
           className="text-xs font-bold uppercase tracking-[0.25em] mb-3"
           style={{ color: '#fdd400', fontFamily: 'Manrope, sans-serif' }}
         >
-          RGPD &amp; Transparence
+          {t('cookies.badge')}
         </p>
         <h1
           className="text-4xl font-extrabold text-white mb-3"
           style={{ fontFamily: '"Plus Jakarta Sans", sans-serif' }}
         >
-          Politique de cookies
+          {t('cookies.title')}
         </h1>
         <p
           className="text-sm max-w-xl mx-auto"
           style={{ color: 'rgba(255,255,255,0.6)', fontFamily: 'Manrope, sans-serif' }}
         >
-          Dernière mise à jour : avril 2026
+          {t('cookies.updated')}
         </p>
       </div>
 
       <div className="max-w-3xl mx-auto px-6 py-12 space-y-10">
 
-        {/* Section */}
-        <Section title="Qu'est-ce qu'un cookie ?">
-          <p>
-            Un cookie est un petit fichier texte déposé sur votre appareil lors de votre visite sur
-            notre site. Il permet de mémoriser vos préférences et d'améliorer votre expérience de
-            navigation.
-          </p>
+        <Section title={t('cookies.whatTitle')}>
+          <p>{t('cookies.whatContent')}</p>
         </Section>
 
         {/* Tableau cookies */}
-        <Section title="Cookies utilisés par Ovatio">
+        <Section title={t('cookies.tableTitle')}>
           <div className="overflow-hidden rounded-xl" style={{ background: '#ffffff', boxShadow: '0 2px 20px rgba(0,0,0,0.04)' }}>
             <table className="w-full text-sm">
               <thead>
                 <tr style={{ background: '#f2f4f7' }}>
-                  <th className="text-left px-5 py-3 text-xs font-bold uppercase tracking-wider" style={{ color: '#454652', fontFamily: 'Manrope, sans-serif' }}>Nom</th>
-                  <th className="text-left px-5 py-3 text-xs font-bold uppercase tracking-wider" style={{ color: '#454652', fontFamily: 'Manrope, sans-serif' }}>Finalité</th>
-                  <th className="text-left px-5 py-3 text-xs font-bold uppercase tracking-wider" style={{ color: '#454652', fontFamily: 'Manrope, sans-serif' }}>Durée</th>
+                  <th className="text-left px-5 py-3 text-xs font-bold uppercase tracking-wider" style={{ color: '#454652', fontFamily: 'Manrope, sans-serif' }}>{t('cookies.colName')}</th>
+                  <th className="text-left px-5 py-3 text-xs font-bold uppercase tracking-wider" style={{ color: '#454652', fontFamily: 'Manrope, sans-serif' }}>{t('cookies.colPurpose')}</th>
+                  <th className="text-left px-5 py-3 text-xs font-bold uppercase tracking-wider" style={{ color: '#454652', fontFamily: 'Manrope, sans-serif' }}>{t('cookies.colDuration')}</th>
                 </tr>
               </thead>
               <tbody>
                 {[
-                  { name: 'ovatio_token',          purpose: 'Authentification (token API)',             duration: 'Session' },
-                  { name: 'ovatio_user',            purpose: "Données de l'utilisateur connecté",        duration: 'Session' },
-                  { name: 'ovatio_cookie_consent',  purpose: 'Mémorisation de votre choix de cookies',   duration: '1 an' },
+                  { name: 'ovatio_token',          purpose: t('cookies.cookie1Purpose'), duration: t('cookies.duration1') },
+                  { name: 'ovatio_user',            purpose: t('cookies.cookie2Purpose'), duration: t('cookies.duration2') },
+                  { name: 'ovatio_cookie_consent',  purpose: t('cookies.cookie3Purpose'), duration: t('cookies.duration3') },
                 ].map((row, i) => (
                   <tr key={row.name} style={{ borderTop: i > 0 ? '1px solid #f2f4f7' : undefined }}>
                     <td className="px-5 py-3 font-mono text-xs" style={{ color: '#000666' }}>{row.name}</td>
@@ -69,18 +66,13 @@ export default function CookiesPage() {
           </div>
         </Section>
 
-        <Section title="Base légale (RGPD)">
-          <p>
-            Conformément au Règlement Général sur la Protection des Données (RGPD), nous collectons
-            votre consentement avant de déposer tout cookie non strictement nécessaire au
-            fonctionnement du site.
-          </p>
+        <Section title={t('cookies.legalTitle')}>
+          <p>{t('cookies.legalContent')}</p>
         </Section>
 
-        <Section title="Vos droits">
+        <Section title={t('cookies.rightsTitle')}>
           <p>
-            Vous pouvez à tout moment modifier votre choix ci-dessous. Pour exercer vos droits
-            d'accès, de rectification ou de suppression, contactez-nous à{' '}
+            {t('cookies.rightsContent')}{' '}
             <a href="mailto:contact@ovatio.be" style={{ color: '#000666' }} className="font-semibold hover:underline">
               contact@ovatio.be
             </a>.
@@ -96,7 +88,7 @@ export default function CookiesPage() {
             className="text-lg font-bold mb-6"
             style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', color: '#191c1e' }}
           >
-            Gérer mes préférences
+            {t('cookies.manageTitle')}
           </h2>
 
           {/* Nécessaires */}
@@ -106,21 +98,21 @@ export default function CookiesPage() {
           >
             <div>
               <p className="text-sm font-semibold" style={{ fontFamily: 'Manrope, sans-serif', color: '#191c1e' }}>
-                Nécessaires
+                {t('cookies.necessary')}
               </p>
               <p className="text-xs mt-0.5" style={{ fontFamily: 'Manrope, sans-serif', color: '#767683' }}>
-                Requis pour le fonctionnement du site.
+                {t('cookies.necessaryDesc')}
               </p>
             </div>
             <span className="text-xs font-bold" style={{ color: '#000666', fontFamily: 'Manrope, sans-serif' }}>
-              Toujours actif
+              {t('cookies.alwaysActive')}
             </span>
           </div>
 
           {[
-            { key: 'analytiques', label: 'Analytiques', desc: 'Statistiques anonymes de navigation.' },
-            { key: 'marketing',   label: 'Marketing',   desc: 'Publicités personnalisées.' },
-          ].map(({ key, label, desc }, i, arr) => (
+            { key: 'analytiques', labelKey: 'cookies.analytics', descKey: 'cookies.analyticsDesc' },
+            { key: 'marketing',   labelKey: 'cookies.marketing', descKey: 'cookies.marketingDesc' },
+          ].map(({ key, labelKey, descKey }, i, arr) => (
             <div
               key={key}
               className="flex items-center justify-between py-4"
@@ -128,10 +120,10 @@ export default function CookiesPage() {
             >
               <div>
                 <p className="text-sm font-semibold" style={{ fontFamily: 'Manrope, sans-serif', color: '#191c1e' }}>
-                  {label}
+                  {t(labelKey)}
                 </p>
                 <p className="text-xs mt-0.5" style={{ fontFamily: 'Manrope, sans-serif', color: '#767683' }}>
-                  {desc}
+                  {t(descKey)}
                 </p>
               </div>
               <button
@@ -157,7 +149,7 @@ export default function CookiesPage() {
                 color: '#ffffff',
               }}
             >
-              Tout accepter
+              {t('cookies.acceptAll')}
             </button>
             <button
               onClick={declineAll}
@@ -168,14 +160,14 @@ export default function CookiesPage() {
                 color: '#454652',
               }}
             >
-              Tout refuser
+              {t('cookies.declineAll')}
             </button>
             <button
               onClick={reset}
               className="px-5 py-2.5 text-sm font-semibold hover:underline transition"
               style={{ fontFamily: 'Manrope, sans-serif', color: '#ba1a1a' }}
             >
-              Réinitialiser
+              {t('cookies.reset')}
             </button>
           </div>
         </div>

@@ -1,8 +1,10 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import api from '../api/axios'
+import { useLanguage } from '../contexts/LanguageContext'
 
 export default function ShowsPage() {
+  const { t } = useLanguage()
   const [shows, setShows]     = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError]     = useState('')
@@ -10,11 +12,11 @@ export default function ShowsPage() {
   useEffect(() => {
     api.get('/shows')
       .then((res) => setShows(res.data.data ?? res.data))
-      .catch(() => setError('Impossible de charger les spectacles.'))
+      .catch(() => setError(t('shows.loadError')))
       .finally(() => setLoading(false))
   }, [])
 
-  if (loading) return <Spinner />
+  if (loading) return <Spinner t={t} />
   if (error)   return <ErrorMsg msg={error} />
 
   return (
@@ -37,17 +39,17 @@ export default function ShowsPage() {
             className="inline-block text-xs font-black uppercase tracking-[0.25em] px-4 py-1.5 rounded-full mb-6"
             style={{ background: '#fdd400', color: '#6f5c00', fontFamily: 'Manrope, sans-serif' }}
           >
-            La Scène Curatée
+            {t('shows.hero_badge')}
           </span>
           <h1
             className="text-5xl md:text-6xl font-extrabold text-white mb-4"
             style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', letterSpacing: '-0.02em', lineHeight: 1.1 }}
           >
-            Catalogue
+            {t('shows.hero_title')}
           </h1>
           <p className="text-lg max-w-xl"
             style={{ color: 'rgba(255,255,255,0.55)', fontFamily: 'Manrope, sans-serif' }}>
-            Découvrez les spectacles les plus exclusifs de Bruxelles, sélectionnés avec soin.
+            {t('shows.hero_subtitle')}
           </p>
         </div>
       </div>
@@ -58,12 +60,12 @@ export default function ShowsPage() {
           <div className="flex flex-col items-center justify-center py-32 gap-4">
             <span className="text-6xl">🎭</span>
             <p className="text-sm" style={{ color: '#767683', fontFamily: 'Manrope, sans-serif' }}>
-              Aucun spectacle disponible pour le moment.
+              {t('shows.noShows')}
             </p>
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-            {shows.map((show) => <ShowCard key={show.id} show={show} />)}
+            {shows.map((show) => <ShowCard key={show.id} show={show} t={t} />)}
           </div>
         )}
       </div>
@@ -71,7 +73,7 @@ export default function ShowsPage() {
   )
 }
 
-function ShowCard({ show }) {
+function ShowCard({ show, t }) {
   const [hovered, setHovered] = useState(false)
 
   return (
@@ -107,7 +109,7 @@ function ShowCard({ show }) {
               background: show.status === 'CONFIRME' ? 'rgba(0,6,102,0.88)' : 'rgba(253,212,0,0.95)',
               color: show.status === 'CONFIRME' ? '#ffffff' : '#6f5c00',
             }}>
-            {show.status === 'CONFIRME' ? 'Confirmé' : 'À confirmer'}
+            {show.status === 'CONFIRME' ? t('shows.card_confirmed') : t('shows.card_toConfirm')}
           </span>
         </div>
       </div>
@@ -116,7 +118,7 @@ function ShowCard({ show }) {
       <div className="p-6 flex flex-col flex-1">
         <p className="text-xs font-black uppercase tracking-[0.2em] mb-2"
           style={{ color: '#705d00', fontFamily: 'Manrope, sans-serif' }}>
-          Spectacle
+          {t('shows.card_label')}
         </p>
         <h2 className="text-lg font-bold mb-4 line-clamp-2 leading-snug flex-1"
           style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', color: '#191c1e' }}>
@@ -131,7 +133,7 @@ function ShowCard({ show }) {
               color: '#ffffff',
               fontFamily: '"Plus Jakarta Sans", sans-serif',
             }}>
-            Voir les représentations
+            {t('shows.card_seeRepresentations')}
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
             </svg>
@@ -139,7 +141,7 @@ function ShowCard({ show }) {
         ) : (
           <div className="flex items-center justify-center text-xs font-semibold py-3 px-5 rounded-xl"
             style={{ background: '#f2f4f7', color: '#767683', fontFamily: 'Manrope, sans-serif' }}>
-            Non disponible à la réservation
+            {t('shows.card_notAvailable')}
           </div>
         )}
       </div>
@@ -147,13 +149,13 @@ function ShowCard({ show }) {
   )
 }
 
-function Spinner() {
+function Spinner({ t }) {
   return (
     <div className="flex flex-col items-center justify-center h-64 gap-4">
       <div className="w-10 h-10 rounded-full border-4 animate-spin"
         style={{ borderColor: '#e0e3e6', borderTopColor: '#000666' }} />
       <p className="text-sm" style={{ color: '#767683', fontFamily: 'Manrope, sans-serif' }}>
-        Chargement des spectacles...
+        {t('shows.loading')}
       </p>
     </div>
   )

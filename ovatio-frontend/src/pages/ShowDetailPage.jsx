@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { useParams, useNavigate, Link } from 'react-router-dom'
 import api from '../api/axios'
 import { useAuth } from '../contexts/AuthContext'
+import { useLanguage } from '../contexts/LanguageContext'
 
 /* ─── Étoiles ─────────────────────────────────────────────────────── */
 function Stars({ score, size = '1rem' }) {
@@ -21,6 +22,7 @@ function Stars({ score, size = '1rem' }) {
 export default function ShowDetailPage() {
   const { id } = useParams()
   const { user } = useAuth()
+  const { t } = useLanguage()
   const navigate = useNavigate()
 
   const [show, setShow]                       = useState(null)
@@ -57,7 +59,7 @@ export default function ShowDetailPage() {
         if (r.length > 0) setSelectedRepr(r[0])
         if (p.length > 0) setSelectedPrice(p[0])
       })
-      .catch(() => setError('Impossible de charger ce spectacle.'))
+      .catch(() => setError(t('detail.loadError')))
       .finally(() => setLoading(false))
   }, [id])
 
@@ -72,17 +74,17 @@ export default function ShowDetailPage() {
         price_id: selectedPrice.id,
         quantity,
       })
-      setSuccess('Réservation créée ! Retrouvez-la dans Mes réservations.')
+      setSuccess(t('detail.bookSuccess'))
     } catch (err) {
       const errors = err.response?.data?.errors
-      setFormError(errors ? Object.values(errors).flat().join(' ') : (err.response?.data?.message ?? 'Erreur lors de la réservation.'))
+      setFormError(errors ? Object.values(errors).flat().join(' ') : (err.response?.data?.message ?? t('detail.bookingError')))
     } finally {
       setSubmitting(false) }
   }
 
-  if (loading) return <Spinner />
-  if (error)   return <ErrorScreen msg={error} />
-  if (!show)   return <ErrorScreen msg="Spectacle introuvable." />
+  if (loading) return <Spinner t={t} />
+  if (error)   return <ErrorScreen msg={error} t={t} />
+  if (!show)   return <ErrorScreen msg={t('detail.notFound')} t={t} />
 
   const posterUrl      = show.poster_url ? `/images/${show.poster_url}` : null
   const total          = selectedPrice ? (selectedPrice.price * quantity).toFixed(2) : null
@@ -113,14 +115,14 @@ export default function ShowDetailPage() {
             border: '1px solid rgba(255,255,255,0.15)', color: '#fff',
             fontFamily: 'Manrope, sans-serif',
           }}>
-          ← Catalogue
+          {t('detail.back')}
         </Link>
 
         <div className="absolute bottom-0 left-0 right-0 px-8 pb-10 max-w-7xl mx-auto w-full"
           style={{ left: '50%', transform: 'translateX(-50%)' }}>
           <p className="text-xs font-black uppercase tracking-[0.25em] mb-3"
             style={{ color: '#fdd400', fontFamily: 'Manrope, sans-serif' }}>
-            {show.status === 'CONFIRME' ? '✓ Spectacle confirmé' : '⏳ À confirmer'}
+            {show.status === 'CONFIRME' ? t('detail.confirmed') : t('detail.toConfirm')}
           </p>
           <h1 className="text-5xl md:text-6xl font-extrabold text-white mb-5 leading-none"
             style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', letterSpacing: '-0.03em' }}>
@@ -144,7 +146,7 @@ export default function ShowDetailPage() {
             {minPrice && (
               <span className="flex items-center gap-2 text-sm font-semibold"
                 style={{ color: 'rgba(255,255,255,0.8)', fontFamily: 'Manrope, sans-serif' }}>
-                🎟 À partir de {minPrice} €
+                🎟 {t('detail.from')} {minPrice} €
               </span>
             )}
           </div>
@@ -163,7 +165,7 @@ export default function ShowDetailPage() {
               <section>
                 <h2 className="text-2xl font-bold mb-4"
                   style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', color: '#0a0d2e' }}>
-                  À propos du spectacle
+                  {t('detail.about')}
                 </h2>
                 <p className="text-base leading-loose"
                   style={{ color: '#555', fontFamily: 'Manrope, sans-serif', lineHeight: 1.9 }}>
@@ -177,7 +179,7 @@ export default function ShowDetailPage() {
               <section>
                 <h2 className="text-2xl font-bold mb-5"
                   style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', color: '#0a0d2e' }}>
-                  Distribution
+                  {t('detail.distribution')}
                 </h2>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   {show.artists.map((artist, i) => (
@@ -217,10 +219,10 @@ export default function ShowDetailPage() {
                   <div>
                     <p className="text-sm font-bold text-white"
                       style={{ fontFamily: '"Plus Jakarta Sans", sans-serif' }}>
-                      L'avis de la rédaction Ovatio
+                      {t('detail.curatorReview')}
                     </p>
                     <p className="text-xs" style={{ color: 'rgba(255,255,255,0.5)', fontFamily: 'Manrope, sans-serif' }}>
-                      Curateurs Arts Vivants
+                      {t('detail.curatorSubtitle')}
                     </p>
                   </div>
                   <div className="ml-auto">
@@ -249,7 +251,7 @@ export default function ShowDetailPage() {
                   <div>
                     <h2 className="text-2xl font-bold"
                       style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', color: '#0a0d2e' }}>
-                      Avis des spectateurs
+                      {t('detail.audienceReviews')}
                     </h2>
                     <div className="flex items-center gap-2 mt-1">
                       <Stars score={Math.round(avgScore)} size="1rem" />
@@ -257,7 +259,7 @@ export default function ShowDetailPage() {
                         {avgScore}/5
                       </span>
                       <span className="text-sm" style={{ color: '#888', fontFamily: 'Manrope, sans-serif' }}>
-                        · {reviews.length} avis
+                        · {reviews.length} {t('detail.reviews')}
                       </span>
                     </div>
                   </div>
@@ -276,7 +278,7 @@ export default function ShowDetailPage() {
                           <div>
                             <p className="text-sm font-bold"
                               style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', color: '#0a0d2e' }}>
-                              {review.user_name ?? 'Spectateur anonyme'}
+                              {review.user_name ?? t('detail.anonymous')}
                             </p>
                             <Stars score={review.score} size="0.85rem" />
                           </div>
@@ -298,24 +300,24 @@ export default function ShowDetailPage() {
                     onClick={() => setShowAllReviews(v => !v)}
                     className="mt-5 flex items-center gap-2 text-sm font-bold hover:opacity-70 transition-opacity"
                     style={{ color: '#000666', fontFamily: 'Manrope, sans-serif', background: 'none', border: 'none', cursor: 'pointer' }}>
-                    {showAllReviews ? 'Voir moins d\'avis ↑' : `Voir les ${reviews.length - 2} autres avis →`}
+                    {showAllReviews ? t('detail.showLess') : t('detail.showMore').replace('{n}', reviews.length - 2)}
                   </button>
                 )}
 
                 {/* Laisser un avis */}
                 <div className="mt-8 pt-6" style={{ borderTop: '1px solid #eceef1' }}>
                   {user ? (
-                    <AddReviewForm showId={id} onAdded={(r) => setReviews(prev => [r, ...prev])} />
+                    <AddReviewForm showId={id} onAdded={(r) => setReviews(prev => [r, ...prev])} t={t} />
                   ) : (
                     <div className="rounded-2xl p-5 text-center"
                       style={{ background: '#f5f6fa', border: '1px dashed #c6c5d4' }}>
                       <p className="text-sm mb-3" style={{ color: '#767683', fontFamily: 'Manrope, sans-serif' }}>
-                        Vous avez vu ce spectacle ?
+                        {t('detail.seenShow')}
                       </p>
                       <Link to="/login"
                         className="text-sm font-bold hover:opacity-80 transition-opacity"
                         style={{ color: '#000666', fontFamily: '"Plus Jakarta Sans", sans-serif' }}>
-                        Connectez-vous pour laisser un avis →
+                        {t('detail.loginToReview')}
                       </Link>
                     </div>
                   )}
@@ -328,26 +330,26 @@ export default function ShowDetailPage() {
               <section>
                 <h2 className="text-2xl font-bold mb-5"
                   style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', color: '#0a0d2e' }}>
-                  Avis des spectateurs
+                  {t('detail.audienceReviews')}
                 </h2>
                 <div className="rounded-2xl p-6 text-center mb-4"
                   style={{ background: '#fff', boxShadow: '0 2px 12px rgba(0,6,102,0.06)' }}>
                   <p className="text-sm" style={{ color: '#888', fontFamily: 'Manrope, sans-serif' }}>
-                    Aucun avis pour ce spectacle pour le moment.
+                    {t('detail.noReviews')}
                   </p>
                 </div>
                 {user ? (
-                  <AddReviewForm showId={id} onAdded={(r) => setReviews([r])} />
+                  <AddReviewForm showId={id} onAdded={(r) => setReviews([r])} t={t} />
                 ) : (
                   <div className="rounded-2xl p-5 text-center"
                     style={{ background: '#f5f6fa', border: '1px dashed #c6c5d4' }}>
                     <p className="text-sm mb-3" style={{ color: '#767683', fontFamily: 'Manrope, sans-serif' }}>
-                      Vous avez vu ce spectacle ?
+                      {t('detail.seenShow')}
                     </p>
                     <Link to="/login"
                       className="text-sm font-bold hover:opacity-80 transition-opacity"
                       style={{ color: '#000666', fontFamily: '"Plus Jakarta Sans", sans-serif' }}>
-                      Connectez-vous pour laisser un avis →
+                      {t('detail.loginToReview')}
                     </Link>
                   </div>
                 )}
@@ -359,7 +361,7 @@ export default function ShowDetailPage() {
               <section>
                 <h2 className="text-2xl font-bold mb-4"
                   style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', color: '#0a0d2e' }}>
-                  Producteur
+                  {t('detail.producer')}
                 </h2>
                 <div className="flex items-center gap-4 rounded-2xl p-4 w-fit"
                   style={{ background: '#fff', boxShadow: '0 2px 12px rgba(0,6,102,0.07)' }}>
@@ -372,7 +374,7 @@ export default function ShowDetailPage() {
                       style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', color: '#0a0d2e' }}>
                       {show.producer.name ?? `${show.producer.firstname} ${show.producer.lastname}`}
                     </p>
-                    <p className="text-xs mt-0.5" style={{ color: '#888', fontFamily: 'Manrope, sans-serif' }}>Producteur</p>
+                    <p className="text-xs mt-0.5" style={{ color: '#888', fontFamily: 'Manrope, sans-serif' }}>{t('detail.producer')}</p>
                   </div>
                 </div>
               </section>
@@ -388,18 +390,18 @@ export default function ShowDetailPage() {
 
               <h2 className="text-xl font-bold mb-6"
                 style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', color: '#0a0d2e' }}>
-                Réserver vos places
+                {t('detail.bookYourSeats')}
               </h2>
 
               {!user ? (
                 <div className="text-center py-4">
                   <p className="text-sm mb-5" style={{ color: '#767683', fontFamily: 'Manrope, sans-serif' }}>
-                    Connectez-vous pour réserver.
+                    {t('detail.loginToBook')}
                   </p>
                   <button onClick={() => navigate('/login')}
                     className="w-full py-4 rounded-2xl font-bold text-sm text-white hover:opacity-90 transition-opacity"
                     style={{ background: 'linear-gradient(135deg, #000666, #1a237e)', fontFamily: '"Plus Jakarta Sans", sans-serif' }}>
-                    Se connecter →
+                    {t('detail.loginBtn')}
                   </button>
                 </div>
               ) : (
@@ -421,7 +423,7 @@ export default function ShowDetailPage() {
                   {representations.length > 0 && (
                     <div>
                       <p className="text-xs font-black uppercase tracking-widest mb-3"
-                        style={{ color: '#888', fontFamily: 'Manrope, sans-serif' }}>Choisir une date</p>
+                        style={{ color: '#888', fontFamily: 'Manrope, sans-serif' }}>{t('detail.chooseDate')}</p>
                       <div className="space-y-2 max-h-48 overflow-y-auto pr-1">
                         {representations.map((r) => {
                           const d = new Date(r.schedule ?? r.date_start)
@@ -456,7 +458,7 @@ export default function ShowDetailPage() {
                   {/* Tarifs */}
                   <div>
                     <p className="text-xs font-black uppercase tracking-widest mb-3"
-                      style={{ color: '#888', fontFamily: 'Manrope, sans-serif' }}>Type de billet</p>
+                      style={{ color: '#888', fontFamily: 'Manrope, sans-serif' }}>{t('detail.ticketType')}</p>
                     <div className="space-y-2">
                       {prices.map((p, i) => {
                         const isSel = selectedPrice?.id === p.id
@@ -472,7 +474,7 @@ export default function ShowDetailPage() {
                             {isPopular && (
                               <span className="absolute top-2 right-2 text-xs font-black px-2 py-0.5 rounded-full"
                                 style={{ background: '#fdd400', color: '#6f5c00', fontFamily: 'Manrope, sans-serif' }}>
-                                POPULAIRE
+                                {t('detail.popular')}
                               </span>
                             )}
                             <div className="flex items-center justify-between" style={{ paddingRight: isPopular ? '5rem' : 0 }}>
@@ -494,7 +496,7 @@ export default function ShowDetailPage() {
                   {/* Quantité */}
                   <div>
                     <p className="text-xs font-black uppercase tracking-widest mb-3"
-                      style={{ color: '#888', fontFamily: 'Manrope, sans-serif' }}>Nombre de places</p>
+                      style={{ color: '#888', fontFamily: 'Manrope, sans-serif' }}>{t('detail.numberOfSeats')}</p>
                     <div className="flex items-center rounded-xl"
                       style={{ background: '#f5f6fa', border: '1px solid #eceef1' }}>
                       <button type="button" onClick={() => setQuantity(q => Math.max(1, q - 1))}
@@ -502,7 +504,7 @@ export default function ShowDetailPage() {
                         style={{ color: '#000666', background: 'transparent', border: 'none', cursor: 'pointer' }}>−</button>
                       <span className="flex-1 text-center text-sm font-bold"
                         style={{ color: '#0a0d2e', fontFamily: '"Plus Jakarta Sans", sans-serif' }}>
-                        {quantity} place{quantity > 1 ? 's' : ''}
+                        {quantity} {quantity > 1 ? t('detail.seatPlural') : t('detail.seatSingular')}
                       </span>
                       <button type="button" onClick={() => setQuantity(q => Math.min(10, q + 1))}
                         className="px-5 py-3 text-xl font-bold hover:bg-gray-200 transition-colors rounded-r-xl"
@@ -515,7 +517,9 @@ export default function ShowDetailPage() {
                     <div className="flex items-center justify-between pt-3"
                       style={{ borderTop: '1px solid #eceef1' }}>
                       <p className="text-sm" style={{ color: '#888', fontFamily: 'Manrope, sans-serif' }}>
-                        Total pour {quantity} billet{quantity > 1 ? 's' : ''}
+                        {t('detail.totalFor')
+                          .replace('{n}', quantity)
+                          .replace('{s}', quantity > 1 ? t('detail.ticketPlural') : t('detail.ticketSingular'))}
                       </p>
                       <p className="text-2xl font-black"
                         style={{ color: '#0a0d2e', fontFamily: '"Plus Jakarta Sans", sans-serif' }}>
@@ -528,12 +532,12 @@ export default function ShowDetailPage() {
                     className="w-full py-4 rounded-2xl font-bold text-sm text-white flex items-center justify-center gap-2 hover:opacity-90 transition-opacity disabled:opacity-50"
                     style={{ background: 'linear-gradient(135deg, #000666, #1a237e)', fontFamily: '"Plus Jakarta Sans", sans-serif' }}>
                     {submitting
-                      ? <><div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" /> En cours...</>
-                      : 'Confirmer la réservation ⚡'}
+                      ? <><div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" /> {t('detail.inProgress')}</>
+                      : t('detail.confirmReservation')}
                   </button>
 
                   <p className="text-center text-xs" style={{ color: '#aaa', fontFamily: 'Manrope, sans-serif' }}>
-                    🔒 Paiement sécurisé via Ovatio Member
+                    {t('detail.securePayment')}
                   </p>
                 </form>
               )}
@@ -550,11 +554,11 @@ export default function ShowDetailPage() {
                   style={{ background: 'linear-gradient(to top, rgba(0,6,60,0.9) 40%, transparent)' }}>
                   <p className="text-base font-bold text-white"
                     style={{ fontFamily: '"Plus Jakarta Sans", sans-serif' }}>
-                    Coulisses &amp; Galerie
+                    {t('detail.backstage')}
                   </p>
                   <p className="text-xs mt-1"
                     style={{ color: 'rgba(255,255,255,0.55)', fontFamily: 'Manrope, sans-serif' }}>
-                    Découvrez l'univers visuel du spectacle avant votre venue.
+                    {t('detail.backstageDesc')}
                   </p>
                   {/* Thumbnails */}
                   <div className="flex gap-2 mt-3">
@@ -582,7 +586,7 @@ export default function ShowDetailPage() {
 }
 
 /* ─── Formulaire avis (membres connectés) ────────────────────────── */
-function AddReviewForm({ showId, onAdded }) {
+function AddReviewForm({ showId, onAdded, t }) {
   const [score, setScore]     = useState(0)
   const [hover, setHover]     = useState(0)
   const [comment, setComment] = useState('')
@@ -592,7 +596,7 @@ function AddReviewForm({ showId, onAdded }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    if (score === 0) { setErr('Veuillez choisir une note.'); return }
+    if (score === 0) { setErr(t('detail.chooseNote')); return }
     setSending(true); setErr('')
     try {
       const res = await api.post(`/shows/${showId}/reviews`, { score, comment })
@@ -601,9 +605,9 @@ function AddReviewForm({ showId, onAdded }) {
       setComment(''); setScore(0)
     } catch (err) {
       if (err.response?.status === 403) {
-        setErr(err.response.data?.message ?? 'Vous devez avoir un ticket payé pour ce spectacle pour laisser un avis.')
+        setErr(err.response.data?.message ?? t('detail.reviewNeedTicket'))
       } else {
-        setErr('Erreur lors de l\'envoi. Réessayez.')
+        setErr(t('detail.reviewError'))
       }
     } finally { setSending(false) }
   }
@@ -611,16 +615,18 @@ function AddReviewForm({ showId, onAdded }) {
   if (sent) return (
     <div className="rounded-2xl px-5 py-4 text-sm"
       style={{ background: '#d4f5e2', color: '#1a5c35', fontFamily: 'Manrope, sans-serif' }}>
-      ✓ Votre avis a été soumis et sera visible après validation.
+      {t('detail.reviewSent')}
     </div>
   )
+
+  const reviewLabels = ['', t('detail.reviewLabel_1'), t('detail.reviewLabel_2'), t('detail.reviewLabel_3'), t('detail.reviewLabel_4'), t('detail.reviewLabel_5')]
 
   return (
     <form onSubmit={handleSubmit} className="rounded-2xl p-5 space-y-4"
       style={{ background: '#fff', boxShadow: '0 2px 12px rgba(0,6,102,0.06)' }}>
       <p className="text-sm font-bold"
         style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', color: '#0a0d2e' }}>
-        Laisser un avis
+        {t('detail.addReview')}
       </p>
 
       {/* Étoiles interactives */}
@@ -637,7 +643,7 @@ function AddReviewForm({ showId, onAdded }) {
         ))}
         {score > 0 && (
           <span className="text-xs ml-2" style={{ color: '#888', fontFamily: 'Manrope, sans-serif' }}>
-            {['', 'Mauvais', 'Passable', 'Bien', 'Très bien', 'Excellent'][score]}
+            {reviewLabels[score]}
           </span>
         )}
       </div>
@@ -645,7 +651,7 @@ function AddReviewForm({ showId, onAdded }) {
       <textarea
         value={comment}
         onChange={e => setComment(e.target.value)}
-        placeholder="Partagez votre expérience..."
+        placeholder={t('detail.reviewPlaceholder')}
         rows={3}
         required
         className="w-full rounded-xl px-4 py-3 text-sm outline-none resize-none"
@@ -657,29 +663,29 @@ function AddReviewForm({ showId, onAdded }) {
       <button type="submit" disabled={sending}
         className="px-5 py-2.5 rounded-xl text-sm font-bold text-white hover:opacity-90 transition-opacity disabled:opacity-50"
         style={{ background: 'linear-gradient(135deg, #000666, #1a237e)', fontFamily: '"Plus Jakarta Sans", sans-serif', border: 'none', cursor: 'pointer' }}>
-        {sending ? 'Envoi...' : 'Publier mon avis'}
+        {sending ? t('detail.sending') : t('detail.submit')}
       </button>
     </form>
   )
 }
 
-function Spinner() {
+function Spinner({ t }) {
   return (
     <div className="flex flex-col items-center justify-center h-64 gap-4">
       <div className="w-10 h-10 rounded-full border-4 animate-spin"
         style={{ borderColor: '#e0e3e6', borderTopColor: '#000666' }} />
       <p className="text-sm" style={{ color: '#767683', fontFamily: 'Manrope, sans-serif' }}>
-        Chargement du spectacle...
+        {t('detail.loading')}
       </p>
     </div>
   )
 }
 
-function ErrorScreen({ msg }) {
+function ErrorScreen({ msg, t }) {
   return (
     <div className="flex flex-col items-center justify-center py-32 gap-4">
       <p className="text-sm" style={{ color: '#767683', fontFamily: 'Manrope, sans-serif' }}>{msg}</p>
-      <Link to="/shows" className="text-sm font-bold" style={{ color: '#000666' }}>← Retour aux spectacles</Link>
+      <Link to="/shows" className="text-sm font-bold" style={{ color: '#000666' }}>{t('detail.backToShows')}</Link>
     </div>
   )
 }

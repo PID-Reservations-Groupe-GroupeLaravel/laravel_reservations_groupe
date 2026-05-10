@@ -1,8 +1,10 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import api from '../api/axios'
+import { useLanguage } from '../contexts/LanguageContext'
 
 export default function ForgotPasswordPage() {
+  const { t } = useLanguage()
   const [email, setEmail]     = useState('')
   const [sent, setSent]       = useState(false)
   const [loading, setLoading] = useState(false)
@@ -16,7 +18,7 @@ export default function ForgotPasswordPage() {
       await api.post('/forgot-password', { email })
       setSent(true)
     } catch (err) {
-      setError(err.response?.data?.message ?? 'Erreur lors de l\'envoi.')
+      setError(err.response?.data?.message ?? t('auth.sendError'))
     } finally {
       setLoading(false)
     }
@@ -32,26 +34,26 @@ export default function ForgotPasswordPage() {
           </h1>
           <p className="text-xs mt-1 tracking-widest uppercase"
             style={{ color: 'rgba(255,255,255,0.5)', fontFamily: 'Manrope, sans-serif' }}>
-            La Scène Curatée
+            {t('shows.hero_badge')}
           </p>
         </Link>
 
         <div className="rounded-3xl p-8" style={{ background: '#ffffff', boxShadow: '0 25px 50px rgba(0,0,0,0.3)' }}>
           <h2 className="text-xl font-bold mb-1" style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', color: '#191c1e' }}>
-            Mot de passe oublié
+            {t('auth.forgotTitle')}
           </h2>
           <p className="text-sm mb-6" style={{ color: '#767683', fontFamily: 'Manrope, sans-serif' }}>
-            Entrez votre email pour recevoir un lien de réinitialisation.
+            {t('auth.forgotDesc')}
           </p>
 
           {sent ? (
             <div className="text-center py-4">
               <div className="text-4xl mb-3">📧</div>
               <p className="text-sm font-semibold mb-2" style={{ color: '#191c1e', fontFamily: 'Manrope, sans-serif' }}>
-                Email envoyé !
+                {t('auth.emailSent')}
               </p>
               <p className="text-xs" style={{ color: '#767683', fontFamily: 'Manrope, sans-serif' }}>
-                Vérifiez votre boîte mail et suivez le lien reçu.
+                {t('auth.emailSentDesc')}
               </p>
             </div>
           ) : (
@@ -65,7 +67,7 @@ export default function ForgotPasswordPage() {
               <div>
                 <label className="block text-xs font-semibold uppercase tracking-wider mb-2"
                   style={{ color: '#454652', fontFamily: 'Manrope, sans-serif' }}>
-                  Adresse email
+                  {t('auth.email')}
                 </label>
                 <div className="flex items-center rounded-xl px-4 py-3 gap-3" style={{ background: '#f2f4f7' }}>
                   <svg className="w-4 h-4 shrink-0" style={{ color: '#767683' }} fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -79,7 +81,7 @@ export default function ForgotPasswordPage() {
               <button type="submit" disabled={loading}
                 className="w-full py-3 rounded-xl text-white font-semibold text-sm transition-opacity disabled:opacity-50"
                 style={{ background: 'linear-gradient(135deg, #000666, #1a237e)', fontFamily: '"Plus Jakarta Sans", sans-serif' }}>
-                {loading ? 'Envoi...' : 'Envoyer le lien'}
+                {loading ? t('auth.sending') : t('auth.sendLink')}
               </button>
             </form>
           )}
@@ -87,7 +89,7 @@ export default function ForgotPasswordPage() {
 
         <p className="text-center text-sm mt-6" style={{ color: 'rgba(255,255,255,0.5)', fontFamily: 'Manrope, sans-serif' }}>
           <Link to="/login" className="font-semibold hover:underline" style={{ color: '#fdd400' }}>
-            ← Retour à la connexion
+            {t('auth.backToLogin')}
           </Link>
         </p>
       </div>
