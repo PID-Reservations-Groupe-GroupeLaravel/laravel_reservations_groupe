@@ -244,11 +244,14 @@ Route::post('/check-email', function (Request $request) {
 Route::post('/login', function (Request $request) {
 
     $request->validate([
-        'email' => 'required|email',
+        'email'    => 'required|string',
         'password' => 'required|string',
     ]);
 
-    $user = User::where('email', $request->email)->first();
+    $identifier = $request->email;
+    $user = User::where('email', $identifier)
+                ->orWhere('login', $identifier)
+                ->first();
 
     if (!$user || !Hash::check($request->password, $user->password)) {
         return response()->json(['message' => 'Invalid credentials'], 401);

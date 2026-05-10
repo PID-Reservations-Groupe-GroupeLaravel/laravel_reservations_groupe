@@ -17,11 +17,12 @@ api.interceptors.request.use((config) => {
   return config
 })
 
-// Rediriger vers login si 401
+// Rediriger vers login si 401, SAUF sur le endpoint de connexion lui-même
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response?.status === 401) {
+    const isLoginRequest = error.config?.url?.includes('/login')
+    if (error.response?.status === 401 && !isLoginRequest) {
       localStorage.removeItem('ovatio_token')
       localStorage.removeItem('ovatio_user')
       window.location.href = '/login'
