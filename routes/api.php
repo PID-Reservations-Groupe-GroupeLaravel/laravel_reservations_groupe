@@ -1,5 +1,10 @@
 <?php
 
+use App\Http\Controllers\Admin\AdminRepresentationController;
+use App\Http\Controllers\Admin\AdminReservationController;
+use App\Http\Controllers\Admin\AdminShowController;
+use App\Http\Controllers\Admin\AdminStatsController;
+use App\Http\Controllers\Admin\AdminUserController;
 use App\Http\Controllers\ArtistApiController;
 use App\Http\Controllers\ShowApiController;
 use App\Mail\WelcomeMail;
@@ -360,6 +365,15 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // ─── Admin ───────────────────────────────────────────────────────────────
     Route::middleware('admin')->prefix('admin')->group(function () {
+
+        // ─── CRUD complet (D1) ───────────────────────────────────────────────
+        Route::apiResource('users', AdminUserController::class)->only(['index', 'update', 'destroy']);
+        Route::apiResource('shows', AdminShowController::class);
+        Route::apiResource('representations', AdminRepresentationController::class);
+        Route::get('reservations',            [AdminReservationController::class, 'index']);
+        Route::patch('reservations/{id}',     [AdminReservationController::class, 'update']);
+        Route::get('reservations/export/csv', [AdminReservationController::class, 'exportCsv']);
+        Route::get('stats',                   [AdminStatsController::class, 'index']);
 
         // GET /admin/demandes → liste des demandes producteur
         Route::get('/demandes', function () {
