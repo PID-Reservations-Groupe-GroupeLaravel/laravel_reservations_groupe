@@ -16,6 +16,7 @@ import CookiesPage        from './pages/CookiesPage'
 import BecomeProducerPage from './pages/BecomeProducerPage'
 import AboutPage          from './pages/AboutPage'
 import AdminPage          from './pages/AdminPage'
+import OAuthCallbackPage  from './pages/OAuthCallbackPage'
 
 /* ─── Layout WITH Navbar + Footer (toutes les pages sauf auth) ─── */
 function AppLayout() {
@@ -90,6 +91,7 @@ export default function App() {
               <Route path="/login"           element={<LoginPage />} />
               <Route path="/register"        element={<RegisterPage />} />
               <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+              <Route path="/auth/callback"   element={<OAuthCallbackPage />} />
             </Route>
 
             {/* Pages APP — avec Navbar + Footer */}
