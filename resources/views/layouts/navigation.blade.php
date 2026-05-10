@@ -12,37 +12,49 @@
 
                 <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
                     <x-nav-link :href="route('home')" :active="request()->routeIs('home')">
-                        Home
+                        {{ __('messages.nav.home') }}
                     </x-nav-link>
 
                     <x-nav-link :href="route('show.index')" :active="request()->routeIs('show.*')">
-                        Shows
+                        {{ __('messages.nav.shows') }}
                     </x-nav-link>
 
                     <x-nav-link :href="route('location.index')" :active="request()->routeIs('location.*')">
-                        Locations
+                        {{ __('messages.nav.locations') }}
                     </x-nav-link>
 
                     <x-nav-link :href="route('type.index')" :active="request()->routeIs('type.*')">
-                        Types
+                        {{ __('messages.nav.types') }}
                     </x-nav-link>
 
                     <x-nav-link :href="route('price.index')" :active="request()->routeIs('price.*')">
-                        Prices
+                        {{ __('messages.nav.prices') }}
                     </x-nav-link>
 
                     <x-nav-link :href="route('locality.index')" :active="request()->routeIs('locality.*')">
-                        Localities
+                        {{ __('messages.nav.localities') }}
                     </x-nav-link>
 
                     <x-nav-link :href="route('role.index')" :active="request()->routeIs('role.*')">
-                        Roles
+                        {{ __('messages.nav.roles') }}
                     </x-nav-link>
                 </div>
             </div>
 
-            <!-- Droite: Auth / Guest -->
-            <div class="hidden sm:flex sm:items-center sm:ml-6">
+            <!-- Droite: langue + Auth / Guest -->
+            <div class="hidden sm:flex sm:items-center sm:ml-6 gap-4">
+
+                <!-- Language switcher -->
+                <div class="flex gap-1 text-xs">
+                    <a href="{{ route('lang.switch', 'en') }}"
+                       class="px-2 py-1 rounded border {{ app()->getLocale() === 'en' ? 'bg-gray-800 text-white border-gray-800' : 'border-gray-300 text-gray-600 hover:border-gray-500' }}">
+                        EN
+                    </a>
+                    <a href="{{ route('lang.switch', 'nl') }}"
+                       class="px-2 py-1 rounded border {{ app()->getLocale() === 'nl' ? 'bg-gray-800 text-white border-gray-800' : 'border-gray-300 text-gray-600 hover:border-gray-500' }}">
+                        NL
+                    </a>
+                </div>
 
                 @auth
                     <x-dropdown align="right" width="48">
@@ -60,14 +72,14 @@
 
                         <x-slot name="content">
                             <x-dropdown-link :href="route('profile.edit')">
-                                Profile
+                                {{ __('messages.nav.profile') }}
                             </x-dropdown-link>
 
                             <form method="POST" action="{{ route('logout') }}">
                                 @csrf
                                 <x-dropdown-link :href="route('logout')"
                                     onclick="event.preventDefault(); this.closest('form').submit();">
-                                    Log Out
+                                    {{ __('Log Out') }}
                                 </x-dropdown-link>
                             </form>
                         </x-slot>
@@ -77,10 +89,10 @@
                 @guest
                     <div class="space-x-4">
                         <a href="{{ route('login') }}" class="text-sm text-gray-600 hover:text-gray-900">
-                            Login
+                            {{ __('messages.nav.login') }}
                         </a>
                         <a href="{{ route('register') }}" class="text-sm text-gray-600 hover:text-gray-900">
-                            Register
+                            {{ __('messages.nav.register') }}
                         </a>
                     </div>
                 @endguest

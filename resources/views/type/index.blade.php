@@ -1,9 +1,9 @@
 @extends('layouts.main')
 
-@section('title', 'Liste des types d\'artistes')
+@section('title', __('messages.types.list'))
 
 @section('content')
-    <h1>Liste des {{ $resource }}</h1>
+    <h1>{{ __('messages.types.list') }}</h1>
 
     <ul>
     @foreach($types as $type)

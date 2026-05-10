@@ -1,9 +1,9 @@
 @extends('layouts.main')
 
-@section('title', 'Liste des localités')
+@section('title', __('messages.localities.list'))
 
 @section('content')
-    <h1>Liste des localités</h1>
+    <h1>{{ __('messages.localities.list') }}</h1>
 
     <ul>
         @foreach($localities as $locality)

@@ -1,9 +1,9 @@
 @extends('layouts.main')
 
-@section('title', 'Liste des prix')
+@section('title', __('messages.prices.list'))
 
 @section('content')
-    <h1>Liste des tarifs</h1>
+    <h1>{{ __('messages.prices.title') }}</h1>
 
     <ul>
         @foreach($prices as $price)

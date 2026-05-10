@@ -1,6 +1,6 @@
 @extends('layouts.main')
 
-@section('title', 'Fiche d\'un lieu de spectacle')
+@section('title', __('messages.locations.profile'))
 
 @section('content')
     <article>
@@ -21,7 +21,7 @@
                     </a>
                 </p>
             @else
-                <p>Pas de site web</p>
+                <p>{{ __('messages.locations.no_website') }}</p>
             @endif
 
             @if($location->phone)
@@ -31,11 +31,11 @@
                     </a>
                 </p>
             @else
-                <p>Pas de téléphone</p>
+                <p>{{ __('messages.locations.no_phone') }}</p>
             @endif
         </address>
 
-        <h2>Liste des spectacles</h2>
+        <h2>{{ __('messages.locations.shows_list') }}</h2>
 
         <ul>
             @foreach($location->shows as $show)
@@ -49,6 +49,6 @@
     </article>
 
     <nav>
-        <a href="{{ route('location.index') }}">Retour à l'index</a>
+        <a href="{{ route('location.index') }}">{{ __('messages.locations.back_index') }}</a>
     </nav>
 @endsection
