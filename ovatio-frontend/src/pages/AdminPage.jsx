@@ -24,7 +24,7 @@ export default function AdminPage() {
   const isAdmin    = user?.roles?.includes('admin')
   const isProducer = user?.roles?.includes('producer')
 
-  const defaultTab = isAdmin ? 'demandes' : 'avis'
+  const defaultTab = isAdmin ? 'demandes' : 'stats'
   const [tab, setTab] = useState(defaultTab)
 
   useEffect(() => {
@@ -69,6 +69,9 @@ export default function AdminPage() {
           )}
           {isProducer && (
             <>
+              <button style={styleTab(tab === 'stats')} onClick={() => setTab('stats')}>
+                {t('admin.tabStats')}
+              </button>
               <button style={styleTab(tab === 'spectacles')} onClick={() => setTab('spectacles')}>
                 {t('admin.tabShows')}
               </button>
@@ -84,6 +87,7 @@ export default function AdminPage() {
         {tab === 'membres'     && isAdmin    && <MembresTab t={t} />}
         {tab === 'producteurs' && isAdmin    && <ProducteursTab t={t} />}
         {tab === 'artistes'    && isAdmin    && <ArtistesTab t={t} />}
+        {tab === 'stats'       && isProducer && <StatsProducerTab t={t} />}
         {tab === 'spectacles'  && isProducer && <SpectaclesTab t={t} />}
         {tab === 'avis'        && isProducer && <AvisTab t={t} />}
       </div>
@@ -609,100 +613,489 @@ function ProducteursTab({ t }) {
 }
 
 /* ═══════════════════════════════════════════════════════
-   ONGLET MES SPECTACLES (producteur)
+   ONGLET MES SPECTACLES (producteur) — CRUD complet
 ═══════════════════════════════════════════════════════ */
-function SpectaclesTab({ t }) {
-  const [shows, setShows]     = useState([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError]     = useState('')
+const EMPTY_FORM = { title: '', description: '', duration: '', created_in: '', location_id: '', bookable: false }
 
-  useEffect(() => {
+function SpectaclesTab({ t }) {
+  const [view, setView]           = useState('list')
+  const [shows, setShows]         = useState([])
+  const [loading, setLoading]     = useState(true)
+  const [error, setError]         = useState('')
+  const [refData, setRefData]     = useState({ locations: [], prices: [], artists: [] })
+  const [editingShow, setEditingShow] = useState(null)
+  const [form, setForm]           = useState(EMPTY_FORM)
+  const [saving, setSaving]       = useState(false)
+  const [formError, setFormError] = useState('')
+  // reps view
+  const [repsShow, setRepsShow]   = useState(null)
+  const [reps, setReps]           = useState([])
+  const [repsLoading, setRepsLoading] = useState(false)
+  const [repsError, setRepsError] = useState('')
+  const [newRep, setNewRep]       = useState({ schedule: '', location_id: '' })
+  const [addingRep, setAddingRep] = useState(false)
+
+  const loadShows = () =>
     api.get('/producer/shows')
       .then(res => setShows(res.data))
       .catch(() => setError(t('admin.loadShowsError')))
       .finally(() => setLoading(false))
+
+  useEffect(() => {
+    loadShows()
+    api.get('/producer/data').then(res => setRefData(res.data)).catch(() => {})
   }, [])
 
   const handleToggle = async (id, bookable) => {
-    const endpoint = bookable ? `/producer/shows/${id}/unconfirm` : `/producer/shows/${id}/confirm`
+    const ep = bookable ? `/producer/shows/${id}/unconfirm` : `/producer/shows/${id}/confirm`
     try {
-      await api.patch(endpoint)
+      await api.patch(ep)
       setShows(prev => prev.map(s => s.id === id ? { ...s, bookable: !bookable } : s))
-    } catch (err) {
-      alert(err.response?.data?.message ?? 'Erreur.')
+    } catch { alert(t('admin.saveError')) }
+  }
+
+  const handleDelete = async (id) => {
+    if (!window.confirm(t('admin.deleteShowConfirm'))) return
+    try {
+      await api.delete(`/producer/shows/${id}`)
+      setShows(prev => prev.filter(s => s.id !== id))
+    } catch { alert(t('admin.deleteError')) }
+  }
+
+  const openCreate = () => {
+    setEditingShow(null)
+    setForm({ ...EMPTY_FORM, location_id: refData.locations[0]?.id ?? '' })
+    setFormError('')
+    setView('form')
+  }
+
+  const openEdit = (show) => {
+    setEditingShow(show)
+    setForm({
+      title:       show.title ?? '',
+      description: show.description ?? '',
+      duration:    show.duration ?? '',
+      created_in:  show.created_in ?? '',
+      location_id: show.location_id ?? '',
+      bookable:    show.bookable ?? false,
+    })
+    setFormError('')
+    setView('form')
+  }
+
+  const openReps = (show) => {
+    setRepsShow(show)
+    setRepsLoading(true)
+    setRepsError('')
+    setNewRep({ schedule: '', location_id: refData.locations[0]?.id ?? '' })
+    setView('reps')
+    api.get(`/producer/shows/${show.id}/detail`)
+      .then(res => setReps(res.data.representations ?? []))
+      .catch(() => setRepsError(t('admin.loadRepsError')))
+      .finally(() => setRepsLoading(false))
+  }
+
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+    setFormError('')
+    setSaving(true)
+    const payload = {
+      ...form,
+      duration:    parseInt(form.duration, 10) || undefined,
+      created_in:  parseInt(form.created_in, 10) || undefined,
+      location_id: form.location_id || undefined,
     }
+    try {
+      if (editingShow) {
+        const res = await api.put(`/producer/shows/${editingShow.id}`, payload)
+        setShows(prev => prev.map(s => s.id === editingShow.id ? res.data : s))
+      } else {
+        const res = await api.post('/producer/shows', payload)
+        setShows(prev => [res.data, ...prev])
+      }
+      setView('list')
+    } catch (err) {
+      setFormError(err.response?.data?.message ?? t('admin.saveError'))
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  const handleAddRep = async (e) => {
+    e.preventDefault()
+    setAddingRep(true)
+    try {
+      const res = await api.post(`/producer/shows/${repsShow.id}/representations`, newRep)
+      setReps(prev => [...prev, res.data])
+      setNewRep({ schedule: '', location_id: refData.locations[0]?.id ?? '' })
+      setShows(prev => prev.map(s =>
+        s.id === repsShow.id ? { ...s, representations_count: (s.representations_count ?? 0) + 1 } : s
+      ))
+    } catch (err) {
+      alert(err.response?.data?.message ?? t('admin.saveError'))
+    } finally {
+      setAddingRep(false)
+    }
+  }
+
+  const handleCancelRep = async (repId) => {
+    if (!window.confirm(t('admin.cancelRepConfirm'))) return
+    try {
+      await api.delete(`/producer/representations/${repId}`)
+      setReps(prev => prev.filter(r => r.id !== repId))
+      setShows(prev => prev.map(s =>
+        s.id === repsShow.id ? { ...s, representations_count: Math.max(0, (s.representations_count ?? 1) - 1) } : s
+      ))
+    } catch { alert(t('admin.deleteError')) }
   }
 
   if (loading) return <Spinner />
   if (error)   return <ErrorMsg msg={error} />
 
-  if (shows.length === 0) return (
-    <div className="text-center py-16 rounded-2xl"
-      style={{ background: '#fff', color: '#767683', fontFamily: 'Manrope, sans-serif' }}>
-      {t('admin.noShows')}
-    </div>
-  )
+  const inputStyle = {
+    fontFamily: 'Manrope, sans-serif', fontSize: '0.875rem', color: '#191c1e',
+    background: '#f7f9fc', border: '1px solid #e0e3e6', borderRadius: '8px',
+    padding: '8px 12px', outline: 'none', width: '100%',
+  }
 
-  return (
-    <>
-      <div className="rounded-2xl overflow-hidden"
-        style={{ background: '#fff', boxShadow: '0 4px 24px rgba(0,6,102,0.07)' }}>
+  /* ── Vue FORMULAIRE ───────────────────────────────── */
+  if (view === 'form') {
+    return (
+      <div>
+        <button onClick={() => setView('list')}
+          style={{ background: 'none', border: 'none', cursor: 'pointer',
+            color: '#000666', fontFamily: 'Manrope, sans-serif', fontSize: '0.875rem',
+            fontWeight: 600, marginBottom: '1.5rem', padding: 0 }}>
+          ← {t('admin.backToList')}
+        </button>
 
-        <div className="grid grid-cols-12 px-6 py-3 text-xs font-black uppercase tracking-widest"
-          style={{ background: '#f7f9fc', color: '#767683', fontFamily: 'Manrope, sans-serif', borderBottom: '1px solid #eceef1' }}>
-          <span className="col-span-7">{t('admin.colShow')}</span>
-          <span className="col-span-3">{t('admin.colStatus')}</span>
-          <span className="col-span-2 text-right">{t('admin.colAction')}</span>
-        </div>
+        <div className="rounded-2xl p-8"
+          style={{ background: '#fff', boxShadow: '0 4px 24px rgba(0,6,102,0.07)' }}>
+          <h2 className="text-xl font-bold mb-6"
+            style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', color: '#191c1e' }}>
+            {editingShow ? t('admin.editShow') : t('admin.createShow')}
+          </h2>
 
-        {shows.map((s, i) => (
-          <div key={s.id} className="grid grid-cols-12 px-6 py-4 items-center"
-            style={{ borderBottom: i < shows.length - 1 ? '1px solid #f2f4f7' : 'none' }}>
+          {formError && (
+            <div className="rounded-xl px-4 py-3 mb-4 text-sm"
+              style={{ background: '#ffebee', color: '#c62828', fontFamily: 'Manrope, sans-serif' }}>
+              {formError}
+            </div>
+          )}
 
-            <div className="col-span-7 flex items-center gap-3">
-              {s.poster_url
-                ? <img src={`/images/${s.poster_url}`} alt={s.title}
-                    className="w-10 h-10 rounded-lg object-cover shrink-0" />
-                : <div className="w-10 h-10 rounded-lg shrink-0 flex items-center justify-center text-white text-lg"
-                    style={{ background: 'linear-gradient(135deg, #000666, #1a237e)' }}>🎭</div>
-              }
-              <p className="text-sm font-semibold"
-                style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', color: '#191c1e' }}>
-                {s.title}
-              </p>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div>
+              <label className="text-xs font-semibold mb-1 block" style={{ color: '#767683', fontFamily: 'Manrope, sans-serif' }}>
+                {t('admin.fieldTitle')} *
+              </label>
+              <input style={inputStyle} required value={form.title}
+                onChange={e => setForm(p => ({ ...p, title: e.target.value }))} />
             </div>
 
-            <div className="col-span-3">
-              <span className="text-xs font-bold px-3 py-1 rounded-full"
-                style={{
-                  background: s.bookable ? '#e8f5e9' : '#fff8e1',
-                  color:      s.bookable ? '#2e7d32' : '#f57f17',
-                  fontFamily: 'Manrope, sans-serif',
-                }}>
-                {s.bookable ? t('admin.showConfirmed') : t('admin.showToConfirm')}
-              </span>
+            <div>
+              <label className="text-xs font-semibold mb-1 block" style={{ color: '#767683', fontFamily: 'Manrope, sans-serif' }}>
+                {t('admin.fieldDescription')}
+              </label>
+              <textarea style={{ ...inputStyle, resize: 'none' }} rows={4} value={form.description}
+                onChange={e => setForm(p => ({ ...p, description: e.target.value }))} />
             </div>
 
-            <div className="col-span-2 flex justify-end">
-              <button onClick={() => handleToggle(s.id, s.bookable)}
-                style={{
-                  background: s.bookable ? '#ffdad6' : '#000666',
-                  color:      s.bookable ? '#93000a' : '#fff',
-                  border: 'none', cursor: 'pointer',
-                  padding: '6px 14px', borderRadius: '8px',
-                  fontFamily: 'Manrope, sans-serif', fontSize: '0.75rem', fontWeight: 600,
-                }}>
-                {s.bookable ? t('admin.removeBtn') : t('admin.confirmBtn')}
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="text-xs font-semibold mb-1 block" style={{ color: '#767683', fontFamily: 'Manrope, sans-serif' }}>
+                  {t('admin.fieldDuration')} *
+                </label>
+                <input style={inputStyle} type="number" min="1" max="600" required value={form.duration}
+                  onChange={e => setForm(p => ({ ...p, duration: e.target.value }))} />
+              </div>
+              <div>
+                <label className="text-xs font-semibold mb-1 block" style={{ color: '#767683', fontFamily: 'Manrope, sans-serif' }}>
+                  {t('admin.fieldCreatedIn')} *
+                </label>
+                <input style={inputStyle} type="number" min="1900" max="2100" required value={form.created_in}
+                  onChange={e => setForm(p => ({ ...p, created_in: e.target.value }))} />
+              </div>
+            </div>
+
+            <div>
+              <label className="text-xs font-semibold mb-1 block" style={{ color: '#767683', fontFamily: 'Manrope, sans-serif' }}>
+                {t('admin.fieldLocation')}
+              </label>
+              <select style={inputStyle} value={form.location_id}
+                onChange={e => setForm(p => ({ ...p, location_id: e.target.value }))}>
+                <option value="">—</option>
+                {refData.locations.map(l => (
+                  <option key={l.id} value={l.id}>{l.designation}</option>
+                ))}
+              </select>
+            </div>
+
+            <div className="flex items-center gap-3">
+              <input type="checkbox" id="bookable" checked={form.bookable}
+                onChange={e => setForm(p => ({ ...p, bookable: e.target.checked }))}
+                style={{ width: '16px', height: '16px', accentColor: '#000666' }} />
+              <label htmlFor="bookable" className="text-sm"
+                style={{ fontFamily: 'Manrope, sans-serif', color: '#454652', cursor: 'pointer' }}>
+                {t('admin.fieldBookable')}
+              </label>
+            </div>
+
+            <div className="flex gap-3 pt-2">
+              <button type="submit" disabled={saving}
+                style={{ background: '#000666', color: '#fff', border: 'none', cursor: 'pointer',
+                  padding: '10px 24px', borderRadius: '10px', fontFamily: 'Manrope, sans-serif',
+                  fontSize: '0.875rem', fontWeight: 600, opacity: saving ? 0.7 : 1 }}>
+                {saving ? t('admin.saving') : editingShow ? t('admin.updateBtn') : t('admin.addBtn')}
+              </button>
+              <button type="button" onClick={() => setView('list')}
+                style={{ background: '#f2f4f7', color: '#454652', border: 'none', cursor: 'pointer',
+                  padding: '10px 20px', borderRadius: '10px', fontFamily: 'Manrope, sans-serif', fontSize: '0.875rem' }}>
+                {t('admin.cancelBtn')}
               </button>
             </div>
-          </div>
-        ))}
+          </form>
+        </div>
+      </div>
+    )
+  }
+
+  /* ── Vue REPRÉSENTATIONS ──────────────────────────── */
+  if (view === 'reps') {
+    return (
+      <div>
+        <button onClick={() => setView('list')}
+          style={{ background: 'none', border: 'none', cursor: 'pointer',
+            color: '#000666', fontFamily: 'Manrope, sans-serif', fontSize: '0.875rem',
+            fontWeight: 600, marginBottom: '1.5rem', padding: 0 }}>
+          ← {t('admin.backToList')}
+        </button>
+
+        <h2 className="text-xl font-bold mb-6"
+          style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', color: '#191c1e' }}>
+          {t('admin.representationsFor')} <span style={{ color: '#000666' }}>{repsShow?.title}</span>
+        </h2>
+
+        {repsLoading ? <Spinner /> : repsError ? <ErrorMsg msg={repsError} /> : (
+          <>
+            {/* Liste des représentations */}
+            <div className="rounded-2xl overflow-hidden mb-6"
+              style={{ background: '#fff', boxShadow: '0 4px 24px rgba(0,6,102,0.07)' }}>
+              {reps.length === 0 ? (
+                <div className="py-10 text-center text-sm" style={{ color: '#767683', fontFamily: 'Manrope, sans-serif' }}>
+                  {t('admin.noReps')}
+                </div>
+              ) : reps.map((r, i) => (
+                <div key={r.id} className="flex items-center justify-between px-6 py-4"
+                  style={{ borderBottom: i < reps.length - 1 ? '1px solid #f2f4f7' : 'none' }}>
+                  <div>
+                    <p className="text-sm font-semibold"
+                      style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', color: '#191c1e' }}>
+                      {r.schedule ? new Date(r.schedule).toLocaleString('fr-BE', {
+                        dateStyle: 'medium', timeStyle: 'short'
+                      }) : '—'}
+                    </p>
+                    {r.location?.name && (
+                      <p className="text-xs mt-0.5" style={{ color: '#767683', fontFamily: 'Manrope, sans-serif' }}>
+                        {r.location.name}
+                      </p>
+                    )}
+                  </div>
+                  <button onClick={() => handleCancelRep(r.id)}
+                    style={{ background: '#ffdad6', color: '#93000a', border: 'none', cursor: 'pointer',
+                      padding: '4px 14px', borderRadius: '8px', fontFamily: 'Manrope, sans-serif',
+                      fontSize: '0.75rem', fontWeight: 600 }}>
+                    {t('admin.deleteBtn')}
+                  </button>
+                </div>
+              ))}
+            </div>
+
+            {/* Formulaire ajout représentation */}
+            <div className="rounded-2xl p-6"
+              style={{ background: '#fff', boxShadow: '0 4px 24px rgba(0,6,102,0.07)' }}>
+              <h3 className="text-sm font-bold mb-4"
+                style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', color: '#191c1e' }}>
+                {t('admin.addRep')}
+              </h3>
+              <form onSubmit={handleAddRep} className="flex flex-wrap gap-3 items-end">
+                <div className="flex-1 min-w-48">
+                  <label className="text-xs font-semibold mb-1 block" style={{ color: '#767683', fontFamily: 'Manrope, sans-serif' }}>
+                    {t('admin.fieldSchedule')}
+                  </label>
+                  <input style={inputStyle} type="datetime-local" required value={newRep.schedule}
+                    onChange={e => setNewRep(p => ({ ...p, schedule: e.target.value }))} />
+                </div>
+                <div className="flex-1 min-w-48">
+                  <label className="text-xs font-semibold mb-1 block" style={{ color: '#767683', fontFamily: 'Manrope, sans-serif' }}>
+                    {t('admin.repLocation')}
+                  </label>
+                  <select style={inputStyle} value={newRep.location_id}
+                    onChange={e => setNewRep(p => ({ ...p, location_id: e.target.value }))}>
+                    <option value="">—</option>
+                    {refData.locations.map(l => (
+                      <option key={l.id} value={l.id}>{l.designation}</option>
+                    ))}
+                  </select>
+                </div>
+                <button type="submit" disabled={addingRep}
+                  style={{ background: '#000666', color: '#fff', border: 'none', cursor: 'pointer',
+                    padding: '9px 20px', borderRadius: '8px', fontFamily: 'Manrope, sans-serif',
+                    fontSize: '0.875rem', fontWeight: 600, opacity: addingRep ? 0.7 : 1 }}>
+                  {addingRep ? '…' : t('admin.addBtn')}
+                </button>
+              </form>
+            </div>
+          </>
+        )}
+      </div>
+    )
+  }
+
+  /* ── Vue LISTE ────────────────────────────────────── */
+  return (
+    <>
+      <div className="flex items-center justify-between mb-6">
+        <p className="text-xs" style={{ color: '#767683', fontFamily: 'Manrope, sans-serif' }}>
+          {shows.length} {t('admin.showCount').replace('{n}', '').replace('{s}', shows.length > 1 ? 's' : '')}
+        </p>
+        <button onClick={openCreate}
+          style={{ background: '#000666', color: '#fff', border: 'none', cursor: 'pointer',
+            padding: '9px 20px', borderRadius: '10px', fontFamily: 'Manrope, sans-serif',
+            fontSize: '0.875rem', fontWeight: 600 }}>
+          {t('admin.createShow')}
+        </button>
       </div>
 
-      <p className="text-xs mt-3 text-right" style={{ color: '#767683', fontFamily: 'Manrope, sans-serif' }}>
-        {shows.length} {t('admin.showCount').replace('{n}', '').replace('{s}', shows.length > 1 ? 's' : '')}
-      </p>
+      {shows.length === 0 ? (
+        <div className="text-center py-16 rounded-2xl"
+          style={{ background: '#fff', color: '#767683', fontFamily: 'Manrope, sans-serif' }}>
+          {t('admin.noShows')}
+        </div>
+      ) : (
+        <div className="space-y-4">
+          {shows.map(s => (
+            <div key={s.id} className="rounded-2xl p-6"
+              style={{ background: '#fff', boxShadow: '0 4px 24px rgba(0,6,102,0.07)' }}>
+
+              <div className="flex items-start justify-between mb-3">
+                <div className="flex items-center gap-3">
+                  {s.poster_url
+                    ? <img src={`/images/${s.poster_url}`} alt={s.title}
+                        className="w-12 h-12 rounded-xl object-cover shrink-0" />
+                    : <div className="w-12 h-12 rounded-xl shrink-0 flex items-center justify-center text-white text-xl"
+                        style={{ background: 'linear-gradient(135deg, #000666, #1a237e)' }}>🎭</div>
+                  }
+                  <div>
+                    <h3 className="font-bold text-base"
+                      style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', color: '#191c1e' }}>
+                      {s.title}
+                    </h3>
+                    <p className="text-xs mt-0.5" style={{ color: '#767683', fontFamily: 'Manrope, sans-serif' }}>
+                      {s.location_name ?? '—'} · {s.representations_count ?? 0} {t('admin.colReps').toLowerCase()}
+                    </p>
+                  </div>
+                </div>
+                <span className="text-xs font-bold px-3 py-1 rounded-full shrink-0"
+                  style={{
+                    background: s.bookable ? '#e8f5e9' : '#fff8e1',
+                    color:      s.bookable ? '#2e7d32' : '#f57f17',
+                    fontFamily: 'Manrope, sans-serif',
+                  }}>
+                  {s.bookable ? t('admin.showConfirmed') : t('admin.showToConfirm')}
+                </span>
+              </div>
+
+              {s.description && (
+                <p className="text-sm mb-4 leading-relaxed line-clamp-2"
+                  style={{ color: '#454652', fontFamily: 'Manrope, sans-serif', lineHeight: 1.6 }}>
+                  {s.description}
+                </p>
+              )}
+
+              <div className="flex flex-wrap gap-2">
+                <button onClick={() => openEdit(s)}
+                  style={{ background: '#e8eaf6', color: '#000666', border: 'none', cursor: 'pointer',
+                    padding: '6px 14px', borderRadius: '8px', fontFamily: 'Manrope, sans-serif',
+                    fontSize: '0.8rem', fontWeight: 600 }}>
+                  {t('admin.editBtn')}
+                </button>
+                <button onClick={() => openReps(s)}
+                  style={{ background: '#f2f4f7', color: '#454652', border: 'none', cursor: 'pointer',
+                    padding: '6px 14px', borderRadius: '8px', fontFamily: 'Manrope, sans-serif',
+                    fontSize: '0.8rem', fontWeight: 600 }}>
+                  📅 {t('admin.manageReps')}
+                </button>
+                <button onClick={() => handleToggle(s.id, s.bookable)}
+                  style={{
+                    background: s.bookable ? '#fff8e1' : '#e8f5e9',
+                    color:      s.bookable ? '#f57f17' : '#2e7d32',
+                    border: 'none', cursor: 'pointer',
+                    padding: '6px 14px', borderRadius: '8px', fontFamily: 'Manrope, sans-serif',
+                    fontSize: '0.8rem', fontWeight: 600,
+                  }}>
+                  {s.bookable ? t('admin.removeBtn') : t('admin.confirmBtn')}
+                </button>
+                <button onClick={() => handleDelete(s.id)}
+                  style={{ background: '#ffdad6', color: '#93000a', border: 'none', cursor: 'pointer',
+                    padding: '6px 14px', borderRadius: '8px', fontFamily: 'Manrope, sans-serif',
+                    fontSize: '0.8rem', fontWeight: 600 }}>
+                  {t('admin.deleteBtn')}
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
     </>
+  )
+}
+
+/* ═══════════════════════════════════════════════════════
+   ONGLET STATS (producteur)
+═══════════════════════════════════════════════════════ */
+function StatsProducerTab({ t }) {
+  const [stats, setStats]     = useState(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError]     = useState('')
+
+  useEffect(() => {
+    api.get('/producer/stats')
+      .then(res => setStats(res.data))
+      .catch(() => setError(t('admin.loadStatsError')))
+      .finally(() => setLoading(false))
+  }, [])
+
+  if (loading) return <Spinner />
+  if (error)   return <ErrorMsg msg={error} />
+
+  const cards = [
+    { key: 'total_shows',        label: t('admin.totalShows'),        icon: '🎭', accent: '#000666', bg: '#eef0ff' },
+    { key: 'confirmed_shows',    label: t('admin.confirmedShows'),    icon: '✅', accent: '#2e7d32', bg: '#e8f5e9' },
+    { key: 'total_reps',         label: t('admin.totalReps'),         icon: '📅', accent: '#1565c0', bg: '#e3f2fd' },
+    { key: 'upcoming_reps',      label: t('admin.upcomingReps'),      icon: '⏭️', accent: '#f57f17', bg: '#fff8e1' },
+    { key: 'total_reservations', label: t('admin.totalReservations'), icon: '🎟️', accent: '#6a1b9a', bg: '#f3e5f5' },
+    { key: 'pending_reviews',    label: t('admin.pendingReviews'),    icon: '⭐', accent: '#c62828', bg: '#ffebee' },
+  ]
+
+  return (
+    <div className="grid grid-cols-3 gap-4">
+      {cards.map(c => (
+        <div key={c.key} className="rounded-2xl p-6"
+          style={{ background: '#fff', boxShadow: '0 4px 24px rgba(0,6,102,0.07)' }}>
+          <div className="w-11 h-11 rounded-xl flex items-center justify-center text-2xl mb-4"
+            style={{ background: c.bg }}>
+            {c.icon}
+          </div>
+          <div className="text-4xl font-black mb-1"
+            style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', color: c.accent }}>
+            {stats?.[c.key] ?? 0}
+          </div>
+          <div className="text-sm" style={{ color: '#767683', fontFamily: 'Manrope, sans-serif' }}>
+            {c.label}
+          </div>
+        </div>
+      ))}
+    </div>
   )
 }
 

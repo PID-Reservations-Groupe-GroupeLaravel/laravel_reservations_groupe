@@ -458,6 +458,16 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 
     // ─── Producteur ──────────────────────────────────────────────────────────
+    // GET /producer/apply → statut de la demande de l'utilisateur connecté
+    Route::get('/producer/apply', function (Request $request) {
+        $req = DB::table('producer_requests')
+            ->where('user_id', $request->user()->id)
+            ->orderByDesc('created_at')
+            ->first();
+        if (!$req) return response()->json(['status' => 'none']);
+        return response()->json(['status' => $req->status, 'rejection_reason' => $req->rejection_reason ?? null]);
+    });
+
     // POST /producer/apply → demande pour devenir producteur
     Route::post('/producer/apply', function (Request $request) {
         $request->validate([
@@ -657,35 +667,209 @@ Route::middleware('auth:sanctum')->group(function () {
     // ─── Producteur : spectacles + modération des avis ───────────────────────
     Route::middleware('producer')->prefix('producer')->group(function () {
 
-        // GET /producer/shows → spectacles du producteur connecté
+        // GET /producer/stats → statistiques du producteur
+        Route::get('/stats', function (Request $request) {
+            $userId  = $request->user()->id;
+            $showIds = \App\Models\Show::where('user_id', $userId)->pluck('id');
+            $repIds  = \App\Models\Representation::whereIn('show_id', $showIds)->pluck('id');
+
+            return response()->json([
+                'total_shows'        => $showIds->count(),
+                'confirmed_shows'    => \App\Models\Show::where('user_id', $userId)->where('bookable', true)->count(),
+                'total_reps'         => $repIds->count(),
+                'upcoming_reps'      => \App\Models\Representation::whereIn('show_id', $showIds)->where('schedule', '>', now())->count(),
+                'total_reservations' => DB::table('representation_reservation')->whereIn('representation_id', $repIds)->count(),
+                'pending_reviews'    => \App\Models\Review::whereIn('show_id', $showIds)->whereNull('validated')->count(),
+            ]);
+        });
+
+        // GET /producer/data → données de référence (lieux, prix, artistes)
+        Route::get('/data', function () {
+            return response()->json([
+                'locations' => \App\Models\Location::orderBy('designation')->get(['id', 'designation']),
+                'prices'    => \App\Models\Price::orderBy('type')->get(['id', 'type', 'price']),
+                'artists'   => \App\Models\Artist::orderBy('lastname')->get(['id', 'firstname', 'lastname']),
+            ]);
+        });
+
+        // GET /producer/shows → spectacles du producteur (enrichis)
         Route::get('/shows', function (Request $request) {
             $shows = \App\Models\Show::where('user_id', $request->user()->id)
+                ->with('location')
+                ->withCount('representations')
+                ->orderByDesc('created_at')
                 ->get()
                 ->map(fn($s) => [
-                    'id'       => $s->id,
-                    'title'    => $s->title,
-                    'bookable' => (bool) $s->bookable,
-                    'poster_url' => $s->poster_url,
+                    'id'                 => $s->id,
+                    'title'              => $s->title,
+                    'description'        => $s->description,
+                    'poster_url'         => $s->poster_url,
+                    'duration'           => $s->duration,
+                    'created_in'         => $s->created_in,
+                    'location_id'        => $s->location_id,
+                    'location_name'      => $s->location?->designation,
+                    'bookable'           => (bool) $s->bookable,
+                    'status'             => $s->status,
+                    'representations_count' => $s->representations_count,
                 ]);
             return response()->json($shows);
         });
 
-        // PATCH /producer/shows/{id}/confirm → confirmer (bookable=1)
-        Route::patch('/shows/{id}/confirm', function (Request $request, $id) {
+        // POST /producer/shows → créer un spectacle
+        Route::post('/shows', function (Request $request) {
+            $data = $request->validate([
+                'title'       => 'required|string|max:255',
+                'description' => 'nullable|string',
+                'poster_url'  => 'nullable|string|max:255',
+                'duration'    => 'required|integer|min:1|max:600',
+                'created_in'  => 'required|integer|min:1900|max:2100',
+                'location_id' => 'nullable|integer|exists:locations,id',
+                'bookable'    => 'boolean',
+            ]);
+
+            $slug = \Illuminate\Support\Str::slug($data['title']) . '-' . time();
+
+            $show = \App\Models\Show::create([
+                'user_id'     => $request->user()->id,
+                'slug'        => $slug,
+                'title'       => $data['title'],
+                'description' => $data['description'] ?? null,
+                'poster_url'  => $data['poster_url'] ?? null,
+                'duration'    => $data['duration'],
+                'created_in'  => $data['created_in'],
+                'location_id' => $data['location_id'] ?? null,
+                'bookable'    => $data['bookable'] ?? false,
+                'status'      => 'A_CONFIRMER',
+            ]);
+
+            $show->load('location');
+            return response()->json([
+                'id'                 => $show->id,
+                'title'              => $show->title,
+                'description'        => $show->description,
+                'poster_url'         => $show->poster_url,
+                'duration'           => $show->duration,
+                'created_in'         => $show->created_in,
+                'location_id'        => $show->location_id,
+                'location_name'      => $show->location?->designation,
+                'bookable'           => (bool) $show->bookable,
+                'status'             => $show->status,
+                'representations_count' => 0,
+            ], 201);
+        });
+
+        // PUT /producer/shows/{id} → modifier un spectacle
+        Route::put('/shows/{id}', function (Request $request, $id) {
             $show = \App\Models\Show::where('id', $id)
                 ->where('user_id', $request->user()->id)
                 ->firstOrFail();
+
+            $data = $request->validate([
+                'title'       => 'required|string|max:255',
+                'description' => 'nullable|string',
+                'poster_url'  => 'nullable|string|max:255',
+                'duration'    => 'required|integer|min:1|max:600',
+                'created_in'  => 'required|integer|min:1900|max:2100',
+                'location_id' => 'nullable|integer|exists:locations,id',
+                'bookable'    => 'boolean',
+            ]);
+
+            $show->update($data);
+            $show->load('location');
+            return response()->json([
+                'id'                 => $show->id,
+                'title'              => $show->title,
+                'description'        => $show->description,
+                'poster_url'         => $show->poster_url,
+                'duration'           => $show->duration,
+                'created_in'         => $show->created_in,
+                'location_id'        => $show->location_id,
+                'location_name'      => $show->location?->designation,
+                'bookable'           => (bool) $show->bookable,
+                'status'             => $show->status,
+                'representations_count' => $show->representations()->count(),
+            ]);
+        });
+
+        // DELETE /producer/shows/{id} → supprimer un spectacle
+        Route::delete('/shows/{id}', function (Request $request, $id) {
+            $show = \App\Models\Show::where('id', $id)
+                ->where('user_id', $request->user()->id)
+                ->firstOrFail();
+            $show->delete();
+            return response()->json(['message' => 'Spectacle supprimé.']);
+        });
+
+        // PATCH /producer/shows/{id}/confirm → confirmer (bookable=1)
+        Route::patch('/shows/{id}/confirm', function (Request $request, $id) {
+            $show = \App\Models\Show::where('id', $id)->where('user_id', $request->user()->id)->firstOrFail();
             $show->update(['bookable' => true]);
             return response()->json(['message' => 'Spectacle confirmé.']);
         });
 
         // PATCH /producer/shows/{id}/unconfirm → retirer la confirmation
         Route::patch('/shows/{id}/unconfirm', function (Request $request, $id) {
+            $show = \App\Models\Show::where('id', $id)->where('user_id', $request->user()->id)->firstOrFail();
+            $show->update(['bookable' => false]);
+            return response()->json(['message' => 'Spectacle mis en attente.']);
+        });
+
+        // GET /producer/shows/{id}/detail → détail + représentations
+        Route::get('/shows/{id}/detail', function (Request $request, $id) {
             $show = \App\Models\Show::where('id', $id)
                 ->where('user_id', $request->user()->id)
+                ->with(['location', 'representations.location'])
                 ->firstOrFail();
-            $show->update(['bookable' => false]);
-            return response()->json(['message' => 'Spectacle mis en attente de confirmation.']);
+
+            return response()->json([
+                'id'          => $show->id,
+                'title'       => $show->title,
+                'description' => $show->description,
+                'poster_url'  => $show->poster_url,
+                'duration'    => $show->duration,
+                'created_in'  => $show->created_in,
+                'location_id' => $show->location_id,
+                'bookable'    => (bool) $show->bookable,
+                'representations' => $show->representations->map(fn($r) => [
+                    'id'           => $r->id,
+                    'schedule'     => $r->schedule,
+                    'location_id'  => $r->location_id,
+                    'location_name'=> $r->location?->designation ?? $show->location?->designation,
+                ]),
+            ]);
+        });
+
+        // POST /producer/shows/{id}/representations → ajouter une représentation
+        Route::post('/shows/{id}/representations', function (Request $request, $id) {
+            $show = \App\Models\Show::where('id', $id)->where('user_id', $request->user()->id)->firstOrFail();
+
+            $data = $request->validate([
+                'schedule'    => 'required|date|after:now',
+                'location_id' => 'nullable|integer|exists:locations,id',
+            ]);
+
+            $rep = \App\Models\Representation::create([
+                'show_id'     => $show->id,
+                'schedule'    => $data['schedule'],
+                'location_id' => $data['location_id'] ?? $show->location_id,
+            ]);
+
+            $rep->load('location');
+            return response()->json([
+                'id'           => $rep->id,
+                'schedule'     => $rep->schedule,
+                'location_id'  => $rep->location_id,
+                'location_name'=> $rep->location?->designation ?? $show->location?->designation,
+            ], 201);
+        });
+
+        // DELETE /producer/representations/{repId} → annuler une représentation
+        Route::delete('/representations/{repId}', function (Request $request, $repId) {
+            $rep = \App\Models\Representation::whereHas(
+                'show', fn($q) => $q->where('user_id', $request->user()->id)
+            )->findOrFail($repId);
+            $rep->delete();
+            return response()->json(['message' => 'Représentation annulée.']);
         });
 
         // GET /producer/avis → avis sur les spectacles du producteur
@@ -701,25 +885,25 @@ Route::middleware('auth:sanctum')->group(function () {
                     'show_title' => $a->show?->title,
                     'score'      => $a->score,
                     'comment'    => $a->comment,
-                    'validated'  => (bool) $a->validated,
+                    'validated'  => $a->validated,
                 ]);
             return response()->json($avis);
         });
 
         // POST /producer/avis/{id}/approve → valider un avis (validated=1)
         Route::post('/avis/{id}/approve', function (Request $request, $id) {
-            $review = \App\Models\Review::whereHas('show', fn($q) => $q->where('user_id', $request->user()->id))
-                ->findOrFail($id);
+            $review = \App\Models\Review::whereHas('show', fn($q) => $q->where('user_id', $request->user()->id))->findOrFail($id);
             $review->update(['validated' => 1]);
             return response()->json(['message' => 'Avis validé.']);
         });
 
         // POST /producer/avis/{id}/reject → rejeter un avis (validated=-1)
         Route::post('/avis/{id}/reject', function (Request $request, $id) {
-            $review = \App\Models\Review::whereHas('show', fn($q) => $q->where('user_id', $request->user()->id))
-                ->findOrFail($id);
+            $review = \App\Models\Review::whereHas('show', fn($q) => $q->where('user_id', $request->user()->id))->findOrFail($id);
             $review->update(['validated' => -1]);
             return response()->json(['message' => 'Avis rejeté.']);
         });
+
+        // POST /producer/apply → déjà géré hors du groupe producer (avant auth check)
     });
 });
