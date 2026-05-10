@@ -1,5 +1,6 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
+import { QRCodeCanvas } from 'qrcode.react'
 import api from '../api/axios'
 import { useLanguage } from '../contexts/LanguageContext'
 
@@ -14,9 +15,8 @@ export default function ReservationsPage() {
   const [reservations, setReservations] = useState([])
   const [loading, setLoading]           = useState(true)
   const [error, setError]               = useState('')
-  const [cancelId, setCancelId]         = useState(null)
-  const [ticketMsg, setTicketMsg]       = useState({})
   const [searchParams, setSearchParams] = useSearchParams()
+  const [ticketModal, setTicketModal]   = useState(null) // { qrCode, reservation }
 
   const paymentStatus = searchParams.get('payment')
 
@@ -30,7 +30,6 @@ export default function ReservationsPage() {
 
   useEffect(() => { fetchReservations() }, [])
 
-  // Stripe Checkout
   const handleCheckout = async (id) => {
     try {
       const res = await api.post(`/reservations/${id}/checkout`)
@@ -40,7 +39,6 @@ export default function ReservationsPage() {
     }
   }
 
-  // Annuler une réservation
   const handleCancel = async (id) => {
     if (!window.confirm(t('reservations.cancelConfirm'))) return
     try {
@@ -49,22 +47,14 @@ export default function ReservationsPage() {
     } catch {
       alert(t('reservations.cancelError'))
     }
-    setCancelId(null)
   }
 
-  // Générer un ticket
-  const handleTicket = async (id) => {
+  const handleTicket = async (reservation) => {
     try {
-      const res = await api.post(`/reservations/${id}/ticket`)
-      setTicketMsg((prev) => ({
-        ...prev,
-        [id]: `${t('reservations.ticketGenerated')} ${res.data.qr_code}`,
-      }))
+      const res = await api.post(`/reservations/${reservation.id}/ticket`)
+      setTicketModal({ qrCode: res.data.qr_code, reservation })
     } catch (err) {
-      setTicketMsg((prev) => ({
-        ...prev,
-        [id]: err.response?.data?.message ?? t('reservations.ticketError'),
-      }))
+      alert(err.response?.data?.message ?? t('reservations.ticketError'))
     }
   }
 
@@ -114,17 +104,25 @@ export default function ReservationsPage() {
               onCancel={handleCancel}
               onPay={handleCheckout}
               onTicket={handleTicket}
-              ticketMsg={ticketMsg[r.id]}
               t={t}
             />
           ))}
         </div>
       )}
+
+      {ticketModal && (
+        <TicketModal
+          qrCode={ticketModal.qrCode}
+          reservation={ticketModal.reservation}
+          onClose={() => setTicketModal(null)}
+          t={t}
+        />
+      )}
     </div>
   )
 }
 
-function ReservationCard({ reservation: r, onCancel, onPay, onTicket, ticketMsg, t }) {
+function ReservationCard({ reservation: r, onCancel, onPay, onTicket, t }) {
   const statusClass = STATUS_COLORS[r.status] ?? 'bg-gray-100 text-gray-700'
 
   return (
@@ -144,7 +142,6 @@ function ReservationCard({ reservation: r, onCancel, onPay, onTicket, ticketMsg,
           </div>
         </div>
 
-        {/* Total */}
         {r.total !== undefined && (
           <div className="text-right">
             <div className="text-xl font-bold text-ovatio-blue">{r.total} €</div>
@@ -153,7 +150,6 @@ function ReservationCard({ reservation: r, onCancel, onPay, onTicket, ticketMsg,
         )}
       </div>
 
-      {/* Représentations */}
       {r.representations?.map((repr) => (
         <div key={repr.id} className="bg-gray-50 rounded-lg p-3 mb-3 text-sm">
           <div className="font-medium text-gray-800">{repr.show_title}</div>
@@ -174,14 +170,6 @@ function ReservationCard({ reservation: r, onCancel, onPay, onTicket, ticketMsg,
         </div>
       ))}
 
-      {/* Message ticket */}
-      {ticketMsg && (
-        <div className="bg-green-50 border border-green-200 text-green-700 rounded-lg p-3 text-sm mb-3">
-          {ticketMsg}
-        </div>
-      )}
-
-      {/* Actions */}
       <div className="flex gap-3 mt-4 flex-wrap">
         {r.status === 'En attente' && (
           <>
@@ -201,12 +189,156 @@ function ReservationCard({ reservation: r, onCancel, onPay, onTicket, ticketMsg,
         )}
         {r.status === 'Payée' && (
           <button
-            onClick={() => onTicket(r.id)}
-            className="bg-ovatio-blue text-white text-sm px-4 py-2 rounded-lg hover:bg-ovatio-light transition"
+            onClick={() => onTicket(r)}
+            className="text-sm px-5 py-2 rounded-lg font-semibold transition"
+            style={{ background: '#000666', color: '#fff' }}
           >
-            {t('reservations.generateTicket')}
+            🎟️ {t('reservations.generateTicket')}
           </button>
         )}
+      </div>
+    </div>
+  )
+}
+
+function TicketModal({ qrCode, reservation: r, onClose, t }) {
+  const canvasRef = useRef(null)
+
+  const showTitle = r.representations?.[0]?.show_title ?? '—'
+  const showDate  = r.representations?.[0]?.schedule
+    ? new Date(r.representations[0].schedule).toLocaleDateString('fr-BE', {
+        weekday: 'long', day: 'numeric', month: 'long', year: 'numeric',
+      })
+    : '—'
+  const totalSeats = r.representations?.reduce((acc, rep) => acc + (rep.quantity ?? 1), 0) ?? 1
+
+  const handleDownload = () => {
+    const canvas = document.getElementById('ovatio-ticket-qr')
+    if (!canvas) return
+    const url = canvas.toDataURL('image/png')
+    const a = document.createElement('a')
+    a.href = url
+    a.download = `billet-ovatio-${r.id}.png`
+    a.click()
+  }
+
+  return (
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center p-4"
+      style={{ background: 'rgba(0,0,0,0.55)', backdropFilter: 'blur(4px)' }}
+      onClick={onClose}
+    >
+      <div
+        className="relative w-full max-w-sm rounded-3xl overflow-hidden"
+        style={{ background: '#fff', boxShadow: '0 24px 80px rgba(0,6,102,0.25)' }}
+        onClick={e => e.stopPropagation()}
+      >
+        {/* Header */}
+        <div className="px-8 pt-8 pb-5 text-center"
+          style={{ background: 'linear-gradient(135deg, #000666 0%, #1a237e 100%)' }}>
+          <p className="text-xs font-bold tracking-widest mb-1"
+            style={{ color: 'rgba(255,255,255,0.55)', fontFamily: 'Manrope, sans-serif', letterSpacing: '0.18em' }}>
+            OVATIO.BE
+          </p>
+          <h2 className="text-2xl font-black text-white mb-0.5"
+            style={{ fontFamily: '"Plus Jakarta Sans", sans-serif' }}>
+            {t('reservations.ticketModalTitle')}
+          </h2>
+          <p className="text-sm" style={{ color: 'rgba(255,255,255,0.65)', fontFamily: 'Manrope, sans-serif' }}>
+            {t('reservations.reservationId')}{r.id}
+          </p>
+        </div>
+
+        {/* Tirets (découpe billet) */}
+        <div className="flex items-center px-6" style={{ margin: '-1px 0' }}>
+          <div className="w-5 h-5 rounded-full shrink-0" style={{ background: '#f7f9fc', border: '1px solid #e0e3e6' }} />
+          <div className="flex-1 border-t-2 border-dashed" style={{ borderColor: '#e0e3e6' }} />
+          <div className="w-5 h-5 rounded-full shrink-0" style={{ background: '#f7f9fc', border: '1px solid #e0e3e6' }} />
+        </div>
+
+        {/* Infos spectacle */}
+        <div className="px-8 py-5 space-y-2">
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-wider mb-0.5"
+              style={{ color: '#767683', fontFamily: 'Manrope, sans-serif' }}>
+              {t('reservations.ticketShow')}
+            </p>
+            <p className="text-base font-bold" style={{ color: '#191c1e', fontFamily: '"Plus Jakarta Sans", sans-serif' }}>
+              {showTitle}
+            </p>
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-wider mb-0.5"
+                style={{ color: '#767683', fontFamily: 'Manrope, sans-serif' }}>
+                {t('reservations.ticketDate')}
+              </p>
+              <p className="text-sm font-medium" style={{ color: '#191c1e', fontFamily: 'Manrope, sans-serif' }}>
+                {showDate}
+              </p>
+            </div>
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-wider mb-0.5"
+                style={{ color: '#767683', fontFamily: 'Manrope, sans-serif' }}>
+                {t('reservations.ticketSeats')}
+              </p>
+              <p className="text-sm font-medium" style={{ color: '#191c1e', fontFamily: 'Manrope, sans-serif' }}>
+                {totalSeats} {totalSeats > 1 ? t('reservations.seatPlural') : t('reservations.seatSingular')}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Tirets */}
+        <div className="flex items-center px-6">
+          <div className="w-5 h-5 rounded-full shrink-0" style={{ background: '#f7f9fc', border: '1px solid #e0e3e6' }} />
+          <div className="flex-1 border-t-2 border-dashed" style={{ borderColor: '#e0e3e6' }} />
+          <div className="w-5 h-5 rounded-full shrink-0" style={{ background: '#f7f9fc', border: '1px solid #e0e3e6' }} />
+        </div>
+
+        {/* QR code */}
+        <div className="px-8 py-6 flex flex-col items-center gap-3">
+          <div className="rounded-2xl p-4" style={{ background: '#f7f9fc', border: '1px solid #e0e3e6' }}>
+            <QRCodeCanvas
+              id="ovatio-ticket-qr"
+              value={qrCode}
+              size={180}
+              bgColor="#f7f9fc"
+              fgColor="#000666"
+              level="M"
+              ref={canvasRef}
+            />
+          </div>
+          <p className="text-xs font-mono text-center" style={{ color: '#767683' }}>{qrCode}</p>
+        </div>
+
+        {/* Actions */}
+        <div className="px-8 pb-8 flex gap-3">
+          <button
+            onClick={handleDownload}
+            className="flex-1 text-sm font-semibold py-3 rounded-xl transition"
+            style={{ background: '#000666', color: '#fff', border: 'none', cursor: 'pointer', fontFamily: 'Manrope, sans-serif' }}
+          >
+            ⬇ {t('reservations.ticketDownload')}
+          </button>
+          <button
+            onClick={onClose}
+            className="text-sm py-3 px-5 rounded-xl transition"
+            style={{ background: '#f2f4f7', color: '#454652', border: 'none', cursor: 'pointer', fontFamily: 'Manrope, sans-serif' }}
+          >
+            {t('reservations.ticketClose')}
+          </button>
+        </div>
+
+        {/* Bouton fermer (coin) */}
+        <button
+          onClick={onClose}
+          style={{ position: 'absolute', top: '1rem', right: '1rem', background: 'rgba(255,255,255,0.15)',
+            border: 'none', borderRadius: '50%', width: '32px', height: '32px', cursor: 'pointer',
+            color: '#fff', fontSize: '1rem', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+        >
+          ×
+        </button>
       </div>
     </div>
   )

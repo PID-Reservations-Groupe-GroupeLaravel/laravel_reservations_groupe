@@ -166,6 +166,13 @@ export default {
     loadError: 'Kan uw boekingen niet laden.',
     seatSingular: 'plaats',
     seatPlural: 'plaatsen',
+    ticketModalTitle: 'Uw Ticket',
+    ticketShow: 'Voorstelling',
+    ticketDate: 'Datum',
+    ticketSeats: 'Plaatsen',
+    ticketCode: 'Toegangscode',
+    ticketDownload: 'PNG downloaden',
+    ticketClose: 'Sluiten',
   },
   footer: {
     tagline: 'Het gecureerde podium van Brussel. De elegantie van live performance herdefiniëren.',
@@ -486,6 +493,8 @@ export default {
     repLocation: 'Locatie',
     noReps: 'Geen vertoningen gepland.',
     saving: 'Opslaan...',
+    fieldPrices: 'Tarieven',
+    fieldArtists: 'Artiesten & rollen',
     // Reviews tab (producer)
     noReviews: 'Geen recensies in behandeling.',
     loadReviewsError: 'Kan recensies niet laden.',

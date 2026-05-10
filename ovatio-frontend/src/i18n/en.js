@@ -166,6 +166,13 @@ export default {
     loadError: 'Unable to load your bookings.',
     seatSingular: 'seat',
     seatPlural: 'seats',
+    ticketModalTitle: 'Your Ticket',
+    ticketShow: 'Show',
+    ticketDate: 'Date',
+    ticketSeats: 'Seats',
+    ticketCode: 'Entry code',
+    ticketDownload: 'Download PNG',
+    ticketClose: 'Close',
   },
   footer: {
     tagline: 'The curated stage of Brussels. Redefining the elegance of live performance.',
@@ -486,6 +493,8 @@ export default {
     repLocation: 'Venue',
     noReps: 'No representations scheduled.',
     saving: 'Saving...',
+    fieldPrices: 'Pricing tiers',
+    fieldArtists: 'Artists & roles',
     // Reviews tab (producer)
     noReviews: 'No reviews pending moderation.',
     loadReviewsError: 'Unable to load reviews.',

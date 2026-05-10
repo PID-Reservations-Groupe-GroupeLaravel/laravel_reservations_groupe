@@ -166,6 +166,13 @@ export default {
     loadError: 'Impossible de charger vos réservations.',
     seatSingular: 'place',
     seatPlural: 'places',
+    ticketModalTitle: 'Votre Billet',
+    ticketShow: 'Spectacle',
+    ticketDate: 'Date',
+    ticketSeats: 'Places',
+    ticketCode: 'Code d\'entrée',
+    ticketDownload: 'Télécharger PNG',
+    ticketClose: 'Fermer',
   },
   footer: {
     tagline: "La scène curatée de Bruxelles. Redéfinir l'élégance de la performance vivante.",
@@ -486,6 +493,8 @@ export default {
     repLocation: 'Lieu de la représentation',
     noReps: 'Aucune représentation planifiée.',
     saving: 'Enregistrement...',
+    fieldPrices: 'Tarifs',
+    fieldArtists: 'Artistes & rôles',
     // Reviews tab (producer)
     noReviews: 'Aucun avis en attente de modération.',
     loadReviewsError: 'Impossible de charger les avis.',

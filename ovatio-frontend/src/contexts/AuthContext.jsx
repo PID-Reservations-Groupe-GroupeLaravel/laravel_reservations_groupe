@@ -32,10 +32,23 @@ export function AuthProvider({ children }) {
     setUser(null)
   }
 
+  // Rafraîchit le profil utilisateur depuis le serveur (rôles mis à jour après approbation)
+  const refreshUser = async () => {
+    try {
+      const res = await api.get('/user')
+      const updated = res.data
+      localStorage.setItem('ovatio_user', JSON.stringify(updated))
+      setUser(updated)
+      return updated
+    } catch {
+      return null
+    }
+  }
+
   const isAdmin = () => user?.roles?.includes('admin') ?? false
 
   return (
-    <AuthContext.Provider value={{ user, token, login, logout, isAdmin }}>
+    <AuthContext.Provider value={{ user, token, login, logout, isAdmin, refreshUser }}>
       {children}
     </AuthContext.Provider>
   )

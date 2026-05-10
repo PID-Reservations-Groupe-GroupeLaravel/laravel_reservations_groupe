@@ -5,7 +5,7 @@ import { useLanguage } from '../contexts/LanguageContext'
 import api from '../api/axios'
 
 export default function BecomeProducerPage() {
-  const { user } = useAuth()
+  const { user, refreshUser } = useAuth()
   const { t } = useLanguage()
   const navigate = useNavigate()
 
@@ -31,9 +31,13 @@ export default function BecomeProducerPage() {
       return
     }
     api.get('/producer/apply')
-      .then(res => {
+      .then(async res => {
         setRequestStatus(res.data.status)
         if (res.data.rejection_reason) setRejectedReason(res.data.rejection_reason)
+        // Si approuvé mais rôle pas encore dans le cache local → rafraîchir
+        if (res.data.status === 'approved' && !user?.roles?.includes('producer')) {
+          await refreshUser()
+        }
       })
       .catch(() => setRequestStatus('none'))
       .finally(() => setStatusLoading(false))

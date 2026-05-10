@@ -615,7 +615,7 @@ function ProducteursTab({ t }) {
 /* ═══════════════════════════════════════════════════════
    ONGLET MES SPECTACLES (producteur) — CRUD complet
 ═══════════════════════════════════════════════════════ */
-const EMPTY_FORM = { title: '', description: '', duration: '', created_in: '', location_id: '', bookable: false }
+const EMPTY_FORM = { title: '', description: '', duration: '', created_in: '', location_id: '', bookable: false, price_ids: [], artist_type_ids: [] }
 
 function SpectaclesTab({ t }) {
   const [view, setView]           = useState('list')
@@ -672,12 +672,14 @@ function SpectaclesTab({ t }) {
   const openEdit = (show) => {
     setEditingShow(show)
     setForm({
-      title:       show.title ?? '',
-      description: show.description ?? '',
-      duration:    show.duration ?? '',
-      created_in:  show.created_in ?? '',
-      location_id: show.location_id ?? '',
-      bookable:    show.bookable ?? false,
+      title:           show.title ?? '',
+      description:     show.description ?? '',
+      duration:        show.duration ?? '',
+      created_in:      show.created_in ?? '',
+      location_id:     show.location_id ?? '',
+      bookable:        show.bookable ?? false,
+      price_ids:       (show.price_ids ?? []).map(Number),
+      artist_type_ids: (show.artist_type_ids ?? []).map(Number),
     })
     setFormError('')
     setView('form')
@@ -701,9 +703,11 @@ function SpectaclesTab({ t }) {
     setSaving(true)
     const payload = {
       ...form,
-      duration:    parseInt(form.duration, 10) || undefined,
-      created_in:  parseInt(form.created_in, 10) || undefined,
-      location_id: form.location_id || undefined,
+      duration:        parseInt(form.duration, 10) || undefined,
+      created_in:      parseInt(form.created_in, 10) || undefined,
+      location_id:     form.location_id || undefined,
+      price_ids:       form.price_ids,
+      artist_type_ids: form.artist_type_ids,
     }
     try {
       if (editingShow) {
@@ -829,6 +833,58 @@ function SpectaclesTab({ t }) {
                 ))}
               </select>
             </div>
+
+            {/* Tarifs */}
+            {refData.prices.length > 0 && (
+              <div>
+                <label className="text-xs font-semibold mb-2 block" style={{ color: '#767683', fontFamily: 'Manrope, sans-serif' }}>
+                  {t('admin.fieldPrices')}
+                </label>
+                <div className="grid grid-cols-2 gap-2">
+                  {refData.prices.map(p => {
+                    const checked = form.price_ids.includes(p.id)
+                    return (
+                      <label key={p.id} className="flex items-center gap-2 cursor-pointer rounded-lg px-3 py-2 text-sm"
+                        style={{ background: checked ? '#e8eaf6' : '#f7f9fc', border: `1px solid ${checked ? '#000666' : '#e0e3e6'}`, fontFamily: 'Manrope, sans-serif', color: '#191c1e' }}>
+                        <input type="checkbox" checked={checked}
+                          onChange={() => setForm(prev => ({
+                            ...prev,
+                            price_ids: checked ? prev.price_ids.filter(id => id !== p.id) : [...prev.price_ids, p.id],
+                          }))}
+                          style={{ accentColor: '#000666' }} />
+                        {p.type} — {p.price} €
+                      </label>
+                    )
+                  })}
+                </div>
+              </div>
+            )}
+
+            {/* Artistes */}
+            {refData.artistTypes.length > 0 && (
+              <div>
+                <label className="text-xs font-semibold mb-2 block" style={{ color: '#767683', fontFamily: 'Manrope, sans-serif' }}>
+                  {t('admin.fieldArtists')}
+                </label>
+                <div className="grid grid-cols-2 gap-2 max-h-48 overflow-y-auto pr-1">
+                  {refData.artistTypes.map(at => {
+                    const checked = form.artist_type_ids.includes(at.id)
+                    return (
+                      <label key={at.id} className="flex items-center gap-2 cursor-pointer rounded-lg px-3 py-2 text-sm"
+                        style={{ background: checked ? '#e8eaf6' : '#f7f9fc', border: `1px solid ${checked ? '#000666' : '#e0e3e6'}`, fontFamily: 'Manrope, sans-serif', color: '#191c1e' }}>
+                        <input type="checkbox" checked={checked}
+                          onChange={() => setForm(prev => ({
+                            ...prev,
+                            artist_type_ids: checked ? prev.artist_type_ids.filter(id => id !== at.id) : [...prev.artist_type_ids, at.id],
+                          }))}
+                          style={{ accentColor: '#000666' }} />
+                        {at.label}
+                      </label>
+                    )
+                  })}
+                </div>
+              </div>
+            )}
 
             <div className="flex items-center gap-3">
               <input type="checkbox" id="bookable" checked={form.bookable}
