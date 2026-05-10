@@ -65,17 +65,23 @@ export default function AdminPage() {
             </>
           )}
           {isProducer && (
-            <button style={styleTab(tab === 'avis')} onClick={() => setTab('avis')}>
-              Modération des avis
-            </button>
+            <>
+              <button style={styleTab(tab === 'spectacles')} onClick={() => setTab('spectacles')}>
+                Mes spectacles
+              </button>
+              <button style={styleTab(tab === 'avis')} onClick={() => setTab('avis')}>
+                Modération des avis
+              </button>
+            </>
           )}
         </div>
 
         {/* Contenu */}
-        {tab === 'demandes'  && isAdmin    && <DemandesTab />}
-        {tab === 'membres'   && isAdmin    && <MembresTab />}
-        {tab === 'artistes'  && isAdmin    && <ArtistesTab />}
-        {tab === 'avis'      && isProducer && <AvisTab />}
+        {tab === 'demandes'   && isAdmin    && <DemandesTab />}
+        {tab === 'membres'    && isAdmin    && <MembresTab />}
+        {tab === 'artistes'   && isAdmin    && <ArtistesTab />}
+        {tab === 'spectacles' && isProducer && <SpectaclesTab />}
+        {tab === 'avis'       && isProducer && <AvisTab />}
       </div>
     </div>
   )
@@ -435,6 +441,104 @@ function MembresTab() {
 }
 
 /* ═══════════════════════════════════════════════════════
+   ONGLET MES SPECTACLES (producteur)
+═══════════════════════════════════════════════════════ */
+function SpectaclesTab() {
+  const [shows, setShows]     = useState([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError]     = useState('')
+
+  useEffect(() => {
+    api.get('/producer/shows')
+      .then(res => setShows(res.data))
+      .catch(() => setError('Impossible de charger vos spectacles.'))
+      .finally(() => setLoading(false))
+  }, [])
+
+  const handleToggle = async (id, bookable) => {
+    const endpoint = bookable ? `/producer/shows/${id}/unconfirm` : `/producer/shows/${id}/confirm`
+    try {
+      await api.patch(endpoint)
+      setShows(prev => prev.map(s => s.id === id ? { ...s, bookable: !bookable } : s))
+    } catch (err) {
+      alert(err.response?.data?.message ?? 'Erreur.')
+    }
+  }
+
+  if (loading) return <Spinner />
+  if (error)   return <ErrorMsg msg={error} />
+
+  if (shows.length === 0) return (
+    <div className="text-center py-16 rounded-2xl"
+      style={{ background: '#fff', color: '#767683', fontFamily: 'Manrope, sans-serif' }}>
+      Aucun spectacle associé à votre compte.
+    </div>
+  )
+
+  return (
+    <>
+      <div className="rounded-2xl overflow-hidden"
+        style={{ background: '#fff', boxShadow: '0 4px 24px rgba(0,6,102,0.07)' }}>
+
+        <div className="grid grid-cols-12 px-6 py-3 text-xs font-black uppercase tracking-widest"
+          style={{ background: '#f7f9fc', color: '#767683', fontFamily: 'Manrope, sans-serif', borderBottom: '1px solid #eceef1' }}>
+          <span className="col-span-7">Spectacle</span>
+          <span className="col-span-3">Statut</span>
+          <span className="col-span-2 text-right">Action</span>
+        </div>
+
+        {shows.map((s, i) => (
+          <div key={s.id} className="grid grid-cols-12 px-6 py-4 items-center"
+            style={{ borderBottom: i < shows.length - 1 ? '1px solid #f2f4f7' : 'none' }}>
+
+            <div className="col-span-7 flex items-center gap-3">
+              {s.poster_url
+                ? <img src={`/images/${s.poster_url}`} alt={s.title}
+                    className="w-10 h-10 rounded-lg object-cover shrink-0" />
+                : <div className="w-10 h-10 rounded-lg shrink-0 flex items-center justify-center text-white text-lg"
+                    style={{ background: 'linear-gradient(135deg, #000666, #1a237e)' }}>🎭</div>
+              }
+              <p className="text-sm font-semibold"
+                style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', color: '#191c1e' }}>
+                {s.title}
+              </p>
+            </div>
+
+            <div className="col-span-3">
+              <span className="text-xs font-bold px-3 py-1 rounded-full"
+                style={{
+                  background: s.bookable ? '#e8f5e9' : '#fff8e1',
+                  color:      s.bookable ? '#2e7d32' : '#f57f17',
+                  fontFamily: 'Manrope, sans-serif',
+                }}>
+                {s.bookable ? '✓ Confirmé' : '⏳ À confirmer'}
+              </span>
+            </div>
+
+            <div className="col-span-2 flex justify-end">
+              <button onClick={() => handleToggle(s.id, s.bookable)}
+                style={{
+                  background: s.bookable ? '#ffdad6' : '#000666',
+                  color:      s.bookable ? '#93000a' : '#fff',
+                  border: 'none', cursor: 'pointer',
+                  padding: '6px 14px', borderRadius: '8px',
+                  fontFamily: 'Manrope, sans-serif', fontSize: '0.75rem', fontWeight: 600,
+                }}>
+                {s.bookable ? 'Retirer' : 'Confirmer'}
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <p className="text-xs mt-3 text-right" style={{ color: '#767683', fontFamily: 'Manrope, sans-serif' }}>
+        {shows.length} spectacle{shows.length > 1 ? 's' : ''} au total
+      </p>
+    </>
+  )
+}
+
+/* ═══════════════════════════════════════════════════════
    ONGLET AVIS (producteur)
 ═══════════════════════════════════════════════════════ */
 function AvisTab() {
@@ -452,14 +556,14 @@ function AvisTab() {
   const handleApprove = async (id) => {
     try {
       await api.post(`/producer/avis/${id}/approve`)
-      setAvis(prev => prev.map(a => a.id === id ? { ...a, status: 'approved' } : a))
+      setAvis(prev => prev.map(a => a.id === id ? { ...a, validated: true } : a))
     } catch { alert('Erreur.') }
   }
 
   const handleReject = async (id) => {
     try {
       await api.post(`/producer/avis/${id}/reject`)
-      setAvis(prev => prev.map(a => a.id === id ? { ...a, status: 'rejected' } : a))
+      setAvis(prev => prev.map(a => a.id === id ? { ...a, validated: -1 } : a))
     } catch { alert('Erreur.') }
   }
 
@@ -496,8 +600,8 @@ function AvisTab() {
               </div>
             </div>
             <div className="flex items-center gap-2">
-              <span style={{ color: '#fdd400', fontSize: '0.9rem' }}>{'★'.repeat(a.rating ?? 0)}</span>
-              <StatusBadge status={a.status === 'approved' ? 'approved' : a.status === 'rejected' ? 'rejected' : 'pending'} />
+              <span style={{ color: '#fdd400', fontSize: '0.9rem' }}>{'★'.repeat(a.score ?? 0)}</span>
+              <StatusBadge status={a.validated === true ? 'approved' : a.validated === -1 ? 'rejected' : 'pending'} />
             </div>
           </div>
 
@@ -506,7 +610,7 @@ function AvisTab() {
             {a.comment}
           </p>
 
-          {a.status === 'pending' && (
+          {a.validated !== true && a.validated !== -1 && (
             <div className="flex gap-3">
               <button onClick={() => handleApprove(a.id)}
                 className="flex items-center gap-2 text-sm font-semibold px-5 py-2.5 rounded-xl"
@@ -520,8 +624,8 @@ function AvisTab() {
               </button>
             </div>
           )}
-          {(a.status === 'approved' || a.status === 'rejected') && (
-            <StatusBadge status={a.status} />
+          {(a.validated === true || a.validated === -1) && (
+            <StatusBadge status={a.validated === true ? 'approved' : 'rejected'} />
           )}
         </div>
       ))}

@@ -1,6 +1,63 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
+import api from '../api/axios'
+
+const LANGS = [
+  { code: 'fr', label: 'FR', flag: '🇫🇷' },
+  { code: 'en', label: 'EN', flag: '🇬🇧' },
+  { code: 'nl', label: 'NL', flag: '🇳🇱' },
+]
+
+function LangSwitcher({ user }) {
+  const stored = localStorage.getItem('langue') ?? user?.langue ?? 'fr'
+  const [lang, setLang] = useState(stored)
+  const [open, setOpen] = useState(false)
+
+  const current = LANGS.find(l => l.code === lang) ?? LANGS[0]
+
+  const handleSelect = async (code) => {
+    setLang(code)
+    setOpen(false)
+    localStorage.setItem('langue', code)
+    if (user) {
+      try { await api.patch('/profile/langue', { langue: code }) } catch {}
+    }
+  }
+
+  return (
+    <div className="relative">
+      <button onClick={() => setOpen(v => !v)}
+        className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold hover:opacity-80 transition-opacity"
+        style={{ background: '#f2f4f7', fontFamily: 'Manrope, sans-serif', color: '#454652', border: 'none', cursor: 'pointer' }}>
+        <span>{current.flag}</span>
+        <span>{current.label}</span>
+        <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor" style={{ opacity: 0.5 }}>
+          <path d="M7 10l5 5 5-5z"/>
+        </svg>
+      </button>
+      {open && (
+        <div className="absolute right-0 top-full mt-2 rounded-xl overflow-hidden z-50"
+          style={{ background: '#fff', boxShadow: '0 8px 32px rgba(0,6,102,0.12)', minWidth: '110px' }}>
+          {LANGS.map(l => (
+            <button key={l.code} onClick={() => handleSelect(l.code)}
+              className="w-full flex items-center gap-2 px-4 py-2.5 text-xs font-semibold hover:opacity-70 transition-opacity text-left"
+              style={{
+                fontFamily: 'Manrope, sans-serif',
+                color: l.code === lang ? '#000666' : '#454652',
+                background: l.code === lang ? '#f0f1ff' : 'transparent',
+                border: 'none', cursor: 'pointer',
+              }}>
+              <span>{l.flag}</span>
+              <span>{l.label}</span>
+              {l.code === lang && <span style={{ marginLeft: 'auto', color: '#000666' }}>✓</span>}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}
 
 export default function Navbar() {
   const { user, logout } = useAuth()
@@ -93,6 +150,7 @@ export default function Navbar() {
 
         {/* Right actions */}
         <div className="hidden md:flex items-center gap-3">
+          <LangSwitcher user={user} />
           {user ? (
             <>
               <div

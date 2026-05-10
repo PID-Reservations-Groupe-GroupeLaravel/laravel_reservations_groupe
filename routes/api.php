@@ -573,6 +573,13 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 
     // ─── Sessions ────────────────────────────────────────────────────────────
+    // PATCH /profile/langue → mettre à jour la langue de l'utilisateur
+    Route::patch('/profile/langue', function (Request $request) {
+        $request->validate(['langue' => 'required|in:fr,en,nl']);
+        $request->user()->update(['langue' => $request->langue]);
+        return response()->json(['message' => 'Langue mise à jour.']);
+    });
+
     // GET /profile/sessions → liste des tokens actifs (sessions)
     Route::get('/profile/sessions', function (Request $request) {
         $tokens = DB::table('personal_access_tokens')
@@ -609,36 +616,71 @@ Route::middleware('auth:sanctum')->group(function () {
         return response()->json(['message' => 'Tous les autres appareils ont été déconnectés.']);
     });
 
-    // ─── Producteur : modération des avis ────────────────────────────────────
+    // ─── Producteur : spectacles + modération des avis ───────────────────────
     Route::middleware('producer')->prefix('producer')->group(function () {
+
+        // GET /producer/shows → spectacles du producteur connecté
+        Route::get('/shows', function (Request $request) {
+            $shows = \App\Models\Show::where('user_id', $request->user()->id)
+                ->get()
+                ->map(fn($s) => [
+                    'id'       => $s->id,
+                    'title'    => $s->title,
+                    'bookable' => (bool) $s->bookable,
+                    'poster_url' => $s->poster_url,
+                ]);
+            return response()->json($shows);
+        });
+
+        // PATCH /producer/shows/{id}/confirm → confirmer (bookable=1)
+        Route::patch('/shows/{id}/confirm', function (Request $request, $id) {
+            $show = \App\Models\Show::where('id', $id)
+                ->where('user_id', $request->user()->id)
+                ->firstOrFail();
+            $show->update(['bookable' => true]);
+            return response()->json(['message' => 'Spectacle confirmé.']);
+        });
+
+        // PATCH /producer/shows/{id}/unconfirm → retirer la confirmation
+        Route::patch('/shows/{id}/unconfirm', function (Request $request, $id) {
+            $show = \App\Models\Show::where('id', $id)
+                ->where('user_id', $request->user()->id)
+                ->firstOrFail();
+            $show->update(['bookable' => false]);
+            return response()->json(['message' => 'Spectacle mis en attente de confirmation.']);
+        });
 
         // GET /producer/avis → avis sur les spectacles du producteur
         Route::get('/avis', function (Request $request) {
             $user = $request->user();
             $avis = \App\Models\Review::with(['user', 'show'])
-                ->whereHas('show', fn($q) => $q->where('producer_id', $user->id))
+                ->whereHas('show', fn($q) => $q->where('user_id', $user->id))
                 ->orderByDesc('created_at')
                 ->get()
                 ->map(fn($a) => [
                     'id'         => $a->id,
                     'user_name'  => $a->user?->name ?? ($a->user?->firstname . ' ' . $a->user?->lastname),
                     'show_title' => $a->show?->title,
-                    'rating'     => $a->rating,
+                    'score'      => $a->score,
                     'comment'    => $a->comment,
-                    'status'     => $a->status ?? 'pending',
+                    'validated'  => (bool) $a->validated,
                 ]);
             return response()->json($avis);
         });
 
-        // POST /producer/avis/{id}/approve → valider un avis
-        Route::post('/avis/{id}/approve', function ($id) {
-            \App\Models\Review::findOrFail($id)->update(['status' => 'approved']);
+        // POST /producer/avis/{id}/approve → valider un avis (validated=1)
+        Route::post('/avis/{id}/approve', function (Request $request, $id) {
+            $review = \App\Models\Review::whereHas('show', fn($q) => $q->where('user_id', $request->user()->id))
+                ->findOrFail($id);
+            $review->update(['validated' => 1]);
             return response()->json(['message' => 'Avis validé.']);
         });
 
-        // POST /producer/avis/{id}/reject → rejeter un avis
-        Route::post('/avis/{id}/reject', function ($id) {
-            \App\Models\Review::findOrFail($id)->update(['status' => 'rejected']);
+        // POST /producer/avis/{id}/reject → rejeter un avis (validated=-1)
+        Route::post('/avis/{id}/reject', function (Request $request, $id) {
+            $review = \App\Models\Review::whereHas('show', fn($q) => $q->where('user_id', $request->user()->id))
+                ->findOrFail($id);
+            $review->update(['validated' => -1]);
             return response()->json(['message' => 'Avis rejeté.']);
         });
     });
