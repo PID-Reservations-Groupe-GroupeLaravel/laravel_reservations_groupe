@@ -65,6 +65,9 @@ export default function AdminPage() {
               <button style={styleTab(tab === 'artistes')} onClick={() => setTab('artistes')}>
                 {t('admin.tabArtists')}
               </button>
+              <button style={styleTab(tab === 'spectacles-admin')} onClick={() => setTab('spectacles-admin')}>
+                Spectacles
+              </button>
             </>
           )}
           {isProducer && (
@@ -83,10 +86,11 @@ export default function AdminPage() {
         </div>
 
         {/* Contenu */}
-        {tab === 'demandes'    && isAdmin    && <DemandesTab t={t} />}
-        {tab === 'membres'     && isAdmin    && <MembresTab t={t} />}
-        {tab === 'producteurs' && isAdmin    && <ProducteursTab t={t} />}
-        {tab === 'artistes'    && isAdmin    && <ArtistesTab t={t} />}
+        {tab === 'demandes'          && isAdmin    && <DemandesTab t={t} />}
+        {tab === 'membres'           && isAdmin    && <MembresTab t={t} />}
+        {tab === 'producteurs'       && isAdmin    && <ProducteursTab t={t} />}
+        {tab === 'artistes'          && isAdmin    && <ArtistesTab t={t} />}
+        {tab === 'spectacles-admin'  && isAdmin    && <SpectaclesAdminTab t={t} />}
         {tab === 'stats'       && isProducer && <StatsProducerTab t={t} />}
         {tab === 'spectacles'  && isProducer && <SpectaclesTab t={t} />}
         {tab === 'avis'        && isProducer && <AvisTab t={t} />}
@@ -1097,6 +1101,163 @@ function SpectaclesTab({ t }) {
                     fontSize: '0.8rem', fontWeight: 600 }}>
                   {t('admin.deleteBtn')}
                 </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </>
+  )
+}
+
+/* ═══════════════════════════════════════════════════════
+   ONGLET SPECTACLES (admin) — validation des spectacles
+═══════════════════════════════════════════════════════ */
+function SpectaclesAdminTab({ t }) {
+  const [shows, setShows]       = useState([])
+  const [loading, setLoading]   = useState(true)
+  const [error, setError]       = useState('')
+  const [filter, setFilter]     = useState('A_CONFIRMER')
+  const [actionId, setActionId] = useState(null)
+
+  const load = (status) => {
+    setLoading(true)
+    const params = status !== 'all' ? `?status=${status}` : ''
+    api.get(`/admin/shows${params}`)
+      .then(res => setShows(res.data.data ?? res.data))
+      .catch(() => setError('Impossible de charger les spectacles.'))
+      .finally(() => setLoading(false))
+  }
+
+  useEffect(() => { load(filter) }, [filter])
+
+  const handleConfirm = async (id) => {
+    setActionId(id)
+    try {
+      await api.patch(`/admin/shows/${id}/confirm`)
+      setShows(prev => prev.map(s => s.id === id ? { ...s, status: 'CONFIRME', bookable: true } : s))
+    } catch { alert('Erreur lors de la confirmation.') }
+    finally { setActionId(null) }
+  }
+
+  const handleRevoke = async (id) => {
+    setActionId(id)
+    try {
+      await api.patch(`/admin/shows/${id}/revoke`)
+      setShows(prev => prev.map(s => s.id === id ? { ...s, status: 'A_CONFIRMER', bookable: false } : s))
+    } catch { alert('Erreur lors de la révocation.') }
+    finally { setActionId(null) }
+  }
+
+  if (loading) return <Spinner />
+  if (error)   return <ErrorMsg msg={error} />
+
+  const filters = [
+    { key: 'A_CONFIRMER', label: 'À confirmer', color: '#f57f17', bg: '#fff8e1' },
+    { key: 'CONFIRME',    label: 'Confirmés',   color: '#2e7d32', bg: '#e8f5e9' },
+    { key: 'all',         label: 'Tous',        color: '#454652', bg: '#f2f4f7' },
+  ]
+
+  const pending = shows.filter(s => s.status === 'A_CONFIRMER').length
+
+  return (
+    <>
+      {/* Compteur en attente */}
+      {filter !== 'CONFIRME' && pending > 0 && (
+        <div className="rounded-2xl px-5 py-4 mb-6 flex items-center gap-3"
+          style={{ background: '#fff8e1', border: '1px solid #ffe082' }}>
+          <span style={{ fontSize: '1.25rem' }}>⏳</span>
+          <p className="text-sm font-semibold" style={{ color: '#f57f17', fontFamily: 'Manrope, sans-serif' }}>
+            <strong>{pending}</strong> spectacle{pending > 1 ? 's' : ''} en attente de confirmation
+          </p>
+        </div>
+      )}
+
+      {/* Filtres */}
+      <div className="flex gap-2 mb-6 flex-wrap">
+        {filters.map(f => (
+          <button key={f.key} onClick={() => setFilter(f.key)}
+            className="text-xs font-bold px-4 py-2 rounded-full"
+            style={{
+              background: filter === f.key ? f.bg : '#f2f4f7',
+              color: filter === f.key ? f.color : '#767683',
+              border: filter === f.key ? `1px solid ${f.color}40` : '1px solid transparent',
+              fontFamily: 'Manrope, sans-serif', cursor: 'pointer',
+            }}>
+            {f.label}
+          </button>
+        ))}
+      </div>
+
+      {shows.length === 0 ? (
+        <div className="text-center py-16 rounded-2xl"
+          style={{ background: '#fff', color: '#767683', fontFamily: 'Manrope, sans-serif' }}>
+          Aucun spectacle dans cette catégorie.
+        </div>
+      ) : (
+        <div className="space-y-4">
+          {shows.map(s => (
+            <div key={s.id} className="rounded-2xl p-6"
+              style={{ background: '#fff', boxShadow: '0 4px 24px rgba(0,6,102,0.07)' }}>
+
+              <div className="flex items-start justify-between mb-3">
+                <div className="flex items-center gap-3">
+                  {s.poster_url
+                    ? <img src={`/images/${s.poster_url}`} alt={s.title}
+                        className="w-12 h-12 rounded-xl object-cover shrink-0" />
+                    : <div className="w-12 h-12 rounded-xl shrink-0 flex items-center justify-center text-white text-xl"
+                        style={{ background: 'linear-gradient(135deg, #000666, #1a237e)' }}>🎭</div>
+                  }
+                  <div>
+                    <h3 className="font-bold text-base"
+                      style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', color: '#191c1e' }}>
+                      {s.title}
+                    </h3>
+                    <p className="text-xs mt-0.5" style={{ color: '#767683', fontFamily: 'Manrope, sans-serif' }}>
+                      {s.location?.designation ?? '—'} · {s.representations?.length ?? 0} représentation{(s.representations?.length ?? 0) > 1 ? 's' : ''}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Badge statut */}
+                <span className="text-xs font-bold px-3 py-1 rounded-full shrink-0"
+                  style={{
+                    background: s.status === 'CONFIRME' ? '#e8f5e9' : '#fff8e1',
+                    color:      s.status === 'CONFIRME' ? '#2e7d32' : '#f57f17',
+                    fontFamily: 'Manrope, sans-serif',
+                  }}>
+                  {s.status === 'CONFIRME' ? 'Confirmé' : 'À confirmer'}
+                </span>
+              </div>
+
+              {s.description && (
+                <p className="text-sm mb-4 line-clamp-2"
+                  style={{ color: '#454652', fontFamily: 'Manrope, sans-serif', lineHeight: 1.6 }}>
+                  {s.description}
+                </p>
+              )}
+
+              <div className="flex gap-2 flex-wrap">
+                {s.status === 'A_CONFIRMER' && (
+                  <button onClick={() => handleConfirm(s.id)} disabled={actionId === s.id}
+                    style={{
+                      background: '#e8f5e9', color: '#2e7d32', border: 'none', cursor: 'pointer',
+                      padding: '6px 16px', borderRadius: '8px', fontFamily: 'Manrope, sans-serif',
+                      fontSize: '0.8rem', fontWeight: 600, opacity: actionId === s.id ? 0.6 : 1,
+                    }}>
+                    ✔ Confirmer
+                  </button>
+                )}
+                {s.status === 'CONFIRME' && (
+                  <button onClick={() => handleRevoke(s.id)} disabled={actionId === s.id}
+                    style={{
+                      background: '#fff8e1', color: '#f57f17', border: 'none', cursor: 'pointer',
+                      padding: '6px 16px', borderRadius: '8px', fontFamily: 'Manrope, sans-serif',
+                      fontSize: '0.8rem', fontWeight: 600, opacity: actionId === s.id ? 0.6 : 1,
+                    }}>
+                    ↩ Révoquer
+                  </button>
+                )}
               </div>
             </div>
           ))}
