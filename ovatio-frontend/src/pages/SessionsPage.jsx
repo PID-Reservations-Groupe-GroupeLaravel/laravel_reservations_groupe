@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react'
 import api from '../api/axios'
+import { useLanguage } from '../contexts/LanguageContext'
 
 export default function SessionsPage() {
+  const { t } = useLanguage()
   const [history, setHistory]   = useState([])
   const [loading, setLoading]   = useState(true)
   const [error, setError]       = useState('')
@@ -13,7 +15,7 @@ export default function SessionsPage() {
   useEffect(() => {
     api.get('/profile/sessions')
       .then((res) => setHistory(res.data.history ?? res.data))
-      .catch(() => setError('Impossible de charger l\'historique.'))
+      .catch(() => setError(t('sessions.loadError')))
       .finally(() => setLoading(false))
   }, [])
 
@@ -24,10 +26,10 @@ export default function SessionsPage() {
     setSubmitting(true)
     try {
       await api.delete('/profile/sessions/others', { data: { password } })
-      setLogoutMsg('✅ Tous les autres appareils ont été déconnectés.')
+      setLogoutMsg(t('sessions.logoutSuccess'))
       setPassword('')
     } catch (err) {
-      setLogoutErr(err.response?.data?.message ?? 'Mot de passe incorrect.')
+      setLogoutErr(err.response?.data?.message ?? t('sessions.wrongPassword'))
     } finally {
       setSubmitting(false)
     }
@@ -37,28 +39,28 @@ export default function SessionsPage() {
 
   return (
     <div className="max-w-3xl mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold text-ovatio-blue mb-2">Gestion des sessions</h1>
-      <p className="text-gray-500 mb-8">Historique de vos connexions et déconnexion à distance</p>
+      <h1 className="text-3xl font-bold text-ovatio-blue mb-2">{t('sessions.title')}</h1>
+      <p className="text-gray-500 mb-8">{t('sessions.subtitle')}</p>
 
       {/* Historique */}
       <div className="bg-white rounded-xl shadow-sm border border-gray-200 mb-8">
         <div className="px-6 py-4 border-b border-gray-100">
-          <h2 className="font-bold text-gray-800">Historique de connexion</h2>
+          <h2 className="font-bold text-gray-800">{t('sessions.historyTitle')}</h2>
         </div>
 
         {error ? (
           <p className="text-center text-red-400 py-8 text-sm">{error}</p>
         ) : history.length === 0 ? (
-          <p className="text-center text-gray-400 py-8 text-sm">Aucun historique disponible.</p>
+          <p className="text-center text-gray-400 py-8 text-sm">{t('sessions.noHistory')}</p>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead className="bg-gray-50 text-gray-500 text-xs uppercase">
                 <tr>
-                  <th className="px-6 py-3 text-left">Date</th>
-                  <th className="px-6 py-3 text-left">Adresse IP</th>
-                  <th className="px-6 py-3 text-left">Navigateur</th>
-                  <th className="px-6 py-3 text-left">Statut</th>
+                  <th className="px-6 py-3 text-left">{t('sessions.colDate')}</th>
+                  <th className="px-6 py-3 text-left">{t('sessions.colIp')}</th>
+                  <th className="px-6 py-3 text-left">{t('sessions.colBrowser')}</th>
+                  <th className="px-6 py-3 text-left">{t('sessions.colStatus')}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">
@@ -81,7 +83,7 @@ export default function SessionsPage() {
                           ? 'bg-green-100 text-green-700'
                           : 'bg-red-100 text-red-700'
                       }`}>
-                        {entry.success ? '✓ Succès' : '✗ Échec'}
+                        {entry.success ? t('sessions.success') : t('sessions.failure')}
                       </span>
                     </td>
                   </tr>
@@ -92,11 +94,11 @@ export default function SessionsPage() {
         )}
       </div>
 
-      {/* Déconnexion tous les appareils — B1 */}
+      {/* Déconnexion tous les appareils */}
       <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-        <h2 className="font-bold text-gray-800 mb-1">Déconnecter tous les autres appareils</h2>
+        <h2 className="font-bold text-gray-800 mb-1">{t('sessions.logoutOthersTitle')}</h2>
         <p className="text-sm text-gray-500 mb-4">
-          Confirmez votre mot de passe pour révoquer toutes les autres sessions actives.
+          {t('sessions.logoutOthersDesc')}
         </p>
 
         {logoutMsg && (
@@ -113,7 +115,7 @@ export default function SessionsPage() {
         <form onSubmit={handleLogoutOthers} className="flex gap-3 items-end">
           <div className="flex-1">
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Mot de passe actuel
+              {t('sessions.currentPassword')}
             </label>
             <input
               type="password"
@@ -129,7 +131,7 @@ export default function SessionsPage() {
             disabled={submitting}
             className="bg-red-600 hover:bg-red-700 text-white px-5 py-2.5 rounded-lg text-sm font-medium transition disabled:opacity-50 whitespace-nowrap"
           >
-            {submitting ? 'En cours...' : 'Déconnecter les autres'}
+            {submitting ? t('sessions.loggingOut') : t('sessions.logoutBtn')}
           </button>
         </form>
       </div>

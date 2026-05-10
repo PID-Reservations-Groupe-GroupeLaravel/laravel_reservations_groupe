@@ -1,10 +1,12 @@
 import { useState, useRef } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
+import { useLanguage } from '../contexts/LanguageContext'
 import api from '../api/axios'
 
 export default function RegisterPage() {
   const { login } = useAuth()
+  const { t } = useLanguage()
   const navigate   = useNavigate()
 
   const [form, setForm] = useState({
@@ -100,23 +102,21 @@ export default function RegisterPage() {
         <div>
           <p className="text-xs font-semibold uppercase tracking-widest mb-4"
             style={{ color: '#fdd400', fontFamily: 'Manrope, sans-serif' }}>
-            Rejoignez la communauté
+            {t('auth.joinCommunity')}
           </p>
           <h1 className="text-5xl font-extrabold text-white leading-tight mb-6"
             style={{ fontFamily: '"Plus Jakarta Sans", sans-serif' }}>
-            Rejoignez<br />
-            <span style={{ color: '#fdd400' }}>l'Élite</span><br />
-            Culturelle.
+            {t('auth.joinElite')}
           </h1>
           <p className="text-sm leading-relaxed mb-8"
             style={{ color: 'rgba(255,255,255,0.6)', fontFamily: 'Manrope, sans-serif' }}>
-            Accédez aux meilleurs spectacles de Bruxelles, réservez en quelques clics et rejoignez une communauté de passionnés.
+            {t('auth.joinDesc')}
           </p>
 
         </div>
 
         <p className="text-xs" style={{ color: 'rgba(255,255,255,0.3)', fontFamily: 'Manrope, sans-serif' }}>
-          Ovatio.be — La Scène Curatée
+          Ovatio.be — {t('shows.hero_badge')}
         </p>
       </div>
 
@@ -132,12 +132,12 @@ export default function RegisterPage() {
           </div>
 
           <h1 className="text-2xl font-bold mb-1" style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', color: '#191c1e' }}>
-            Créer votre compte
+            {t('auth.createAccount')}
           </h1>
           <p className="text-sm mb-8" style={{ fontFamily: 'Manrope, sans-serif', color: '#767683' }}>
-            Déjà membre ?{' '}
+            {t('auth.alreadyMember')}{' '}
             <Link to="/login" style={{ color: '#000666' }} className="font-semibold hover:underline">
-              Connectez-vous
+              {t('auth.loginLink')}
             </Link>
           </p>
 
@@ -167,7 +167,7 @@ export default function RegisterPage() {
               </div>
               <input ref={fileRef} type="file" accept="image/*" onChange={handlePhoto} className="hidden" />
               <p className="text-xs" style={{ color: '#767683', fontFamily: 'Manrope, sans-serif' }}>
-                Photo de profil (optionnelle) · JPG ou PNG, Max 5MB
+                {t('auth.profilePhoto')}
               </p>
               {errors.photo && <p className="text-xs" style={{ color: '#ba1a1a' }}>{errors.photo[0]}</p>}
             </div>
@@ -176,7 +176,7 @@ export default function RegisterPage() {
             <div className="grid grid-cols-2 gap-3">
               <div>
                 <label className="block text-xs font-semibold uppercase tracking-wider mb-1.5"
-                  style={{ fontFamily: 'Manrope, sans-serif', color: '#454652' }}>Prénom</label>
+                  style={{ fontFamily: 'Manrope, sans-serif', color: '#454652' }}>{t('auth.firstname')}</label>
                 <input type="text" value={form.firstname} onChange={set('firstname')}
                   placeholder="Jean"
                   className="w-full rounded-xl px-4 py-2.5 text-sm outline-none"
@@ -185,7 +185,7 @@ export default function RegisterPage() {
               </div>
               <div>
                 <label className="block text-xs font-semibold uppercase tracking-wider mb-1.5"
-                  style={{ fontFamily: 'Manrope, sans-serif', color: '#454652' }}>Nom</label>
+                  style={{ fontFamily: 'Manrope, sans-serif', color: '#454652' }}>{t('auth.lastname')}</label>
                 <input type="text" value={form.lastname} onChange={set('lastname')}
                   placeholder="Dupont"
                   className="w-full rounded-xl px-4 py-2.5 text-sm outline-none"
@@ -197,26 +197,26 @@ export default function RegisterPage() {
             {/* Login */}
             <div>
               <label className="block text-xs font-semibold uppercase tracking-wider mb-1.5"
-                style={{ fontFamily: 'Manrope, sans-serif', color: '#454652' }}>Identifiant (public)</label>
+                style={{ fontFamily: 'Manrope, sans-serif', color: '#454652' }}>{t('auth.loginField')}</label>
               <input type="text" value={form.login} onChange={set('login')}
                 onBlur={checkLogin} placeholder="mon_login"
                 className="w-full rounded-xl px-4 py-2.5 text-sm outline-none"
                 style={inputClass('login')} />
-              {loginAvail === true  && <p className="text-xs mt-1" style={{ color: '#386a20' }}>✓ Login disponible</p>}
-              {loginAvail === false && <p className="text-xs mt-1" style={{ color: '#ba1a1a' }}>✗ Login déjà pris</p>}
+              {loginAvail === true  && <p className="text-xs mt-1" style={{ color: '#386a20' }}>{t('auth.loginAvailable')}</p>}
+              {loginAvail === false && <p className="text-xs mt-1" style={{ color: '#ba1a1a' }}>{t('auth.loginTaken')}</p>}
               {errors.login && <p className="text-xs mt-1" style={{ color: '#ba1a1a' }}>{errors.login[0]}</p>}
             </div>
 
             {/* Email */}
             <div>
               <label className="block text-xs font-semibold uppercase tracking-wider mb-1.5"
-                style={{ fontFamily: 'Manrope, sans-serif', color: '#454652' }}>Adresse email</label>
+                style={{ fontFamily: 'Manrope, sans-serif', color: '#454652' }}>{t('auth.emailField')}</label>
               <input type="email" value={form.email} onChange={set('email')}
                 onBlur={checkEmail} placeholder="email@exemple.com"
                 className="w-full rounded-xl px-4 py-2.5 text-sm outline-none"
                 style={inputClass('email')} />
-              {emailAvail === true  && <p className="text-xs mt-1" style={{ color: '#386a20' }}>✓ Email disponible</p>}
-              {emailAvail === false && <p className="text-xs mt-1" style={{ color: '#ba1a1a' }}>✗ Email déjà utilisé</p>}
+              {emailAvail === true  && <p className="text-xs mt-1" style={{ color: '#386a20' }}>{t('auth.emailAvailable')}</p>}
+              {emailAvail === false && <p className="text-xs mt-1" style={{ color: '#ba1a1a' }}>{t('auth.emailUsed')}</p>}
               {errors.email && <p className="text-xs mt-1" style={{ color: '#ba1a1a' }}>{errors.email[0]}</p>}
             </div>
 
@@ -224,7 +224,7 @@ export default function RegisterPage() {
             <div className="grid grid-cols-2 gap-3">
               <div>
                 <label className="block text-xs font-semibold uppercase tracking-wider mb-1.5"
-                  style={{ fontFamily: 'Manrope, sans-serif', color: '#454652' }}>Langue de préférence</label>
+                  style={{ fontFamily: 'Manrope, sans-serif', color: '#454652' }}>{t('auth.languagePref')}</label>
                 <select value={form.langue} onChange={set('langue')}
                   className="w-full rounded-xl px-4 py-2.5 text-sm outline-none"
                   style={{ background: '#f2f4f7', color: '#191c1e', fontFamily: 'Manrope, sans-serif' }}>
@@ -235,10 +235,10 @@ export default function RegisterPage() {
               </div>
               <div>
                 <label className="block text-xs font-semibold uppercase tracking-wider mb-1.5"
-                  style={{ fontFamily: 'Manrope, sans-serif', color: '#454652' }}>Mot de passe</label>
+                  style={{ fontFamily: 'Manrope, sans-serif', color: '#454652' }}>{t('auth.passwordField')}</label>
                 <div className="flex items-center rounded-xl px-3 py-2.5 gap-2" style={inputClass('password')}>
                   <input type={showPassword ? 'text' : 'password'} value={form.password} onChange={set('password')}
-                    placeholder="Min. 6 car."
+                    placeholder={t('auth.minPassword')}
                     className="flex-1 bg-transparent text-sm outline-none"
                     style={{ fontFamily: 'Manrope, sans-serif', color: '#191c1e', minWidth: 0 }} />
                   <button type="button" onClick={() => setShowPassword(p => !p)} style={{ color: '#767683', flexShrink: 0 }}>
@@ -255,11 +255,11 @@ export default function RegisterPage() {
             {/* Confirmation */}
             <div>
               <label className="block text-xs font-semibold uppercase tracking-wider mb-1.5"
-                style={{ fontFamily: 'Manrope, sans-serif', color: '#454652' }}>Confirmation du mot de passe</label>
+                style={{ fontFamily: 'Manrope, sans-serif', color: '#454652' }}>{t('auth.confirmPassword')}</label>
               <div className="flex items-center rounded-xl px-3 py-2.5 gap-2" style={inputClass('password_confirmation')}>
                 <input type={showConfirm ? 'text' : 'password'} value={form.password_confirmation}
                   onChange={set('password_confirmation')}
-                  placeholder="Répéter le mot de passe"
+                  placeholder={t('auth.repeatPassword')}
                   className="flex-1 bg-transparent text-sm outline-none"
                   style={{ fontFamily: 'Manrope, sans-serif', color: '#191c1e', minWidth: 0 }} />
                 <button type="button" onClick={() => setShowConfirm(p => !p)} style={{ color: '#767683', flexShrink: 0 }}>
@@ -275,14 +275,14 @@ export default function RegisterPage() {
             <button type="submit" disabled={loading}
               className="w-full py-3.5 rounded-xl text-white font-semibold text-sm transition-opacity disabled:opacity-50"
               style={{ background: 'linear-gradient(135deg, #000666, #1a237e)', fontFamily: '"Plus Jakarta Sans", sans-serif' }}>
-              {loading ? 'Inscription...' : 'Créer mon compte'}
+              {loading ? t('auth.registering') : t('auth.registerBtn')}
             </button>
 
             <p className="text-xs text-center" style={{ color: '#767683', fontFamily: 'Manrope, sans-serif' }}>
-              En cliquant sur "Créer mon compte", vous acceptez nos{' '}
-              <Link to="/cookies" style={{ color: '#000666' }} className="hover:underline">Conditions d'utilisation</Link>
-              {' '}et notre{' '}
-              <a href="#" style={{ color: '#000666' }} className="hover:underline">Politique de confidentialité</a>.
+              {t('auth.termsText')}{' '}
+              <Link to="/cookies" style={{ color: '#000666' }} className="hover:underline">{t('auth.termsLink')}</Link>
+              {' '}{t('auth.termsAnd')}{' '}
+              <a href="#" style={{ color: '#000666' }} className="hover:underline">{t('auth.privacyLink')}</a>.
             </p>
           </form>
         </div>

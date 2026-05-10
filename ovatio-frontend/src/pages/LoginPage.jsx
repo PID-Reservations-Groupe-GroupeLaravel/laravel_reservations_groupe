@@ -1,9 +1,11 @@
 import { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
+import { useLanguage } from '../contexts/LanguageContext'
 
 export default function LoginPage() {
   const { login } = useAuth()
+  const { t } = useLanguage()
   const navigate = useNavigate()
 
   const [email, setEmail]           = useState('')
@@ -21,7 +23,7 @@ export default function LoginPage() {
       await login(email, password, remember)
       navigate('/reservations')
     } catch (err) {
-      setError(err.response?.data?.message ?? 'Identifiants invalides.')
+      setError(err.response?.data?.message ?? t('auth.invalidCredentials'))
     } finally {
       setLoading(false)
     }
@@ -51,7 +53,7 @@ export default function LoginPage() {
           </h1>
           <p className="text-xs mt-1 tracking-[0.3em] uppercase"
             style={{ color: 'rgba(255,255,255,0.5)', fontFamily: 'Manrope, sans-serif' }}>
-            La Scène Curatée
+            {t('shows.hero_badge')}
           </p>
         </Link>
 
@@ -59,10 +61,10 @@ export default function LoginPage() {
         <div className="rounded-3xl p-8" style={{ background: 'white', boxShadow: '0 25px 50px rgba(0,0,0,0.3)' }}>
 
           <h2 className="text-xl font-bold mb-1" style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', color: '#191c1e' }}>
-            Bienvenue
+            {t('auth.welcome')}
           </h2>
           <p className="text-sm mb-6" style={{ fontFamily: 'Manrope, sans-serif', color: '#767683' }}>
-            Connectez-vous pour accéder à vos réservations.
+            {t('auth.loginDesc')}
           </p>
 
           {error && (
@@ -78,7 +80,7 @@ export default function LoginPage() {
             <div>
               <label className="block text-xs font-semibold uppercase tracking-wider mb-2"
                 style={{ fontFamily: 'Manrope, sans-serif', color: '#454652' }}>
-                Identifiant
+                {t('auth.identifier')}
               </label>
               <div className="flex items-center rounded-xl px-4 py-3 gap-3"
                 style={{ background: '#f2f4f7' }}>
@@ -102,11 +104,11 @@ export default function LoginPage() {
               <div className="flex items-center justify-between mb-2">
                 <label className="block text-xs font-semibold uppercase tracking-wider"
                   style={{ fontFamily: 'Manrope, sans-serif', color: '#454652' }}>
-                  Mot de passe
+                  {t('auth.password')}
                 </label>
                 <Link to="/forgot-password" className="text-xs hover:underline"
                   style={{ fontFamily: 'Manrope, sans-serif', color: '#000666' }}>
-                  Oublié ?
+                  {t('auth.forgot')}
                 </Link>
               </div>
               <div className="flex items-center rounded-xl px-4 py-3 gap-3"
@@ -144,7 +146,7 @@ export default function LoginPage() {
                 style={{ accentColor: '#000666' }}
               />
               <label htmlFor="remember" className="text-sm" style={{ fontFamily: 'Manrope, sans-serif', color: '#454652' }}>
-                Rester connecté
+                {t('auth.rememberMe')}
               </label>
             </div>
 
@@ -155,14 +157,14 @@ export default function LoginPage() {
               className="w-full py-3 rounded-xl text-white font-semibold text-sm flex items-center justify-center gap-2 transition-opacity disabled:opacity-50"
               style={{ background: 'linear-gradient(135deg, #000666, #1a237e)', fontFamily: '"Plus Jakarta Sans", sans-serif' }}
             >
-              {loading ? 'Connexion...' : <><span>Se connecter</span><span>→</span></>}
+              {loading ? t('auth.loggingIn') : <><span>{t('auth.loginAction')}</span><span>→</span></>}
             </button>
           </form>
 
           {/* Séparateur */}
           <div className="flex items-center gap-3 my-5">
             <div className="flex-1 h-px" style={{ background: '#eceef1' }} />
-            <span className="text-xs" style={{ color: '#767683', fontFamily: 'Manrope, sans-serif' }}>ou</span>
+            <span className="text-xs" style={{ color: '#767683', fontFamily: 'Manrope, sans-serif' }}>{t('auth.or')}</span>
             <div className="flex-1 h-px" style={{ background: '#eceef1' }} />
           </div>
 
@@ -188,9 +190,9 @@ export default function LoginPage() {
         </div>
 
         <p className="text-center text-sm mt-6" style={{ color: 'rgba(255,255,255,0.5)', fontFamily: 'Manrope, sans-serif' }}>
-          Pas encore de compte ?{' '}
+          {t('auth.noAccountYet')}{' '}
           <Link to="/register" className="font-semibold hover:underline" style={{ color: '#fdd400' }}>
-            S'inscrire gratuitement
+            {t('auth.signupFree')}
           </Link>
         </p>
       </div>

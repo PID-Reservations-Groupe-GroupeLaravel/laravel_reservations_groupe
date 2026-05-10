@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import api from '../api/axios'
+import { useLanguage } from '../contexts/LanguageContext'
 
 const STATUS_COLORS = {
   'En attente': 'bg-yellow-100 text-yellow-800',
@@ -9,6 +10,7 @@ const STATUS_COLORS = {
 }
 
 export default function ReservationsPage() {
+  const { t } = useLanguage()
   const [reservations, setReservations] = useState([])
   const [loading, setLoading]           = useState(true)
   const [error, setError]               = useState('')
@@ -22,7 +24,7 @@ export default function ReservationsPage() {
     setLoading(true)
     api.get('/reservations')
       .then((res) => setReservations(res.data.data ?? res.data))
-      .catch(() => setError('Impossible de charger vos réservations.'))
+      .catch(() => setError(t('reservations.loadError')))
       .finally(() => setLoading(false))
   }
 
@@ -34,18 +36,18 @@ export default function ReservationsPage() {
       const res = await api.post(`/reservations/${id}/checkout`)
       window.location.href = res.data.url
     } catch (err) {
-      alert(err.response?.data?.message ?? 'Impossible de lancer le paiement Stripe.')
+      alert(err.response?.data?.message ?? t('reservations.payError'))
     }
   }
 
   // Annuler une réservation
   const handleCancel = async (id) => {
-    if (!window.confirm('Annuler cette réservation ?')) return
+    if (!window.confirm(t('reservations.cancelConfirm'))) return
     try {
       await api.delete(`/reservations/${id}`)
       fetchReservations()
     } catch {
-      alert('Impossible d\'annuler cette réservation.')
+      alert(t('reservations.cancelError'))
     }
     setCancelId(null)
   }
@@ -56,12 +58,12 @@ export default function ReservationsPage() {
       const res = await api.post(`/reservations/${id}/ticket`)
       setTicketMsg((prev) => ({
         ...prev,
-        [id]: `🎟️ Ticket généré ! Code QR : ${res.data.qr_code}`,
+        [id]: `${t('reservations.ticketGenerated')} ${res.data.qr_code}`,
       }))
     } catch (err) {
       setTicketMsg((prev) => ({
         ...prev,
-        [id]: err.response?.data?.message ?? 'Erreur ticket.',
+        [id]: err.response?.data?.message ?? t('reservations.ticketError'),
       }))
     }
   }
@@ -71,14 +73,14 @@ export default function ReservationsPage() {
 
   return (
     <div className="max-w-5xl mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold text-ovatio-blue mb-2">Mes réservations</h1>
-      <p className="text-gray-500 mb-8">Gérez vos réservations de spectacles</p>
+      <h1 className="text-3xl font-bold text-ovatio-blue mb-2">{t('reservations.title')}</h1>
+      <p className="text-gray-500 mb-8">{t('reservations.subtitle')}</p>
 
       {paymentStatus === 'success' && (
         <div className="mb-6 rounded-xl px-5 py-4 text-sm font-semibold flex items-center gap-3"
           style={{ background: '#e8f5e9', color: '#2e7d32', border: '1px solid #a5d6a7' }}>
           <span>✅</span>
-          <span>Paiement confirmé ! Votre réservation est maintenant payée.</span>
+          <span>{t('reservations.paySuccess')}</span>
           <button onClick={() => setSearchParams({})}
             style={{ marginLeft: 'auto', background: 'none', border: 'none', cursor: 'pointer', color: '#2e7d32', fontSize: '1rem' }}>
             ×
@@ -90,7 +92,7 @@ export default function ReservationsPage() {
         <div className="mb-6 rounded-xl px-5 py-4 text-sm font-semibold flex items-center gap-3"
           style={{ background: '#ffdad6', color: '#93000a', border: '1px solid #ffb4ab' }}>
           <span>❌</span>
-          <span>Paiement annulé. Votre réservation reste en attente.</span>
+          <span>{t('reservations.payCancel')}</span>
           <button onClick={() => setSearchParams({})}
             style={{ marginLeft: 'auto', background: 'none', border: 'none', cursor: 'pointer', color: '#93000a', fontSize: '1rem' }}>
             ×
@@ -101,7 +103,7 @@ export default function ReservationsPage() {
       {reservations.length === 0 ? (
         <div className="text-center py-20 text-gray-400">
           <div className="text-6xl mb-4">🎭</div>
-          <p className="text-lg">Aucune réservation pour le moment.</p>
+          <p className="text-lg">{t('reservations.none')}</p>
         </div>
       ) : (
         <div className="space-y-4">
@@ -113,6 +115,7 @@ export default function ReservationsPage() {
               onPay={handleCheckout}
               onTicket={handleTicket}
               ticketMsg={ticketMsg[r.id]}
+              t={t}
             />
           ))}
         </div>
@@ -121,14 +124,14 @@ export default function ReservationsPage() {
   )
 }
 
-function ReservationCard({ reservation: r, onCancel, onPay, onTicket, ticketMsg }) {
+function ReservationCard({ reservation: r, onCancel, onPay, onTicket, ticketMsg, t }) {
   const statusClass = STATUS_COLORS[r.status] ?? 'bg-gray-100 text-gray-700'
 
   return (
     <div className="bg-white border border-gray-200 rounded-xl shadow-sm p-6">
       <div className="flex items-start justify-between mb-4">
         <div>
-          <span className="text-sm text-gray-400">Réservation #{r.id}</span>
+          <span className="text-sm text-gray-400">{t('reservations.reservationId')}{r.id}</span>
           <div className="flex items-center gap-3 mt-1">
             <span className={`text-xs font-medium px-3 py-1 rounded-full ${statusClass}`}>
               {r.status}
@@ -145,7 +148,7 @@ function ReservationCard({ reservation: r, onCancel, onPay, onTicket, ticketMsg 
         {r.total !== undefined && (
           <div className="text-right">
             <div className="text-xl font-bold text-ovatio-blue">{r.total} €</div>
-            <div className="text-xs text-gray-400">total</div>
+            <div className="text-xs text-gray-400">{t('reservations.total')}</div>
           </div>
         )}
       </div>
@@ -162,10 +165,10 @@ function ReservationCard({ reservation: r, onCancel, onPay, onTicket, ticketMsg 
               : '—'
             }
             {repr.quantity && (
-              <span className="ml-3">🪑 {repr.quantity} place(s)</span>
+              <span className="ml-3">🪑 {repr.quantity} {repr.quantity > 1 ? t('reservations.seatPlural') : t('reservations.seatSingular')}</span>
             )}
             {repr.unit_price && (
-              <span className="ml-3">💶 {repr.unit_price} €/place</span>
+              <span className="ml-3">💶 {repr.unit_price} €/{t('reservations.seatSingular')}</span>
             )}
           </div>
         </div>
@@ -186,13 +189,13 @@ function ReservationCard({ reservation: r, onCancel, onPay, onTicket, ticketMsg 
               onClick={() => onPay(r.id)}
               className="bg-green-600 text-white text-sm px-4 py-2 rounded-lg hover:bg-green-700 transition font-semibold"
             >
-              💳 Payer via Stripe
+              💳 {t('reservations.payStripe')}
             </button>
             <button
               onClick={() => onCancel(r.id)}
               className="bg-red-600 text-white text-sm px-4 py-2 rounded-lg hover:bg-red-700 transition"
             >
-              Annuler
+              {t('reservations.cancel')}
             </button>
           </>
         )}
@@ -201,7 +204,7 @@ function ReservationCard({ reservation: r, onCancel, onPay, onTicket, ticketMsg 
             onClick={() => onTicket(r.id)}
             className="bg-ovatio-blue text-white text-sm px-4 py-2 rounded-lg hover:bg-ovatio-light transition"
           >
-            🎟️ Générer ticket
+            {t('reservations.generateTicket')}
           </button>
         )}
       </div>
