@@ -44,6 +44,44 @@ Route::post('/stripe/webhook', function (\Illuminate\Http\Request $request) {
     return response()->json(['status' => 'ok']);
 });
 
+// ─── Flux RSS ────────────────────────────────────────────────────────────────
+Route::get('/rss', function (\Illuminate\Http\Request $request) {
+    $mode = $request->query('mode', 'latest');
+
+    $query = \App\Models\Show::with(['representations' => function ($q) {
+        $q->orderBy('schedule');
+    }]);
+
+    if ($mode === 'upcoming') {
+        $query->whereHas('representations', fn($q) => $q->where('schedule', '>=', now()));
+    }
+
+    $shows = $query->latest()->take(20)->get();
+
+    $items = $shows->map(function ($show) {
+        $next = $show->representations->first(fn($r) => $r->schedule >= now());
+        $date = $next ? \Carbon\Carbon::parse($next->schedule)->toRssString() : now()->toRssString();
+
+        return sprintf(
+            "<item>\n<title><![CDATA[%s]]></title>\n<link>%s</link>\n<description><![CDATA[%s]]></description>\n<pubDate>%s</pubDate>\n</item>",
+            e($show->title),
+            url('/api/shows/' . $show->id),
+            e($show->description ?? ''),
+            $date
+        );
+    })->implode("\n");
+
+    $xml = '<?xml version="1.0" encoding="UTF-8"?>' . "\n"
+        . '<rss version="2.0"><channel>' . "\n"
+        . '<title>Ovatio.be – Spectacles</title>' . "\n"
+        . '<link>' . url('/') . '</link>' . "\n"
+        . '<description>Les derniers spectacles sur Ovatio.be</description>' . "\n"
+        . $items . "\n"
+        . '</channel></rss>';
+
+    return response($xml, 200)->header('Content-Type', 'application/rss+xml; charset=UTF-8');
+});
+
 // Routes publiques — spectacles (pas de token requis)
 Route::get('/shows', [ShowApiController::class, 'index']);
 Route::get('/shows/{id}', [ShowApiController::class, 'show'])->whereNumber('id');
@@ -80,12 +118,23 @@ Route::get('/shows/{id}/reviews', function ($id) {
     return response()->json($reviews);
 })->whereNumber('id');
 
-// POST /shows/{id}/reviews — poster un avis (membre connecté)
+// POST /shows/{id}/reviews — poster un avis (membre avec ticket payé)
 Route::middleware('auth:sanctum')->post('/shows/{id}/reviews', function (Request $request, $id) {
     $request->validate([
         'score'   => 'required|integer|min:1|max:5',
         'comment' => 'required|string|min:5|max:1000',
     ]);
+
+    $hasTicket = Reservation::where('user_id', $request->user()->id)
+        ->where('status', 'Payée')
+        ->whereHas('representations', fn($q) => $q->where('show_id', $id))
+        ->exists();
+
+    if (!$hasTicket) {
+        return response()->json([
+            'message' => 'Vous devez avoir assisté à ce spectacle (ticket payé) pour laisser un avis.',
+        ], 403);
+    }
 
     $review = \App\Models\Review::create([
         'user_id'   => $request->user()->id,

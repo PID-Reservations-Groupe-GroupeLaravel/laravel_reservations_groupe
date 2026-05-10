@@ -599,8 +599,12 @@ function AddReviewForm({ showId, onAdded }) {
       onAdded(res.data)
       setSent(true)
       setComment(''); setScore(0)
-    } catch {
-      setErr('Erreur lors de l\'envoi. Réessayez.')
+    } catch (err) {
+      if (err.response?.status === 403) {
+        setErr(err.response.data?.message ?? 'Vous devez avoir un ticket payé pour ce spectacle pour laisser un avis.')
+      } else {
+        setErr('Erreur lors de l\'envoi. Réessayez.')
+      }
     } finally { setSending(false) }
   }
 
