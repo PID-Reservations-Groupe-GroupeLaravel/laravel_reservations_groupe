@@ -77,21 +77,21 @@ class User extends Authenticatable
 
     public function isMembre(): bool
     {
-        return $this->hasRole('membre');
+        return $this->hasRole('member');
     }
 
     public function isProducteur(): bool
     {
-        return $this->hasRole('producteur');
+        return $this->hasRole('producer');
     }
 
     public function isCritique(): bool
     {
-        return $this->hasRole('critique');
+        return $this->hasRole('press');
     }
 
     public function isAffilie(): bool
     {
-        return $this->hasRole('affilie');
+        return $this->hasRole('affiliate');
     }
 }
