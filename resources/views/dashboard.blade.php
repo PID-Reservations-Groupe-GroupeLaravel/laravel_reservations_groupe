@@ -16,17 +16,17 @@
                 <div class="p-6 text-gray-900">
 
                     <div class="flex items-center justify-between mb-6">
-                        <h3 class="text-lg font-semibold">Liste des artistes</h3>
+                        <h3 class="text-lg font-semibold">{{ __('messages.artists.list') }}</h3>
 
                         <a href="{{ route('artists.create') }}"
                            class="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
-                            + Ajouter un artiste
+                            + {{ __('messages.artists.add') }}
                         </a>
                     </div>
 
                     @if ($artists->count() === 0)
                         <div class="p-4 bg-yellow-50 text-yellow-800 rounded">
-                            Aucun artiste trouvé.
+                            {{ __('messages.artists.none_found') }}
                         </div>
                     @else
                         <div class="overflow-x-auto">
@@ -34,9 +34,9 @@
                                 <thead class="bg-gray-100">
                                     <tr>
                                         <th class="text-left p-3 border-b">ID</th>
-                                        <th class="text-left p-3 border-b">Firstname</th>
-                                        <th class="text-left p-3 border-b">Lastname</th>
-                                        <th class="text-left p-3 border-b">Actions</th>
+                                        <th class="text-left p-3 border-b">{{ __('messages.artists.firstname') }}</th>
+                                        <th class="text-left p-3 border-b">{{ __('messages.artists.lastname') }}</th>
+                                        <th class="text-left p-3 border-b">{{ __('messages.artists.actions') }}</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -49,21 +49,21 @@
                                                 <div class="flex gap-2">
                                                     <a href="{{ route('artists.show', $artist->id) }}"
                                                        class="px-3 py-1 bg-gray-800 text-white rounded hover:bg-black">
-                                                        Voir
+                                                        {{ __('messages.artists.view') }}
                                                     </a>
 
                                                     <a href="{{ route('artists.edit', $artist->id) }}"
                                                        class="px-3 py-1 bg-indigo-600 text-white rounded hover:bg-indigo-700">
-                                                        Modifier
+                                                        {{ __('messages.artists.edit') }}
                                                     </a>
 
                                                     <form action="{{ route('artists.destroy', $artist->id) }}" method="POST"
-                                                          onsubmit="return confirm('Supprimer cet artiste ?');">
+                                                          onsubmit="return confirm('{{ __('messages.artists.delete_confirm') }}')">
                                                         @csrf
                                                         @method('DELETE')
                                                         <button type="submit"
                                                                 class="px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700">
-                                                            Supprimer
+                                                            {{ __('messages.artists.delete') }}
                                                         </button>
                                                     </form>
                                                 </div>
@@ -77,7 +77,7 @@
 
                     <div class="mt-6">
                         <a href="{{ route('artists.index') }}" class="text-blue-700 hover:underline">
-                            Aller sur la page complète /artists
+                            {{ __('messages.artists.full_page') }}
                         </a>
                     </div>
 

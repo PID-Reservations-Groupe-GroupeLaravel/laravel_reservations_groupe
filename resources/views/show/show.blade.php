@@ -1,6 +1,6 @@
 @extends('layouts.main')
 
-@section('title', "Fiche d'un spectacle")
+@section('title', __('messages.shows.profile'))
 
 @section('content')
 <article>
@@ -17,19 +17,19 @@
     @endif
 
     @if($show->location)
-        <p><strong>Lieu de création :</strong> {{ $show->location->designation }}</p>
+        <p><strong>{{ __('messages.shows.venue') }} :</strong> {{ $show->location->designation }}</p>
     @endif
 
-    <p><strong>Durée :</strong> {{ $show->duration }} minutes</p>
-    <p><strong>Année création :</strong> {{ $show->created_in }}</p>
+    <p><strong>{{ __('messages.shows.duration') }} :</strong> {{ __('messages.shows.duration_minutes', ['duration' => $show->duration]) }}</p>
+    <p><strong>{{ __('messages.shows.created_in') }} :</strong> {{ $show->created_in }}</p>
 
     @if($show->bookable)
-        <p><em>Réservable</em></p>
+        <p><em>{{ __('messages.shows.bookable') }}</em></p>
     @else
-        <p><em>Non réservable</em></p>
+        <p><em>{{ __('messages.shows.not_bookable') }}</em></p>
     @endif
 
-    <h2>Liste des représentations</h2>
+    <h2>{{ __('messages.shows.representations') }}</h2>
     @if($show->representations->count() >= 1)
         <ul>
             @foreach ($show->representations as $representation)
@@ -40,19 +40,19 @@
                     @elseif($representation->show->location)
                         ({{ $representation->show->location->designation }})
                     @else
-                        (lieu à déterminer)
+                        ({{ __('messages.shows.venue_tbd') }})
                     @endif
                 </li>
             @endforeach
         </ul>
     @else
-        <p>Aucune représentation</p>
+        <p>{{ __('messages.shows.no_representation') }}</p>
     @endif
 
-    <h2>Liste des artistes</h2>
+    <h2>{{ __('messages.shows.artists_list') }}</h2>
 
     <p>
-        <strong>Auteur :</strong>
+        <strong>{{ __('messages.shows.author') }} :</strong>
         @if(isset($collaborateurs['auteur']))
             @foreach($collaborateurs['auteur'] as $auteur)
                 {{ $auteur->firstname }} {{ $auteur->lastname }}
@@ -68,7 +68,7 @@
     </p>
 
     <p>
-        <strong>Metteur en scène :</strong>
+        <strong>{{ __('messages.shows.director') }} :</strong>
         @if(isset($collaborateurs['scénographe']))
             @foreach($collaborateurs['scénographe'] as $scenographe)
                 {{ $scenographe->firstname }} {{ $scenographe->lastname }}
@@ -84,7 +84,7 @@
     </p>
 
     <p>
-        <strong>Distribution :</strong>
+        <strong>{{ __('messages.shows.cast') }} :</strong>
         @if(isset($collaborateurs['comédien']))
             @foreach($collaborateurs['comédien'] as $comedien)
                 {{ $comedien->firstname }} {{ $comedien->lastname }}
@@ -102,6 +102,6 @@
 </article>
 
 <nav>
-    <a href="{{ route('show.index') }}">Retour à l'index</a>
+    <a href="{{ route('show.index') }}">{{ __('messages.shows.back_index') }}</a>
 </nav>
 @endsection

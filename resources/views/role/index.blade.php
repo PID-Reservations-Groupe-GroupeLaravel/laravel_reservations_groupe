@@ -1,9 +1,9 @@
 @extends('layouts.main')
 
-@section('title', 'Liste des rôles')
+@section('title', __('messages.roles.list'))
 
 @section('content')
-    <h1>Liste des rôles</h1>
+    <h1>{{ __('messages.roles.list') }}</h1>
 
     <ul>
         @foreach($roles as $role)

@@ -1,9 +1,9 @@
 @extends('layouts.main')
 
-@section('title', 'Liste des lieux de spectacle')
+@section('title', __('messages.locations.list'))
 
 @section('content')
-    <h1>Liste des lieux de spectacle</h1>
+    <h1>{{ __('messages.locations.list') }}</h1>
 
     <ul>
         @foreach($locations as $location)
@@ -22,6 +22,6 @@
     </ul>
 
     <p>
-        <a href="{{ route('home') }}">Retour à l'accueil</a>
+        <a href="{{ route('home') }}">{{ __('messages.locations.back_home') }}</a>
     </p>
 @endsection

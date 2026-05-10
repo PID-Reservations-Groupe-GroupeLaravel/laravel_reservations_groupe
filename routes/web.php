@@ -18,6 +18,13 @@ use App\Http\Controllers\RoleController;
 |--------------------------------------------------------------------------
 */
 
+Route::get('/lang/{locale}', function (string $locale) {
+    if (in_array($locale, ['en', 'nl'])) {
+        session(['locale' => $locale]);
+    }
+    return back();
+})->name('lang.switch');
+
 Route::view('/', 'welcome')->name('home');
 
 /*

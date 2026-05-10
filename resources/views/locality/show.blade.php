@@ -1,6 +1,6 @@
 @extends('layouts.main')
 
-@section('title', 'Fiche d\'une localité')
+@section('title', __('messages.localities.profile'))
 
 @section('content')
     <h1>{{ $locality->postal_code }} {{ $locality->locality }}</h1>
@@ -12,6 +12,6 @@
     </ul>
 
     <nav>
-        <a href="{{ route('locality.index') }}">Retour à l'index</a>
+        <a href="{{ route('locality.index') }}">{{ __('messages.localities.back_index') }}</a>
     </nav>
 @endsection

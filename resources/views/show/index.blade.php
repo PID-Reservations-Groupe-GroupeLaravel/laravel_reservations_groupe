@@ -1,16 +1,16 @@
 @extends('layouts.main')
 
-@section('title', 'Liste des spectacles')
+@section('title', __('messages.shows.list'))
 
 @section('content')
-    <h1>Liste des spectacles</h1>
+    <h1>{{ __('messages.shows.list') }}</h1>
 
     <ul>
     @foreach($shows as $show)
         <li>
             <a href="{{ route('show.show', $show->id) }}">{{ $show->title }}</a>
             @if(!$show->bookable)
-                <em>Réservation indisponible</em>
+                <em>{{ __('messages.shows.booking_unavailable') }}</em>
             @endif
         </li>
     @endforeach
