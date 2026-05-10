@@ -223,6 +223,13 @@ export default {
     rejectedTitle: 'Application rejected',
     rejectedDesc: 'Your application was rejected. Reason:',
     rejectedRetry: 'You may submit a new application.',
+    siretHint: '(optional)',
+    errRequired: 'This field is required.',
+    errMinName: 'Minimum 2 characters.',
+    errMinDesc: 'Description must be at least 20 characters.',
+    errSiret: 'Invalid format. E.g. BE 0123.456.789 or 14 digits.',
+    errUrl: 'URL must start with http:// or https://',
+    errPhone: 'Invalid phone number.',
   },
   cookies: {
     badge: 'GDPR & Transparency',

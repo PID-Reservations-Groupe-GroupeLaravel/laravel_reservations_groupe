@@ -24,10 +24,11 @@ class RoleUserSeeder extends Seeder
         $data = [];
 
         // Rôles
-        $roleMember = Role::firstWhere('role', 'member');
-        $roleAdmin = Role::firstWhere('role', 'admin');
-        $rolePress = Role::firstWhere('role', 'press');
+        $roleMember   = Role::firstWhere('role', 'member');
+        $roleAdmin    = Role::firstWhere('role', 'admin');
+        $rolePress    = Role::firstWhere('role', 'press');
         $roleAffiliate = Role::firstWhere('role', 'affiliate');
+        $roleProducer = Role::firstWhere('role', 'producer');
 
         // Tous les users => member
         if ($roleMember) {
@@ -86,6 +87,16 @@ class RoleUserSeeder extends Seeder
                     'user_id' => $affiliate->id,
                     'role_id' => $roleAffiliate->id,
                 ];
+            }
+        }
+
+        // 4 producteurs nommés : anna, thomas, marie, lucas
+        if ($roleProducer) {
+            foreach (['anna', 'thomas', 'marie', 'lucas'] as $login) {
+                $producer = User::firstWhere('login', $login);
+                if ($producer) {
+                    $data[] = ['user_id' => $producer->id, 'role_id' => $roleProducer->id];
+                }
             }
         }
 

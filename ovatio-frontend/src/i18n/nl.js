@@ -223,6 +223,13 @@ export default {
     rejectedTitle: 'Aanvraag geweigerd',
     rejectedDesc: 'Uw aanvraag is geweigerd. Reden:',
     rejectedRetry: 'U kunt een nieuwe aanvraag indienen.',
+    siretHint: '(optioneel)',
+    errRequired: 'Dit veld is verplicht.',
+    errMinName: 'Minimum 2 tekens.',
+    errMinDesc: 'Beschrijving moet minimaal 20 tekens bevatten.',
+    errSiret: 'Ongeldig formaat. Bijv. BE 0123.456.789 of 14 cijfers.',
+    errUrl: 'URL moet beginnen met http:// of https://',
+    errPhone: 'Ongeldig telefoonnummer.',
   },
   cookies: {
     badge: 'AVG & Transparantie',

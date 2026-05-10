@@ -223,6 +223,13 @@ export default {
     rejectedTitle: 'Demande refusée',
     rejectedDesc: 'Votre demande a été refusée. Motif :',
     rejectedRetry: 'Vous pouvez soumettre une nouvelle demande.',
+    siretHint: '(optionnel)',
+    errRequired: 'Ce champ est obligatoire.',
+    errMinName: 'Minimum 2 caractères.',
+    errMinDesc: 'La description doit faire au moins 20 caractères.',
+    errSiret: 'Format invalide. Ex : BE 0123.456.789 ou 14 chiffres.',
+    errUrl: 'L\'URL doit commencer par http:// ou https://',
+    errPhone: 'Numéro de téléphone invalide.',
   },
   cookies: {
     badge: 'RGPD & Transparence',

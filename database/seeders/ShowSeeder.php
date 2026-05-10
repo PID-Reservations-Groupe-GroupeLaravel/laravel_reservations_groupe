@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\DB;
 use App\Models\Show;
 use App\Models\Location;
 use App\Models\Price;
+use App\Models\User;
 
 class ShowSeeder extends Seeder
 {
@@ -16,12 +17,8 @@ class ShowSeeder extends Seeder
             DB::statement('SET FOREIGN_KEY_CHECKS=0;');
         }
 
-        if (DB::getDriverName() === 'mysql') {
-            DB::table('price_show')->truncate();
-        } else {
-            DB::table('price_show')->delete();
-        }
-
+        DB::table('price_show')->truncate();
+        DB::table('producer_requests')->truncate();
         Show::truncate();
 
         if (DB::getDriverName() === 'mysql') {
@@ -32,12 +29,16 @@ class ShowSeeder extends Seeder
         $dexia   = Location::where('slug', 'dexia-art-center')->first();
         $sama    = Location::where('slug', 'la-samaritaine')->first();
 
-        $user    = \App\Models\User::first();
+        $anna   = User::firstWhere('login', 'anna');
+        $thomas = User::firstWhere('login', 'thomas');
+        $marie  = User::firstWhere('login', 'marie');
+        $lucas  = User::firstWhere('login', 'lucas');
 
         $pNormal = Price::where('price', 14.90)->first();
         $pEnfant = Price::where('price', 7.90)->first();
         $pAncien = Price::where('price', 15.90)->first();
 
+        // ── Spectacle 1 → Anna Lyse ──────────────────────────────────────────
         Show::create([
             'slug'        => 'ayiti',
             'title'       => 'Ayiti',
@@ -45,12 +46,13 @@ class ShowSeeder extends Seeder
             'poster_url'  => 'ayiti.jpg',
             'duration'    => 90,
             'created_in'  => 2010,
-            'user_id'     => $user?->id,
+            'user_id'     => $anna?->id,
             'location_id' => $venerie?->id,
             'price_id'    => $pNormal?->id,
             'bookable'    => true,
         ]);
 
+        // ── Spectacle 2 → Thomas Martin ──────────────────────────────────────
         Show::create([
             'slug'        => 'cible-mouvante',
             'title'       => 'Cible mouvante',
@@ -58,12 +60,13 @@ class ShowSeeder extends Seeder
             'poster_url'  => 'cible-mouvante.jpg',
             'duration'    => 90,
             'created_in'  => 2012,
-            'user_id'     => $user?->id,
+            'user_id'     => $thomas?->id,
             'location_id' => $dexia?->id,
             'price_id'    => $pEnfant?->id,
             'bookable'    => true,
         ]);
 
+        // ── Spectacle 3 → Marie Dupont ───────────────────────────────────────
         Show::create([
             'slug'        => 'ceci-nest-pas-un-chanteur-belge',
             'title'       => "Ceci n'est pas un chanteur belge",
@@ -71,12 +74,13 @@ class ShowSeeder extends Seeder
             'poster_url'  => 'claudebelgesaison220.jpg',
             'duration'    => 80,
             'created_in'  => 2014,
-            'user_id'     => $user?->id,
+            'user_id'     => $marie?->id,
             'location_id' => $dexia?->id,
             'price_id'    => $pEnfant?->id,
             'bookable'    => false,
         ]);
 
+        // ── Spectacle 4 → Lucas Bernard ──────────────────────────────────────
         Show::create([
             'slug'        => 'manneke',
             'title'       => 'Manneke... !',
@@ -84,10 +88,61 @@ class ShowSeeder extends Seeder
             'poster_url'  => 'wayburn.jpg',
             'duration'    => 70,
             'created_in'  => 2011,
-            'user_id'     => $user?->id,
+            'user_id'     => $lucas?->id,
             'location_id' => $sama?->id,
             'price_id'    => $pAncien?->id,
             'bookable'    => true,
         ]);
+
+        // ── producer_requests approuvées pour chaque producteur ───────────────
+        $producerData = [
+            [
+                'user'         => $anna,
+                'company_name' => 'Compagnie Anna Lyse',
+                'description'  => 'Compagnie de théâtre contemporain spécialisée dans les récits personnels et engagés.',
+                'siret'        => 'BE 0412.345.678',
+                'website'      => 'https://annalyse.be',
+                'phone'        => '+32 2 123 45 67',
+            ],
+            [
+                'user'         => $thomas,
+                'company_name' => 'Théâtre Mouvement',
+                'description'  => 'Création de spectacles de danse-théâtre explorant le corps et l\'espace scénique.',
+                'siret'        => 'BE 0523.456.789',
+                'website'      => 'https://theatremouvement.be',
+                'phone'        => '+32 4 234 56 78',
+            ],
+            [
+                'user'         => $marie,
+                'company_name' => 'Les Productions Dupont',
+                'description'  => 'Compagnie belge de comédie et de satire sociale, ancrée dans l\'identité culturelle belge.',
+                'siret'        => 'BE 0634.567.890',
+                'website'      => 'https://productionsdupont.be',
+                'phone'        => '+32 2 345 67 89',
+            ],
+            [
+                'user'         => $lucas,
+                'company_name' => 'Bernard Productions',
+                'description'  => 'Productions néerlandophones et bilingues axées sur la mémoire et l\'identité populaire.',
+                'siret'        => 'BE 0745.678.901',
+                'website'      => 'https://bernardproductions.be',
+                'phone'        => '+32 9 456 78 90',
+            ],
+        ];
+
+        foreach ($producerData as $pd) {
+            if (!$pd['user']) continue;
+            DB::table('producer_requests')->insert([
+                'user_id'      => $pd['user']->id,
+                'company_name' => $pd['company_name'],
+                'description'  => $pd['description'],
+                'siret'        => $pd['siret'],
+                'website'      => $pd['website'],
+                'phone'        => $pd['phone'],
+                'status'       => 'approved',
+                'created_at'   => now()->subDays(rand(30, 90)),
+                'updated_at'   => now()->subDays(rand(1, 29)),
+            ]);
+        }
     }
 }
