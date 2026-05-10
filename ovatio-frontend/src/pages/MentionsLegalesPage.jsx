@@ -35,7 +35,7 @@ export default function MentionsLegalesPage() {
       <div className="max-w-3xl mx-auto px-6 py-12 space-y-10">
 
         <Section title="Éditeur du site">
-          <p>Le site <strong>Ovatio.be</strong> est édité dans le cadre d'un projet pédagogique réalisé à l'<strong>EPHEC</strong> (École Pratique des Hautes Études Commerciales), située avenue Konrad Adenauer 3, 1200 Woluwe-Saint-Lambert, Belgique.</p>
+          <p>Le site <strong>Ovatio.be</strong> est édité dans le cadre d'un projet pédagogique réalisé à l'<strong>ICCBXL</strong> (Institut Cardinal Mercier — site de Bruxelles), situé rue des Minimes 6, 1000 Bruxelles, Belgique.</p>
           <p>Responsables du projet : Soufiane Achraa, Salim El Ghalbzouri, Mehdi Chouati, Mohamed Minhas.</p>
           <p>Contact : <a href="mailto:contact@ovatio.be" className="underline" style={{ color: '#000666' }}>contact@ovatio.be</a></p>
         </Section>
