@@ -60,7 +60,7 @@ export default function AboutPage() {
           <div className="space-y-3 text-sm" style={{ color: '#454652', lineHeight: 1.7 }}>
             <p><strong>{t('about.legalEditor')}</strong> Ovatio SPRL — BE 0123.456.789</p>
             <p><strong>{t('about.legalAddress')}</strong> Rue de la Culture 42, 1000 Bruxelles, Belgique</p>
-            <p><strong>{t('about.legalEmail')}</strong> contact@ovatio.be</p>
+            <p><strong>{t('about.legalEmail')}</strong> contact@standing-ovation.be</p>
             <p><strong>{t('about.legalHost')}</strong> OVH SAS, 2 rue Kellermann, 59100 Roubaix, France</p>
             <p><strong>{t('about.legalResponsible')}</strong> Soufiane &amp; Salim — Étudiants PID 2024-2025</p>
           </div>

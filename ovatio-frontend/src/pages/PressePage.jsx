@@ -71,7 +71,7 @@ export default function PressePage() {
               {t('press.pressContactInfo')}
             </p>
           </div>
-          <a href="mailto:presse@ovatio.be"
+          <a href="mailto:presse@standing-ovation.be"
             className="px-5 py-2.5 rounded-xl text-sm font-bold text-white hover:opacity-90 transition-opacity shrink-0"
             style={{ background: 'linear-gradient(135deg, #000666, #1a237e)', fontFamily: '"Plus Jakarta Sans", sans-serif' }}>
             {t('press.pressContactBtn')}
