@@ -73,8 +73,8 @@ export default function CookiesPage() {
         <Section title={t('cookies.rightsTitle')}>
           <p>
             {t('cookies.rightsContent')}{' '}
-            <a href="mailto:contact@ovatio.be" style={{ color: '#000666' }} className="font-semibold hover:underline">
-              contact@ovatio.be
+            <a href="mailto:contact@standing-ovation.be" style={{ color: '#000666' }} className="font-semibold hover:underline">
+              contact@standing-ovation.be
             </a>.
           </p>
         </Section>

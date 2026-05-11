@@ -39,9 +39,9 @@ export default function MentionsLegalesPage() {
       <div className="max-w-3xl mx-auto px-6 py-12 space-y-10">
 
         <Section title={t('mentions.editorTitle')}>
-          <p>Le site <strong>Ovatio.be</strong> est édité dans le cadre d'un projet pédagogique réalisé à l'<strong>ICCBXL</strong> (Institut Cardinal Mercier — site de Bruxelles), situé rue des Minimes 6, 1000 Bruxelles, Belgique.</p>
+          <p>Le site <strong>Standing-Ovation.be</strong> est édité dans le cadre d'un projet pédagogique réalisé à l'<strong>ICCBXL</strong> (Institut Cardinal Mercier — site de Bruxelles), situé rue des Minimes 6, 1000 Bruxelles, Belgique.</p>
           <p>Responsables du projet : Soufiane Achraa, Salim El Ghalbzouri, Mehdi Chouati, Mohamed Minhas.</p>
-          <p>Contact : <a href="mailto:contact@ovatio.be" className="underline" style={{ color: '#000666' }}>contact@ovatio.be</a></p>
+          <p>Contact : <a href="mailto:contact@standing-ovation.be" className="underline" style={{ color: '#000666' }}>contact@standing-ovation.be</a></p>
         </Section>
 
         <Section title={t('mentions.hostTitle')}>
@@ -49,22 +49,22 @@ export default function MentionsLegalesPage() {
         </Section>
 
         <Section title={t('mentions.ipTitle')}>
-          <p>L'ensemble des contenus présents sur Ovatio.be (textes, images, logos, descriptions de spectacles) est protégé par le droit d'auteur. Toute reproduction, même partielle, est interdite sans autorisation écrite préalable.</p>
+          <p>L'ensemble des contenus présents sur Standing-Ovation.be (textes, images, logos, descriptions de spectacles) est protégé par le droit d'auteur. Toute reproduction, même partielle, est interdite sans autorisation écrite préalable.</p>
           <p>Les visuels des spectacles sont la propriété de leurs producteurs respectifs et sont utilisés à titre illustratif dans un cadre pédagogique.</p>
         </Section>
 
         <Section title={t('mentions.gdprTitle')}>
-          <p>Ovatio.be collecte les données suivantes lors de l'inscription : nom, prénom, adresse e-mail, pseudonyme et préférence de langue. Ces données sont utilisées exclusivement pour le fonctionnement du service.</p>
+          <p>Standing-Ovation.be collecte les données suivantes lors de l'inscription : nom, prénom, adresse e-mail, pseudonyme et préférence de langue. Ces données sont utilisées exclusivement pour le fonctionnement du service.</p>
           <p>Conformément au <strong>Règlement Général sur la Protection des Données (RGPD)</strong> et à la loi belge du 30 juillet 2018, vous disposez d'un droit d'accès, de rectification et de suppression de vos données.</p>
-          <p>Pour exercer ces droits, contactez-nous à : <a href="mailto:privacy@ovatio.be" className="underline" style={{ color: '#000666' }}>privacy@ovatio.be</a></p>
+          <p>Pour exercer ces droits, contactez-nous à : <a href="mailto:privacy@standing-ovation.be" className="underline" style={{ color: '#000666' }}>privacy@standing-ovation.be</a></p>
         </Section>
 
         <Section title={t('mentions.cookiesTitle')}>
-          <p>Ovatio.be utilise des cookies fonctionnels pour maintenir votre session et mémoriser vos préférences. Aucun cookie publicitaire ou de tracking tiers n'est utilisé. Consultez notre <a href="/cookies" className="underline" style={{ color: '#000666' }}>politique de cookies</a> pour plus d'informations.</p>
+          <p>Standing-Ovation.be utilise des cookies fonctionnels pour maintenir votre session et mémoriser vos préférences. Aucun cookie publicitaire ou de tracking tiers n'est utilisé. Consultez notre <a href="/cookies" className="underline" style={{ color: '#000666' }}>politique de cookies</a> pour plus d'informations.</p>
         </Section>
 
         <Section title={t('mentions.liabilityTitle')}>
-          <p>Ovatio.be est un projet étudiant à visée pédagogique. Les informations présentées (spectacles, disponibilités, tarifs) sont fictives ou illustratives et ne constituent pas une offre commerciale réelle.</p>
+          <p>Standing-Ovation.be est un projet étudiant à visée pédagogique. Les informations présentées (spectacles, disponibilités, tarifs) sont fictives ou illustratives et ne constituent pas une offre commerciale réelle.</p>
           <p>L'équipe ne pourra être tenue responsable d'éventuelles erreurs, omissions ou indisponibilités du service.</p>
         </Section>
 
