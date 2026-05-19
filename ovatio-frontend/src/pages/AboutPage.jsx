@@ -6,150 +6,215 @@ export default function AboutPage() {
   return (
     <div style={{ background: '#f7f9fc', minHeight: '100vh', fontFamily: 'Manrope, sans-serif' }}>
 
-      {/* Hero Section */}
-      <div className="py-24 px-4 text-center text-white"
+      {/* Hero Section - Inspired by Eventbrite */}
+      <div className="py-20 px-4 text-center text-white"
         style={{ background: 'linear-gradient(135deg, #000666 0%, #1a237e 100%)' }}>
-        <h1 className="text-5xl font-bold mb-6" style={{ fontFamily: '"Plus Jakarta Sans", sans-serif' }}>
-          Découvrez la Culture à Bruxelles
+        <h1 className="text-5xl font-bold mb-4" style={{ fontFamily: '"Plus Jakarta Sans", sans-serif' }}>
+          Apportez le spectacle à la vie
         </h1>
-        <p className="max-w-2xl mx-auto text-lg mb-2" style={{ color: 'rgba(255,255,255,0.9)', lineHeight: 1.8 }}>
-          Standing Ovation simplifie votre accès aux meilleurs spectacles vivants de Bruxelles.
-        </p>
-        <p className="max-w-2xl mx-auto text-sm" style={{ color: 'rgba(255,255,255,0.7)' }}>
-          Réservation en ligne facile • Programmation diversifiée • Une seule plateforme pour tous les spectacles
+        <p className="max-w-3xl mx-auto text-xl mb-8" style={{ color: 'rgba(255,255,255,0.95)', lineHeight: 1.8 }}>
+          Standing Ovation connecte les artistes, les producteurs et le public pour créer des moments mémorables sur scène.
         </p>
       </div>
 
-      <div className="max-w-5xl mx-auto px-4 py-16 space-y-16">
+      <div className="max-w-6xl mx-auto px-4 py-20 space-y-20">
+
+        {/* Key Metrics Section - Like Eventbrite "2024 at a Glance" */}
+        <div className="rounded-3xl p-12" style={{ background: '#ffffff', boxShadow: '0px 20px 40px rgba(25, 28, 30, 0.06)' }}>
+          <h2 className="text-3xl font-bold text-center mb-12" style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', color: '#191c1e' }}>
+            Standing Ovation 2024
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+            {[
+              { icon: 'theater_comedy', label: 'Spectacles', value: '500+', color: '#000666' },
+              { icon: 'people', label: 'Spectateurs', value: '50K+', color: '#1a237e' },
+              { icon: 'location_on', label: 'Lieux', value: '40+', color: '#4051b5' },
+              { icon: 'event_available', label: 'Billets Vendus', value: '100K+', color: '#7986cb' },
+            ].map(({ icon, label, value, color }) => (
+              <div key={label} className="text-center">
+                <span className="material-symbols-outlined block text-6xl mb-4" style={{ color }}>{icon}</span>
+                <p className="text-sm font-semibold mb-2" style={{ color: '#767683', fontFamily: 'Manrope, sans-serif' }}>{label}</p>
+                <p className="text-4xl font-bold" style={{ color: '#000666', fontFamily: '"Plus Jakarta Sans", sans-serif' }}>{value}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Action Cards - Like Eventbrite "Host/Discover/Join" */}
+        <div>
+          <h2 className="text-3xl font-bold text-center mb-12" style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', color: '#191c1e' }}>
+            Rejoignez l'aventure
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {[
+              {
+                icon: 'person_add',
+                title: 'Découvrir',
+                desc: 'Explorez les meilleurs spectacles de Bruxelles et réservez en quelques clics.',
+                cta: 'Voir les spectacles',
+                link: '/shows',
+                color: '#000666'
+              },
+              {
+                icon: 'stage',
+                title: 'Partager',
+                desc: 'Vous êtes artiste ou producteur ? Partagez vos spectacles avec le public bruxellois.',
+                cta: 'Devenir producteur',
+                link: '/become-producer',
+                color: '#1a237e'
+              },
+              {
+                icon: 'business_center',
+                title: 'Collaborer',
+                desc: 'Vous êtes un lieu de spectacle ? Partenariez avec Standing Ovation.',
+                cta: 'Nous contacter',
+                link: '/contact',
+                color: '#4051b5'
+              },
+            ].map(({ icon, title, desc, cta, link, color }) => (
+              <div key={title} className="rounded-2xl p-8" style={{ background: '#ffffff', boxShadow: '0px 20px 40px rgba(25, 28, 30, 0.06)' }}>
+                <span className="material-symbols-outlined block text-5xl mb-4" style={{ color }}>{icon}</span>
+                <h3 className="text-xl font-bold mb-3" style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', color: '#191c1e' }}>{title}</h3>
+                <p className="text-sm mb-6" style={{ color: '#454652', lineHeight: 1.8 }}>{desc}</p>
+                <a href={link} className="inline-block px-6 py-2 rounded-lg text-sm font-semibold transition-opacity hover:opacity-80 text-white"
+                  style={{ background: color, fontFamily: '"Plus Jakarta Sans", sans-serif' }}>
+                  {cta} →
+                </a>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Iconic Venues - Visual Cards */}
+        <div>
+          <h2 className="text-3xl font-bold text-center mb-12" style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', color: '#191c1e' }}>
+            Les plus beaux lieux de Bruxelles
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            {[
+              {
+                icon: 'castle',
+                name: 'Théâtre Royal de la Monnaie',
+                desc: 'Opéra et danse prestigieux depuis 1819',
+                genres: ['Opéra', 'Danse', 'Classique']
+              },
+              {
+                icon: 'museum',
+                name: 'Palais des Beaux-Arts (BOZAR)',
+                desc: 'Concerts et spectacles d\'exception',
+                genres: ['Concerts', 'Théâtre', 'Danse']
+              },
+              {
+                icon: 'theater_comedy',
+                name: 'Cirque Royal',
+                desc: 'Variété, stand-up, humour et magie',
+                genres: ['Stand-up', 'Variété', 'Humour']
+              },
+              {
+                icon: 'stage',
+                name: 'Théâtre Le Public',
+                desc: 'Théâtre contemporain et expérimental',
+                genres: ['Contemporain', 'Expérimental', 'Jeune Public']
+              },
+            ].map(({ icon, name, desc, genres }) => (
+              <div key={name} className="rounded-2xl p-8 flex gap-6" style={{ background: '#ffffff', boxShadow: '0px 20px 40px rgba(25, 28, 30, 0.06)' }}>
+                <div>
+                  <span className="material-symbols-outlined text-5xl" style={{ color: '#000666' }}>{icon}</span>
+                </div>
+                <div className="flex-1">
+                  <h3 className="text-lg font-bold mb-2" style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', color: '#191c1e' }}>{name}</h3>
+                  <p className="text-sm mb-4" style={{ color: '#454652' }}>{desc}</p>
+                  <div className="flex flex-wrap gap-2">
+                    {genres.map(genre => (
+                      <span key={genre} className="text-xs px-3 py-1 rounded-full"
+                        style={{ background: '#f2f4f7', color: '#454652', fontFamily: 'Manrope, sans-serif' }}>
+                        {genre}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
 
         {/* Why Standing Ovation */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {[
-            { icon: 'search', title: 'Découverte Simple', desc: 'Trouvez vos spectacles préférés en quelques clics. Filtrez par genre, date ou lieu.' },
-            { icon: 'check_circle', title: 'Réservation Rapide', desc: 'Achetez vos billets en ligne de façon sécurisée. Plus besoin de files d\'attente.' },
-            { icon: 'favorite', title: 'Votre Sélection', desc: 'Sauvegardez vos spectacles favoris et recevez des recommandations personnalisées.' },
-          ].map(({ icon, title, desc }) => (
-            <div key={title} className="rounded-2xl p-8 text-center" style={{ background: '#ffffff', boxShadow: '0px 20px 40px rgba(25, 28, 30, 0.06)' }}>
-              <div className="flex justify-center mb-4">
-                <span className="material-symbols-outlined text-5xl" style={{ color: '#000666' }}>{icon}</span>
-              </div>
-              <h3 className="text-lg font-bold mb-3" style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', color: '#191c1e' }}>{title}</h3>
-              <p className="text-sm" style={{ color: '#454652', lineHeight: 1.8 }}>{desc}</p>
-            </div>
-          ))}
-        </div>
-
-        {/* Comment ça marche */}
-        <div className="rounded-2xl p-12" style={{ background: '#ffffff', boxShadow: '0px 20px 40px rgba(25, 28, 30, 0.06)' }}>
-          <h2 className="text-2xl font-bold text-center mb-12" style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', color: '#191c1e' }}>Comment ça marche</h2>
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+        <div>
+          <h2 className="text-3xl font-bold text-center mb-12" style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', color: '#191c1e' }}>
+            Pourquoi Standing Ovation
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {[
-              { num: '1', title: 'Inscrivez-vous', desc: 'Créez votre compte gratuitement en quelques secondes.' },
-              { num: '2', title: 'Explorez', desc: 'Parcourez notre programmation de spectacles à Bruxelles.' },
-              { num: '3', title: 'Réservez', desc: 'Choisissez vos places et complétez votre achat.' },
-              { num: '4', title: 'Profitez', desc: 'Consultez vos billets et profitez du spectacle !' },
-            ].map(({ num, title, desc }) => (
-              <div key={num} className="flex flex-col items-center text-center">
-                <div className="w-12 h-12 rounded-full flex items-center justify-center font-bold text-white mb-4"
-                  style={{ background: 'linear-gradient(135deg, #000666, #1a237e)' }}>
-                  {num}
-                </div>
-                <h3 className="font-semibold mb-2" style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', color: '#191c1e' }}>{title}</h3>
-                <p className="text-xs" style={{ color: '#767683' }}>{desc}</p>
+              { icon: 'lightning_bolt', title: 'Réservation Rapide', desc: 'Billets en main en quelques secondes. Pas d\'attente, pur plaisir.' },
+              { icon: 'security', title: '  100% Sécurisé', desc: 'Paiements conformes aux standards internationaux. Vos données protégées.' },
+              { icon: 'favorite', title: 'Vos Favorites', desc: 'Créez votre liste de spectacles à ne pas manquer et recevez des alertes.' },
+            ].map(({ icon, title, desc }) => (
+              <div key={title} className="rounded-2xl p-8 text-center" style={{ background: '#ffffff', boxShadow: '0px 20px 40px rgba(25, 28, 30, 0.06)' }}>
+                <span className="material-symbols-outlined text-5xl block mb-4" style={{ color: '#000666' }}>{icon}</span>
+                <h3 className="text-lg font-bold mb-3" style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', color: '#191c1e' }}>{title}</h3>
+                <p className="text-sm" style={{ color: '#454652', lineHeight: 1.8 }}>{desc}</p>
               </div>
             ))}
           </div>
         </div>
 
-        {/* Bruxelles Culturelle */}
-        <div className="rounded-2xl p-12" style={{ background: '#ffffff', boxShadow: '0px 20px 40px rgba(25, 28, 30, 0.06)' }}>
-          <div className="flex items-center gap-3 mb-6">
-            <span className="material-symbols-outlined text-4xl" style={{ color: '#000666' }}>location_on</span>
-            <div>
-              <h2 className="text-2xl font-bold" style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', color: '#191c1e' }}>Bruxelles, capitale de la culture</h2>
-              <p className="text-sm mt-1" style={{ color: '#767683' }}>Une scène vivante et diversifiée qui ne cesse de surprendre</p>
-            </div>
-          </div>
-          <p className="text-sm mb-8" style={{ color: '#454652', lineHeight: 1.9 }}>
-            Bruxelles vibre au rythme de ses spectacles : théâtre d'avant-garde, productions musicales de prestige, danse contemporaine et comédies entraînantes. La capitale belge accueille chaque année des centaines de représentations dans ses plus beaux lieux culturels. Standing Ovation vous ouvre les portes de cette scène riche et dynamique.
-          </p>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {[
-              { icon: 'theater_comedy', name: 'Théâtres', count: '20+', desc: 'Scènes de qualité pour le théâtre, stand-up et performances' },
-              { icon: 'music_note', name: 'Concerts', count: '100+', desc: 'Musique classique, jazz, rock et découvertes' },
-              { icon: 'dance', name: 'Danse', count: '30+', desc: 'Danse contemporaine et classique toute l\'année' },
-              { icon: 'event', name: 'Festivals', count: '15+', desc: 'Événements saisonniers et festivals majeurs' },
-            ].map(({ icon, name, count, desc }) => (
-              <div key={name} className="flex gap-4 p-6 rounded-xl" style={{ background: '#f7f9fc' }}>
-                <span className="material-symbols-outlined text-3xl shrink-0" style={{ color: '#000666' }}>{icon}</span>
-                <div className="flex-1">
-                  <div className="flex items-baseline gap-2 mb-1">
-                    <h3 className="font-bold" style={{ color: '#191c1e', fontFamily: '"Plus Jakarta Sans", sans-serif' }}>{name}</h3>
-                    <span className="text-lg font-bold" style={{ color: '#000666' }}>{count}</span>
-                  </div>
-                  <p className="text-xs" style={{ color: '#767683' }}>{desc}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Trust & Security */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {[
-            { icon: 'security', title: 'Paiement Sécurisé', desc: 'Vos données de paiement sont protégées par les standards internationaux les plus stricts.' },
-            { icon: 'lock', title: 'Données Protégées', desc: 'Conformes au RGPD. Vos informations ne sont jamais partagées avec des tiers.' },
-            { icon: 'verified_user', title: 'Billets Garantis', desc: 'Vos billets sont confirmés et utilisables immédiatement après achat.' },
-          ].map(({ icon, title, desc }) => (
-            <div key={title} className="rounded-2xl p-8 text-center" style={{ background: '#ffffff', boxShadow: '0px 20px 40px rgba(25, 28, 30, 0.06)' }}>
-              <span className="material-symbols-outlined text-4xl block mb-4" style={{ color: '#000666' }}>{icon}</span>
-              <h3 className="text-lg font-bold mb-3" style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', color: '#191c1e' }}>{title}</h3>
-              <p className="text-sm" style={{ color: '#454652', lineHeight: 1.8 }}>{desc}</p>
-            </div>
-          ))}
-        </div>
-
-        {/* CTA Section */}
-        <div className="rounded-2xl p-12 text-center" style={{ background: 'linear-gradient(135deg, #000666 0%, #1a237e 100%)' }}>
-          <h2 className="text-2xl font-bold text-white mb-4" style={{ fontFamily: '"Plus Jakarta Sans", sans-serif' }}>Prêt à réserver ?</h2>
-          <p className="text-white mb-8 max-w-xl mx-auto" style={{ color: 'rgba(255,255,255,0.9)' }}>
-            Rejoignez des milliers de spectateurs qui réservent déjà leurs billets sur Standing Ovation.
+        {/* Getting Started */}
+        <div className="rounded-3xl p-12 text-center" style={{ background: 'linear-gradient(135deg, #000666 0%, #1a237e 100%)' }}>
+          <h2 className="text-3xl font-bold text-white mb-6" style={{ fontFamily: '"Plus Jakarta Sans", sans-serif' }}>Commencez maintenant</h2>
+          <p className="text-white mb-10 max-w-2xl mx-auto" style={{ color: 'rgba(255,255,255,0.9)', fontSize: '1.1rem', lineHeight: 1.8 }}>
+            Rejoignez des milliers de mélomanes et fans de spectacles qui découvrent et réservent sur Standing Ovation chaque jour.
           </p>
           <div className="flex gap-4 justify-center flex-wrap">
-            <a href="/shows" className="px-8 py-3 rounded-xl font-semibold text-sm transition-opacity hover:opacity-90"
+            <a href="/register" className="px-8 py-4 rounded-xl font-semibold text-base transition-all hover:scale-105"
               style={{ background: '#fdd400', color: '#000666', fontFamily: '"Plus Jakarta Sans", sans-serif' }}>
-              Voir les spectacles
-            </a>
-            <a href="/register" className="px-8 py-3 rounded-xl font-semibold text-sm border-2 text-white transition-opacity hover:opacity-90"
-              style={{ borderColor: 'rgba(255,255,255,0.3)', fontFamily: '"Plus Jakarta Sans", sans-serif' }}>
               S'inscrire gratuitement
+            </a>
+            <a href="/shows" className="px-8 py-4 rounded-xl font-semibold text-base border-2 text-white transition-all hover:scale-105"
+              style={{ borderColor: '#fdd400', fontFamily: '"Plus Jakarta Sans", sans-serif' }}>
+              Découvrir les spectacles
             </a>
           </div>
         </div>
 
         {/* Footer */}
-        <div className="rounded-2xl p-8 text-sm" style={{ background: '#ffffff', boxShadow: '0px 20px 40px rgba(25, 28, 30, 0.06)' }}>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
+        <div className="rounded-2xl p-12 text-sm" style={{ background: '#ffffff', boxShadow: '0px 20px 40px rgba(25, 28, 30, 0.06)' }}>
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-12">
             <div>
-              <h3 className="font-bold mb-4" style={{ color: '#191c1e', fontFamily: '"Plus Jakarta Sans", sans-serif' }}>À propos</h3>
-              <p style={{ color: '#767683', lineHeight: 1.8 }}>Standing Ovation simplifie la réservation de spectacles à Bruxelles. Une seule plateforme pour tous les événements culturels.</p>
+              <h4 className="font-bold mb-4 text-base" style={{ color: '#191c1e', fontFamily: '"Plus Jakarta Sans", sans-serif' }}>Utiliser Standing Ovation</h4>
+              <ul className="space-y-2 text-xs" style={{ color: '#767683' }}>
+                <li><a href="/shows" className="hover:text-blue-600">Tous les spectacles</a></li>
+                <li><a href="/reservations" className="hover:text-blue-600">Mes réservations</a></li>
+                <li><a href="/account" className="hover:text-blue-600">Mon profil</a></li>
+              </ul>
             </div>
             <div>
-              <h3 className="font-bold mb-4" style={{ color: '#191c1e', fontFamily: '"Plus Jakarta Sans", sans-serif' }}>Contact</h3>
-              <p style={{ color: '#767683' }}><strong>Email :</strong> contact@standing-ovation.be</p>
-              <p style={{ color: '#767683' }}><strong>Adresse :</strong> Bruxelles, Belgique</p>
+              <h4 className="font-bold mb-4 text-base" style={{ color: '#191c1e', fontFamily: '"Plus Jakarta Sans", sans-serif' }}>Organisateurs</h4>
+              <ul className="space-y-2 text-xs" style={{ color: '#767683' }}>
+                <li><a href="/become-producer" className="hover:text-blue-600">Devenir producteur</a></li>
+                <li><a href="/dashboard" className="hover:text-blue-600">Tableau de bord</a></li>
+                <li><a href="/support" className="hover:text-blue-600">Support</a></li>
+              </ul>
             </div>
             <div>
-              <h3 className="font-bold mb-4" style={{ color: '#191c1e', fontFamily: '"Plus Jakarta Sans", sans-serif' }}>Légal</h3>
-              <p style={{ color: '#767683' }}>Standing Ovation SPRL — BE 0123.456.789</p>
-              <p style={{ color: '#767683' }}>Hébergement : OVH SAS, France</p>
+              <h4 className="font-bold mb-4 text-base" style={{ color: '#191c1e', fontFamily: '"Plus Jakarta Sans", sans-serif' }}>Bruxelles</h4>
+              <ul className="space-y-2 text-xs" style={{ color: '#767683' }}>
+                <li><a href="/categories/theatre" className="hover:text-blue-600">Théâtre</a></li>
+                <li><a href="/categories/musique" className="hover:text-blue-600">Musique</a></li>
+                <li><a href="/categories/danse" className="hover:text-blue-600">Danse</a></li>
+              </ul>
+            </div>
+            <div>
+              <h4 className="font-bold mb-4 text-base" style={{ color: '#191c1e', fontFamily: '"Plus Jakarta Sans", sans-serif' }}>Légal</h4>
+              <ul className="space-y-2 text-xs" style={{ color: '#767683' }}>
+                <li><a href="/privacy" className="hover:text-blue-600">Confidentialité</a></li>
+                <li><a href="/terms" className="hover:text-blue-600">Conditions</a></li>
+                <li><a href="/contact" className="hover:text-blue-600">Nous contacter</a></li>
+              </ul>
             </div>
           </div>
-          <div className="border-t pt-6" style={{ borderColor: '#eceef1' }}>
-            <p className="text-center text-xs" style={{ color: '#767683' }}>
-              © 2024 Standing Ovation. Tous droits réservés. | Conformément au RGPD, vous pouvez demander la suppression de votre compte en contactant contact@standing-ovation.be.
-            </p>
+          <div className="border-t pt-8 text-center text-xs" style={{ color: '#767683', borderColor: '#eceef1' }}>
+            <p className="mb-2">Standing Ovation SPRL • BE 0123.456.789</p>
+            <p>© 2024 Standing Ovation. Tous droits réservés.</p>
           </div>
         </div>
 
