@@ -67,7 +67,7 @@ export default function AboutPage() {
                 name: 'Théâtre Royal de la Monnaie',
                 desc: 'Opéra et danse prestigieux depuis 1819',
                 genres: ['Opéra', 'Danse', 'Classique'],
-                image: 'https://images.unsplash.com/photo-1533900298318-6b8da08a523e?w=600&h=400&fit=crop'
+                image: 'https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=600&h=400&fit=crop'
               },
               {
                 name: 'Palais des Beaux-Arts (BOZAR)',
@@ -79,13 +79,13 @@ export default function AboutPage() {
                 name: 'Cirque Royal',
                 desc: 'Variété, stand-up, humour et magie',
                 genres: ['Stand-up', 'Variété', 'Humour'],
-                image: 'https://images.unsplash.com/photo-1503205136139-0e7e32cd0a80?w=600&h=400&fit=crop'
+                image: 'https://images.unsplash.com/photo-1577720643272-265efce3c772?w=600&h=400&fit=crop'
               },
               {
                 name: 'Théâtre Le Public',
                 desc: 'Théâtre contemporain et expérimental',
                 genres: ['Contemporain', 'Expérimental', 'Jeune Public'],
-                image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600&h=400&fit=crop'
+                image: 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=600&h=400&fit=crop'
               },
             ].map(({ name, desc, genres, image }) => (
               <div key={name} className="rounded-2xl overflow-hidden" style={{ background: '#ffffff', boxShadow: '0px 20px 40px rgba(25, 28, 30, 0.06)' }}>
@@ -119,7 +119,7 @@ export default function AboutPage() {
                 venue: 'Théâtre Royal de la Monnaie',
                 date: 'Juin 2024',
                 genre: 'Ballet Classique',
-                image: 'https://images.unsplash.com/photo-1533900298318-6b8da08a523e?w=500&h=700&fit=crop'
+                image: 'https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=500&h=700&fit=crop'
               },
               {
                 title: 'Concert Symphonique',
@@ -133,7 +133,7 @@ export default function AboutPage() {
                 venue: 'Cirque Royal',
                 date: 'Mai 2024',
                 genre: 'Spectacle',
-                image: 'https://images.unsplash.com/photo-1514320291840-2e0a9bf2a9ae?w=500&h=700&fit=crop'
+                image: 'https://images.unsplash.com/photo-1577720643272-265efce3c772?w=500&h=700&fit=crop'
               },
             ].map(({ title, venue, date, genre, image }) => (
               <div key={title} className="rounded-2xl overflow-hidden border-l-4" style={{ background: '#ffffff', boxShadow: '0px 20px 40px rgba(25, 28, 30, 0.06)', borderLeftColor: '#000666' }}>
