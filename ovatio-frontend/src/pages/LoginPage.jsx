@@ -46,11 +46,11 @@ export default function LoginPage() {
       {/* Left side - Image */}
       <div className="hidden md:flex md:w-1/2 relative justify-center items-center">
         <img
-          src="https://images.unsplash.com/photo-1514306688484-ace2b7637992?w=800&h=1000&fit=crop"
+          src="https://images.unsplash.com/photo-1487180144351-b8472da7d491?w=800&h=1000&fit=crop"
           alt="spectacle"
           className="h-full w-full object-cover"
         />
-        <div className="absolute inset-0" style={{ background: 'linear-gradient(135deg, rgba(0, 6, 102, 0.4) 0%, rgba(26, 35, 126, 0.4) 100%)' }}></div>
+        <div className="absolute inset-0" style={{ background: 'linear-gradient(135deg, rgba(0, 6, 102, 0.5) 0%, rgba(26, 35, 126, 0.5) 100%)' }}></div>
       </div>
 
       {/* Right side - Login Form */}
