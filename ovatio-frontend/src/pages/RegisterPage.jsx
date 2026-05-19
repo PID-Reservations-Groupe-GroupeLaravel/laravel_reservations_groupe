@@ -100,7 +100,7 @@ export default function RegisterPage() {
         {/* Logo */}
         <Link to="/shows" className="inline-block relative z-10">
           <h2 className="text-2xl font-bold text-white" style={{ fontFamily: '"Plus Jakarta Sans", sans-serif' }}>
-            Ovatio<span style={{ color: '#fdd400' }}>.be</span>
+            Standing-Ovation<span style={{ color: '#fdd400' }}>.be</span>
           </h2>
         </Link>
 
@@ -122,7 +122,7 @@ export default function RegisterPage() {
         </div>
 
         <p className="text-xs relative z-10" style={{ color: 'rgba(255,255,255,0.5)', fontFamily: 'Manrope, sans-serif' }}>
-          Ovatio.be — {t('shows.hero_badge')}
+          Standing Ovation.be — {t('shows.hero_badge')}
         </p>
       </div>
 
@@ -145,7 +145,7 @@ export default function RegisterPage() {
           {/* Logo mobile */}
           <div className="lg:hidden text-center mb-8">
             <h2 className="text-2xl font-bold" style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', color: '#000666' }}>
-              Ovatio<span style={{ color: '#fdd400' }}>.be</span>
+              Standing-Ovation<span style={{ color: '#fdd400' }}>.be</span>
             </h2>
           </div>
 
