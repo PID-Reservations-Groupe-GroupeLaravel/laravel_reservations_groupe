@@ -67,7 +67,7 @@ export default function AboutPage() {
                 name: 'Théâtre Royal de la Monnaie',
                 desc: 'Opéra et danse prestigieux depuis 1819',
                 genres: ['Opéra', 'Danse', 'Classique'],
-                image: 'https://images.unsplash.com/photo-1459749411175-04bf5292ceea?w=600&h=400&fit=crop'
+                image: 'https://images.unsplash.com/photo-1514306688484-ace2b7637992?w=600&h=400&fit=crop'
               },
               {
                 name: 'Palais des Beaux-Arts (BOZAR)',
@@ -119,7 +119,7 @@ export default function AboutPage() {
                 venue: 'Théâtre Royal de la Monnaie',
                 date: '15 juin 2024',
                 genre: 'Opéra',
-                image: 'https://images.unsplash.com/photo-1517457373614-b7152f800fd1?w=500&h=700&fit=crop'
+                image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=500&h=700&fit=crop'
               },
               {
                 title: 'Rhythm & Blues Night',
