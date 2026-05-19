@@ -12,14 +12,23 @@ export default function AboutPage() {
     <div style={{ background: '#f7f9fc', minHeight: '100vh', fontFamily: 'Manrope, sans-serif' }}>
 
       {/* Hero Section - Inspired by Eventbrite */}
-      <div className="py-20 px-4 text-center text-white"
+      <div className="relative py-32 px-4 text-center text-white overflow-hidden"
         style={{ background: 'linear-gradient(135deg, #000666 0%, #1a237e 100%)' }}>
-        <h1 className="text-5xl font-bold mb-4" style={{ fontFamily: '"Plus Jakarta Sans", sans-serif' }}>
-          Apportez le spectacle à la vie
-        </h1>
-        <p className="max-w-3xl mx-auto text-xl mb-8" style={{ color: 'rgba(255,255,255,0.95)', lineHeight: 1.8 }}>
-          Standing Ovation connecte les artistes, les producteurs et le public pour créer des moments mémorables sur scène.
-        </p>
+        <div className="absolute inset-0 opacity-20">
+          <img
+            src="https://images.unsplash.com/photo-1459749411175-04bf5292ceea?w=1200&h=600&fit=crop"
+            alt="spectacle"
+            className="w-full h-full object-cover"
+          />
+        </div>
+        <div className="relative z-10 max-w-4xl mx-auto">
+          <h1 className="text-5xl font-bold mb-4" style={{ fontFamily: '"Plus Jakarta Sans", sans-serif' }}>
+            Apportez le spectacle à la vie
+          </h1>
+          <p className="max-w-3xl mx-auto text-xl" style={{ color: 'rgba(255,255,255,0.95)', lineHeight: 1.8 }}>
+            Standing Ovation connecte les artistes, les producteurs et le public pour créer des moments mémorables sur scène.
+          </p>
+        </div>
       </div>
 
       <div className="max-w-6xl mx-auto px-4 py-20 space-y-20">
@@ -46,7 +55,7 @@ export default function AboutPage() {
         </div>
 
 
-        {/* Iconic Venues - Visual Cards with Better Icons */}
+        {/* Iconic Venues - Visual Cards with Images */}
         <div>
           <h2 className="text-3xl font-bold text-center mb-12" style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', color: '#191c1e' }}>
             Les plus beaux lieux de Bruxelles
@@ -54,33 +63,33 @@ export default function AboutPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {[
               {
-                emoji: '🏰',
                 name: 'Théâtre Royal de la Monnaie',
                 desc: 'Opéra et danse prestigieux depuis 1819',
-                genres: ['Opéra', 'Danse', 'Classique']
+                genres: ['Opéra', 'Danse', 'Classique'],
+                image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600&h=400&fit=crop'
               },
               {
-                emoji: '🎨',
                 name: 'Palais des Beaux-Arts (BOZAR)',
                 desc: 'Concerts et spectacles d\'exception',
-                genres: ['Concerts', 'Théâtre', 'Danse']
+                genres: ['Concerts', 'Théâtre', 'Danse'],
+                image: 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=600&h=400&fit=crop'
               },
               {
-                emoji: '🎪',
                 name: 'Cirque Royal',
                 desc: 'Variété, stand-up, humour et magie',
-                genres: ['Stand-up', 'Variété', 'Humour']
+                genres: ['Stand-up', 'Variété', 'Humour'],
+                image: 'https://images.unsplash.com/photo-1514306688484-ace2b7637992?w=600&h=400&fit=crop'
               },
               {
-                emoji: '🎭',
                 name: 'Théâtre Le Public',
                 desc: 'Théâtre contemporain et expérimental',
-                genres: ['Contemporain', 'Expérimental', 'Jeune Public']
+                genres: ['Contemporain', 'Expérimental', 'Jeune Public'],
+                image: 'https://images.unsplash.com/photo-1459749411175-04bf5292ceea?w=600&h=400&fit=crop'
               },
-            ].map(({ emoji, name, desc, genres }) => (
-              <div key={name} className="rounded-2xl p-8 flex gap-6" style={{ background: '#ffffff', boxShadow: '0px 20px 40px rgba(25, 28, 30, 0.06)' }}>
-                <div className="text-4xl">{emoji}</div>
-                <div className="flex-1">
+            ].map(({ name, desc, genres, image }) => (
+              <div key={name} className="rounded-2xl overflow-hidden" style={{ background: '#ffffff', boxShadow: '0px 20px 40px rgba(25, 28, 30, 0.06)' }}>
+                <img src={image} alt={name} className="w-full h-48 object-cover" />
+                <div className="p-8">
                   <h3 className="text-lg font-bold mb-2" style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', color: '#191c1e' }}>{name}</h3>
                   <p className="text-sm mb-4" style={{ color: '#454652' }}>{desc}</p>
                   <div className="flex flex-wrap gap-2">
@@ -108,33 +117,39 @@ export default function AboutPage() {
                 title: 'La Reine des Neiges',
                 venue: 'Théâtre Royal de la Monnaie',
                 date: '15 juin 2024',
-                genre: 'Opéra'
+                genre: 'Opéra',
+                image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=500&h=700&fit=crop'
               },
               {
                 title: 'Rhythm & Blues Night',
                 venue: 'Palais des Beaux-Arts',
                 date: '22 juin 2024',
-                genre: 'Concerts'
+                genre: 'Concerts',
+                image: 'https://images.unsplash.com/photo-1516997121675-1dae9017592c?w=500&h=700&fit=crop'
               },
               {
                 title: 'Cirque du Soleil',
                 venue: 'Cirque Royal',
                 date: '30 juin 2024',
-                genre: 'Cirque'
+                genre: 'Cirque',
+                image: 'https://images.unsplash.com/photo-1514306688484-ace2b7637992?w=500&h=700&fit=crop'
               },
-            ].map(({ title, venue, date, genre }) => (
-              <div key={title} className="rounded-2xl p-8 border-l-4" style={{ background: '#ffffff', boxShadow: '0px 20px 40px rgba(25, 28, 30, 0.06)', borderLeftColor: '#000666' }}>
-                <h3 className="text-lg font-bold mb-2" style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', color: '#191c1e' }}>{title}</h3>
-                <p className="text-sm mb-3" style={{ color: '#454652' }}>
-                  <span style={{ fontWeight: 'bold' }}>📍</span> {venue}
-                </p>
-                <p className="text-sm mb-4" style={{ color: '#454652' }}>
-                  <span style={{ fontWeight: 'bold' }}>📅</span> {date}
-                </p>
-                <span className="text-xs px-3 py-1 rounded-full"
-                  style={{ background: '#f2f4f7', color: '#454652', fontFamily: 'Manrope, sans-serif' }}>
-                  {genre}
-                </span>
+            ].map(({ title, venue, date, genre, image }) => (
+              <div key={title} className="rounded-2xl overflow-hidden border-l-4" style={{ background: '#ffffff', boxShadow: '0px 20px 40px rgba(25, 28, 30, 0.06)', borderLeftColor: '#000666' }}>
+                <img src={image} alt={title} className="w-full h-64 object-cover" />
+                <div className="p-8">
+                  <h3 className="text-lg font-bold mb-2" style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', color: '#191c1e' }}>{title}</h3>
+                  <p className="text-sm mb-3" style={{ color: '#454652' }}>
+                    <span style={{ fontWeight: 'bold' }}>📍</span> {venue}
+                  </p>
+                  <p className="text-sm mb-4" style={{ color: '#454652' }}>
+                    <span style={{ fontWeight: 'bold' }}>📅</span> {date}
+                  </p>
+                  <span className="text-xs px-3 py-1 rounded-full"
+                    style={{ background: '#f2f4f7', color: '#454652', fontFamily: 'Manrope, sans-serif' }}>
+                    {genre}
+                  </span>
+                </div>
               </div>
             ))}
           </div>
