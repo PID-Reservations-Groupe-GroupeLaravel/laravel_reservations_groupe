@@ -96,7 +96,7 @@ function AppLayout() {
               <FooterCopyright />
             </p>
             <a
-              href="http://localhost:8001/api/rss"
+              href="http://localhost:8000/api/rss"
               target="_blank"
               rel="noreferrer"
               className="text-xs hover:opacity-100 transition-opacity flex items-center gap-1"

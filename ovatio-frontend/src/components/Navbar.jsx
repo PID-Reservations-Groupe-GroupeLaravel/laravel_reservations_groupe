@@ -116,7 +116,7 @@ export default function Navbar() {
             </Link>
           )}
           <a
-            href="http://localhost:8001/api/rss"
+            href="http://localhost:8000/api/rss"
             target="_blank"
             rel="noreferrer"
             className="text-sm font-semibold transition-colors hover:opacity-80 flex items-center gap-1"
