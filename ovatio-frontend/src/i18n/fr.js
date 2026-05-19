@@ -175,7 +175,7 @@ export default {
     ticketClose: 'Fermer',
   },
   footer: {
-    tagline: "La scène curatée de Bruxelles. Redéfinir l'élégance de la performance vivante.",
+    tagline: "Redéfinir l'élégance de la performance vivante.",
     legal: 'Mentions Légales',
     contact: 'Contact',
     press: 'Presse',

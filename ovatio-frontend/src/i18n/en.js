@@ -175,7 +175,7 @@ export default {
     ticketClose: 'Close',
   },
   footer: {
-    tagline: 'The curated stage of Brussels. Redefining the elegance of live performance.',
+    tagline: 'Redefining the elegance of live performance.',
     legal: 'Legal Notice',
     contact: 'Contact',
     press: 'Press',

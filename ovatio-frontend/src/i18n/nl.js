@@ -175,7 +175,7 @@ export default {
     ticketClose: 'Sluiten',
   },
   footer: {
-    tagline: 'Het gecureerde podium van Brussel. De elegantie van live performance herdefiniëren.',
+    tagline: 'De elegantie van live performance herdefiniëren.',
     legal: 'Juridische informatie',
     contact: 'Contact',
     press: 'Pers',
