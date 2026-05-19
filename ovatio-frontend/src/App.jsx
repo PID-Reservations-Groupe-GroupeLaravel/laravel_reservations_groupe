@@ -32,7 +32,7 @@ function AppLayout() {
       <main className="flex-1">
         <Outlet />
       </main>
-      <footer style={{ background: '#1a1f3a', color: '#fff' }}>
+      <footer style={{ background: 'linear-gradient(135deg, #000666 0%, #1a237e 100%)', color: '#fff' }}>
         <div className="max-w-7xl mx-auto px-8 py-12">
           {/* Header avec logo */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-12">
