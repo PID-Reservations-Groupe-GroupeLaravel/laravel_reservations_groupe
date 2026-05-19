@@ -17,6 +17,7 @@ export default function RegisterPage() {
     password: '',
     password_confirmation: '',
     langue: 'fr',
+    accept_terms: false,
   })
   const [photo, setPhoto]               = useState(null)
   const [preview, setPreview]           = useState(null)
@@ -87,7 +88,7 @@ export default function RegisterPage() {
       <div className="hidden lg:flex lg:w-5/12 flex-col justify-between p-12 relative overflow-hidden"
         style={{
           background: 'linear-gradient(160deg, #000666 0%, #1a237e 100%)',
-          backgroundImage: 'url("https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=800&h=1000&fit=crop")',
+          backgroundImage: 'url("https://images.unsplash.com/photo-1511379938547-c1f69b13d835?w=800&h=1000&fit=crop")',
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           backgroundBlend: 'multiply'
@@ -276,19 +277,32 @@ export default function RegisterPage() {
               </div>
             </div>
 
+            {/* Accept Terms Checkbox */}
+            <div className="flex items-start gap-3 pt-2">
+              <input
+                type="checkbox"
+                id="accept_terms"
+                checked={form.accept_terms}
+                onChange={(e) => setForm({ ...form, accept_terms: e.target.checked })}
+                className="w-5 h-5 mt-0.5 rounded"
+                style={{ accentColor: '#000666' }}
+              />
+              <label htmlFor="accept_terms" className="text-xs flex-1 cursor-pointer"
+                style={{ color: '#454652', fontFamily: 'Manrope, sans-serif', lineHeight: 1.5 }}>
+                {t('auth.termsText')}{' '}
+                <Link to="/cookies" style={{ color: '#000666' }} className="hover:underline font-semibold">{t('auth.termsLink')}</Link>
+                {' '}{t('auth.termsAnd')}{' '}
+                <a href="#" style={{ color: '#000666' }} className="hover:underline font-semibold">{t('auth.privacyLink')}</a>.
+              </label>
+              {errors.accept_terms && <p className="text-xs" style={{ color: '#ba1a1a' }}>{errors.accept_terms[0]}</p>}
+            </div>
+
             {/* Submit */}
-            <button type="submit" disabled={loading}
+            <button type="submit" disabled={loading || !form.accept_terms}
               className="w-full py-3.5 rounded-xl text-white font-semibold text-sm transition-opacity disabled:opacity-50"
               style={{ background: 'linear-gradient(135deg, #000666, #1a237e)', fontFamily: '"Plus Jakarta Sans", sans-serif' }}>
               {loading ? t('auth.registering') : t('auth.registerBtn')}
             </button>
-
-            <p className="text-xs text-center" style={{ color: '#767683', fontFamily: 'Manrope, sans-serif' }}>
-              {t('auth.termsText')}{' '}
-              <Link to="/cookies" style={{ color: '#000666' }} className="hover:underline">{t('auth.termsLink')}</Link>
-              {' '}{t('auth.termsAnd')}{' '}
-              <a href="#" style={{ color: '#000666' }} className="hover:underline">{t('auth.privacyLink')}</a>.
-            </p>
           </form>
         </div>
       </div>
