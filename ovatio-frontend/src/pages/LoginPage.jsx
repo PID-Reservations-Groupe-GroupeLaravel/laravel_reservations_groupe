@@ -30,7 +30,7 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex relative overflow-hidden"
+    <div className="h-screen w-screen flex relative overflow-hidden"
       style={{ background: 'linear-gradient(135deg, #000666 0%, #1a237e 100%)' }}>
 
       {/* Ambient lights */}
