@@ -67,25 +67,25 @@ export default function AboutPage() {
                 name: 'Théâtre Royal de la Monnaie',
                 desc: 'Opéra et danse prestigieux depuis 1819',
                 genres: ['Opéra', 'Danse', 'Classique'],
-                image: 'https://images.unsplash.com/photo-1511379938547-c1f69b13d835?w=600&h=400&fit=crop'
+                image: 'https://images.unsplash.com/photo-1459749411175-04bf5292ceea?w=600&h=400&fit=crop'
               },
               {
                 name: 'Palais des Beaux-Arts (BOZAR)',
                 desc: 'Concerts et spectacles d\'exception',
                 genres: ['Concerts', 'Théâtre', 'Danse'],
-                image: 'https://images.unsplash.com/photo-1487180144351-b8472da7d491?w=600&h=400&fit=crop'
+                image: 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=600&h=400&fit=crop'
               },
               {
                 name: 'Cirque Royal',
                 desc: 'Variété, stand-up, humour et magie',
                 genres: ['Stand-up', 'Variété', 'Humour'],
-                image: 'https://images.unsplash.com/photo-1577720643272-265efce3c772?w=600&h=400&fit=crop'
+                image: 'https://images.unsplash.com/photo-1514320291840-2e0a9bf2a9ae?w=600&h=400&fit=crop'
               },
               {
                 name: 'Théâtre Le Public',
                 desc: 'Théâtre contemporain et expérimental',
                 genres: ['Contemporain', 'Expérimental', 'Jeune Public'],
-                image: 'https://images.unsplash.com/photo-1504633409405-bb5de06fbb6e?w=600&h=400&fit=crop'
+                image: 'https://images.unsplash.com/photo-1508700115892-5e266edb3146?w=600&h=400&fit=crop'
               },
             ].map(({ name, desc, genres, image }) => (
               <div key={name} className="rounded-2xl overflow-hidden" style={{ background: '#ffffff', boxShadow: '0px 20px 40px rgba(25, 28, 30, 0.06)' }}>
@@ -119,21 +119,21 @@ export default function AboutPage() {
                 venue: 'Théâtre Royal de la Monnaie',
                 date: '15 juin 2024',
                 genre: 'Opéra',
-                image: 'https://images.unsplash.com/photo-1522880486-0bff4dfed88d?w=500&h=700&fit=crop'
+                image: 'https://images.unsplash.com/photo-1517457373614-b7152f800fd1?w=500&h=700&fit=crop'
               },
               {
                 title: 'Rhythm & Blues Night',
                 venue: 'Palais des Beaux-Arts',
                 date: '22 juin 2024',
                 genre: 'Concerts',
-                image: 'https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=500&h=700&fit=crop'
+                image: 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=500&h=700&fit=crop'
               },
               {
                 title: 'Cirque du Soleil',
                 venue: 'Cirque Royal',
                 date: '30 juin 2024',
                 genre: 'Cirque',
-                image: 'https://images.unsplash.com/photo-1577720643272-265efce3c772?w=500&h=700&fit=crop'
+                image: 'https://images.unsplash.com/photo-1514320291840-2e0a9bf2a9ae?w=500&h=700&fit=crop'
               },
             ].map(({ title, venue, date, genre, image }) => (
               <div key={title} className="rounded-2xl overflow-hidden border-l-4" style={{ background: '#ffffff', boxShadow: '0px 20px 40px rgba(25, 28, 30, 0.06)', borderLeftColor: '#000666' }}>

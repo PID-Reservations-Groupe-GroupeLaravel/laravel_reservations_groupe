@@ -87,7 +87,7 @@ export default function Navbar() {
           className="text-xl font-black tracking-tight shrink-0"
           style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', color: '#000666' }}
         >
-          Ovatio<span style={{ color: '#fdd400' }}>.be</span>
+          Standing-Ovation<span style={{ color: '#fdd400' }}>.be</span>
         </Link>
 
         {/* Nav links — centre */}

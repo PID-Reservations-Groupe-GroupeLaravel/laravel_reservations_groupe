@@ -24,7 +24,7 @@ export default function ShowsPage() {
 
       {/* ── HERO ── */}
       <div
-        className="relative py-32 px-6 overflow-hidden"
+        className="relative py-16 px-6 overflow-hidden"
         style={{
           background: 'linear-gradient(135deg, #000666 0%, #1a237e 100%)',
           backgroundImage: 'url("https://images.unsplash.com/photo-1514306688484-ace2b7637992?w=1200&h=600&fit=crop")',
