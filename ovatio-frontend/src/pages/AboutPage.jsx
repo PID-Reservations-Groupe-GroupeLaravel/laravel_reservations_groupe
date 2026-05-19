@@ -186,50 +186,6 @@ export default function AboutPage() {
 
       </div>
 
-      {/* FOOTER - Separate at the bottom */}
-      <footer style={{ background: '#1a1f3a', color: '#fff', marginTop: '6rem', paddingTop: '4rem', paddingBottom: '2rem' }}>
-        <div className="max-w-6xl mx-auto px-4">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8 text-sm">
-            <div>
-              <h4 className="font-bold mb-4 text-base" style={{ fontFamily: '"Plus Jakarta Sans", sans-serif' }}>Utiliser Standing Ovation</h4>
-              <ul className="space-y-2 text-xs" style={{ color: 'rgba(255,255,255,0.7)' }}>
-                <li><a href="/shows" className="hover:text-white transition-colors">Tous les spectacles</a></li>
-                <li><a href="/reservations" className="hover:text-white transition-colors">Mes réservations</a></li>
-                <li><a href="/account" className="hover:text-white transition-colors">Mon profil</a></li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="font-bold mb-4 text-base" style={{ fontFamily: '"Plus Jakarta Sans", sans-serif' }}>Organisateurs</h4>
-              <ul className="space-y-2 text-xs" style={{ color: 'rgba(255,255,255,0.7)' }}>
-                <li><a href="/become-producer" className="hover:text-white transition-colors">Devenir producteur</a></li>
-                <li><a href="/dashboard" className="hover:text-white transition-colors">Tableau de bord</a></li>
-                <li><a href="/support" className="hover:text-white transition-colors">Support</a></li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="font-bold mb-4 text-base" style={{ fontFamily: '"Plus Jakarta Sans", sans-serif' }}>Bruxelles</h4>
-              <ul className="space-y-2 text-xs" style={{ color: 'rgba(255,255,255,0.7)' }}>
-                <li><a href="/categories/theatre" className="hover:text-white transition-colors">Théâtre</a></li>
-                <li><a href="/categories/musique" className="hover:text-white transition-colors">Musique</a></li>
-                <li><a href="/categories/danse" className="hover:text-white transition-colors">Danse</a></li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="font-bold mb-4 text-base" style={{ fontFamily: '"Plus Jakarta Sans", sans-serif' }}>Légal</h4>
-              <ul className="space-y-2 text-xs" style={{ color: 'rgba(255,255,255,0.7)' }}>
-                <li><a href="/privacy" className="hover:text-white transition-colors">Confidentialité</a></li>
-                <li><a href="/terms" className="hover:text-white transition-colors">Conditions</a></li>
-                <li><a href="/contact" className="hover:text-white transition-colors">Nous contacter</a></li>
-              </ul>
-            </div>
-          </div>
-
-          <div className="text-center text-xs border-t pt-8" style={{ color: 'rgba(255,255,255,0.6)', borderTopColor: 'rgba(255,255,255,0.2)' }}>
-            <p className="mb-2">Standing Ovation SPRL • BE 0123.456.789</p>
-            <p>© 2024 Standing Ovation. Tous droits réservés.</p>
-          </div>
-        </div>
-      </footer>
     </div>
   )
 }
