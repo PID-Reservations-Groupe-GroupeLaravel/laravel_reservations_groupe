@@ -13,14 +13,15 @@ export default function AboutPage() {
 
       {/* Hero Section - Inspired by Eventbrite */}
       <div className="relative py-32 px-4 text-center text-white overflow-hidden"
-        style={{ background: 'linear-gradient(135deg, #000666 0%, #1a237e 100%)' }}>
-        <div className="absolute inset-0 opacity-15">
-          <img
-            src="https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=1200&h=600&fit=crop"
-            alt="spectacle"
-            className="w-full h-full object-cover"
-          />
-        </div>
+        style={{
+          background: 'linear-gradient(135deg, #000666 0%, #1a237e 100%)',
+          backgroundImage: 'url("https://images.unsplash.com/photo-1514306688484-ace2b7637992?w=1200&h=600&fit=crop")',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundBlend: 'multiply'
+        }}>
+        <div className="absolute inset-0 pointer-events-none"
+          style={{ background: 'linear-gradient(135deg, rgba(0, 6, 102, 0.75) 0%, rgba(26, 35, 126, 0.75) 100%)' }} />
         <div className="relative z-10 max-w-4xl mx-auto">
           <h1 className="text-5xl font-bold mb-4" style={{ fontFamily: '"Plus Jakarta Sans", sans-serif' }}>
             Apportez le spectacle à la vie
