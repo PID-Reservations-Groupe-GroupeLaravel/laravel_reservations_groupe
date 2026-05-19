@@ -24,27 +24,27 @@ export default function ShowsPage() {
 
       {/* ── HERO ── */}
       <div
-        className="relative py-16 px-6 overflow-hidden"
+        className="relative py-24 px-6 overflow-hidden text-center"
         style={{
           background: 'linear-gradient(135deg, #000666 0%, #1a237e 100%)',
-          backgroundImage: 'url("https://images.unsplash.com/photo-1514306688484-ace2b7637992?w=1200&h=600&fit=crop")',
+          backgroundImage: 'url("https://images.unsplash.com/photo-1485579149c0-123123c6f4b8?w=1200&h=600&fit=crop")',
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           backgroundBlend: 'multiply'
         }}
       >
         <div className="absolute inset-0 pointer-events-none"
-          style={{ background: 'linear-gradient(135deg, rgba(0, 6, 102, 0.85) 0%, rgba(26, 35, 126, 0.85) 100%)' }} />
+          style={{ background: 'linear-gradient(135deg, rgba(0, 6, 102, 0.87) 0%, rgba(26, 35, 126, 0.87) 100%)' }} />
 
-        <div className="relative max-w-7xl mx-auto">
+        <div className="relative max-w-4xl mx-auto">
           <h1
-            className="text-5xl md:text-6xl font-extrabold text-white mb-4"
-            style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', letterSpacing: '-0.02em', lineHeight: 1.1 }}
+            className="text-5xl md:text-6xl font-extrabold text-white mb-6"
+            style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', letterSpacing: '-0.02em', lineHeight: 1.2 }}
           >
             {t('shows.hero_title')}
           </h1>
-          <p className="text-lg max-w-xl"
-            style={{ color: 'rgba(255,255,255,0.85)', fontFamily: 'Manrope, sans-serif' }}>
+          <p className="text-lg max-w-3xl mx-auto"
+            style={{ color: 'rgba(255,255,255,0.90)', fontFamily: 'Manrope, sans-serif', lineHeight: 1.8 }}>
             {t('shows.hero_subtitle')}
           </p>
         </div>
