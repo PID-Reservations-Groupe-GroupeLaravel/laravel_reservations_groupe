@@ -85,21 +85,26 @@ export default function RegisterPage() {
 
       {/* ── Gauche — Hero ── */}
       <div className="hidden lg:flex lg:w-5/12 flex-col justify-between p-12 relative overflow-hidden"
-        style={{ background: 'linear-gradient(160deg, #000666 0%, #1a237e 100%)' }}>
+        style={{
+          background: 'linear-gradient(160deg, #000666 0%, #1a237e 100%)',
+          backgroundImage: 'url("https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=800&h=1000&fit=crop")',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundBlend: 'multiply'
+        }}>
 
-        {/* Ambient */}
-        <div className="absolute -bottom-32 -left-32 w-96 h-96 rounded-full opacity-20"
-          style={{ background: 'radial-gradient(circle, #7986cb, transparent 70%)' }} />
+        <div className="absolute inset-0 pointer-events-none"
+          style={{ background: 'linear-gradient(160deg, rgba(0, 6, 102, 0.7) 0%, rgba(26, 35, 126, 0.7) 100%)' }} />
 
         {/* Logo */}
-        <Link to="/shows" className="inline-block">
+        <Link to="/shows" className="inline-block relative z-10">
           <h2 className="text-2xl font-bold text-white" style={{ fontFamily: '"Plus Jakarta Sans", sans-serif' }}>
             Ovatio<span style={{ color: '#fdd400' }}>.be</span>
           </h2>
         </Link>
 
         {/* Tagline */}
-        <div>
+        <div className="relative z-10">
           <p className="text-xs font-semibold uppercase tracking-widest mb-4"
             style={{ color: '#fdd400', fontFamily: 'Manrope, sans-serif' }}>
             {t('auth.joinCommunity')}
@@ -109,13 +114,13 @@ export default function RegisterPage() {
             {t('auth.joinElite')}
           </h1>
           <p className="text-sm leading-relaxed mb-8"
-            style={{ color: 'rgba(255,255,255,0.6)', fontFamily: 'Manrope, sans-serif' }}>
+            style={{ color: 'rgba(255,255,255,0.85)', fontFamily: 'Manrope, sans-serif' }}>
             {t('auth.joinDesc')}
           </p>
 
         </div>
 
-        <p className="text-xs" style={{ color: 'rgba(255,255,255,0.3)', fontFamily: 'Manrope, sans-serif' }}>
+        <p className="text-xs relative z-10" style={{ color: 'rgba(255,255,255,0.5)', fontFamily: 'Manrope, sans-serif' }}>
           Ovatio.be — {t('shows.hero_badge')}
         </p>
       </div>
