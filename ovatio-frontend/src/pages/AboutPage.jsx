@@ -1,7 +1,11 @@
 import { useLanguage } from '../contexts/LanguageContext'
+import { useAuth } from '../contexts/AuthContext'
+import { useNavigate } from 'react-router-dom'
 
 export default function AboutPage() {
   const { t } = useLanguage()
+  const { user } = useAuth()
+  const navigate = useNavigate()
 
   return (
     <div style={{ background: '#f7f9fc', minHeight: '100vh', fontFamily: 'Manrope, sans-serif' }}>
@@ -46,42 +50,41 @@ export default function AboutPage() {
             Rejoignez l'aventure
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {[
-              {
-                icon: 'person_add',
-                title: 'Découvrir',
-                desc: 'Explorez les meilleurs spectacles de Bruxelles et réservez en quelques clics.',
-                cta: 'Voir les spectacles',
-                link: '/shows',
-                color: '#000666'
-              },
-              {
-                icon: 'stage',
-                title: 'Partager',
-                desc: 'Vous êtes artiste ou producteur ? Partagez vos spectacles avec le public bruxellois.',
-                cta: 'Devenir producteur',
-                link: '/become-producer',
-                color: '#1a237e'
-              },
-              {
-                icon: 'business_center',
-                title: 'Collaborer',
-                desc: 'Vous êtes un lieu de spectacle ? Partenariez avec Standing Ovation.',
-                cta: 'Nous contacter',
-                link: '/contact',
-                color: '#4051b5'
-              },
-            ].map(({ icon, title, desc, cta, link, color }) => (
-              <div key={title} className="rounded-2xl p-8" style={{ background: '#ffffff', boxShadow: '0px 20px 40px rgba(25, 28, 30, 0.06)' }}>
-                <span className="material-symbols-outlined block text-5xl mb-4" style={{ color }}>{icon}</span>
-                <h3 className="text-xl font-bold mb-3" style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', color: '#191c1e' }}>{title}</h3>
-                <p className="text-sm mb-6" style={{ color: '#454652', lineHeight: 1.8 }}>{desc}</p>
-                <a href={link} className="inline-block px-6 py-2 rounded-lg text-sm font-semibold transition-opacity hover:opacity-80 text-white"
-                  style={{ background: color, fontFamily: '"Plus Jakarta Sans", sans-serif' }}>
-                  {cta} →
-                </a>
-              </div>
-            ))}
+            {/* Découvrir Card - Always visible */}
+            <div className="rounded-2xl p-8" style={{ background: '#ffffff', boxShadow: '0px 20px 40px rgba(25, 28, 30, 0.06)' }}>
+              <span className="material-symbols-outlined block text-5xl mb-4" style={{ color: '#000666' }}>person_add</span>
+              <h3 className="text-xl font-bold mb-3" style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', color: '#191c1e' }}>Découvrir</h3>
+              <p className="text-sm mb-6" style={{ color: '#454652', lineHeight: 1.8 }}>Explorez les meilleurs spectacles de Bruxelles et réservez en quelques clics.</p>
+              <a href="/shows" className="inline-block px-6 py-2 rounded-lg text-sm font-semibold transition-opacity hover:opacity-80 text-white"
+                style={{ background: '#000666', fontFamily: '"Plus Jakarta Sans", sans-serif' }}>
+                Voir les spectacles →
+              </a>
+            </div>
+
+            {/* Partager Card - Only if authenticated */}
+            <div className="rounded-2xl p-8" style={{ background: '#ffffff', boxShadow: '0px 20px 40px rgba(25, 28, 30, 0.06)', opacity: user ? 1 : 0.6 }}>
+              <span className="material-symbols-outlined block text-5xl mb-4" style={{ color: '#1a237e' }}>stage</span>
+              <h3 className="text-xl font-bold mb-3" style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', color: '#191c1e' }}>Partager</h3>
+              <p className="text-sm mb-6" style={{ color: '#454652', lineHeight: 1.8 }}>Vous êtes artiste ou producteur ? Partagez vos spectacles avec le public bruxellois.</p>
+              <button
+                onClick={() => user ? navigate('/become-producer') : navigate('/login')}
+                className="inline-block px-6 py-2 rounded-lg text-sm font-semibold transition-opacity hover:opacity-80 text-white cursor-pointer"
+                style={{ background: '#1a237e', fontFamily: '"Plus Jakarta Sans", sans-serif', border: 'none' }}>
+                {user ? 'Devenir producteur' : 'Se connecter'} →
+              </button>
+              {!user && <p className="text-xs mt-2" style={{ color: '#767683' }}>Connectez-vous pour continuer</p>}
+            </div>
+
+            {/* Collaborer Card - Always visible */}
+            <div className="rounded-2xl p-8" style={{ background: '#ffffff', boxShadow: '0px 20px 40px rgba(25, 28, 30, 0.06)' }}>
+              <span className="material-symbols-outlined block text-5xl mb-4" style={{ color: '#4051b5' }}>business_center</span>
+              <h3 className="text-xl font-bold mb-3" style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', color: '#191c1e' }}>Collaborer</h3>
+              <p className="text-sm mb-6" style={{ color: '#454652', lineHeight: 1.8 }}>Vous êtes un lieu de spectacle ? Partenariez avec Standing Ovation.</p>
+              <a href="/contact" className="inline-block px-6 py-2 rounded-lg text-sm font-semibold transition-opacity hover:opacity-80 text-white"
+                style={{ background: '#4051b5', fontFamily: '"Plus Jakarta Sans", sans-serif' }}>
+                Nous contacter →
+              </a>
+            </div>
           </div>
         </div>
 
