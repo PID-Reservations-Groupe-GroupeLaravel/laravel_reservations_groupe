@@ -30,7 +30,7 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4 relative overflow-hidden"
+    <div className="min-h-screen flex relative overflow-hidden"
       style={{ background: 'linear-gradient(135deg, #000666 0%, #1a237e 100%)' }}>
 
       {/* Ambient lights */}
@@ -43,34 +43,46 @@ export default function LoginPage() {
           style={{ background: 'radial-gradient(circle, #7986cb 0%, transparent 70%)' }} />
       </div>
 
-      <div className="relative w-full max-w-sm z-10">
+      {/* Left side - Image */}
+      <div className="hidden md:flex md:w-1/2 relative justify-center items-center">
+        <img
+          src="https://images.unsplash.com/photo-1514306688484-ace2b7637992?w=800&h=1000&fit=crop"
+          alt="spectacle"
+          className="h-full w-full object-cover"
+        />
+        <div className="absolute inset-0" style={{ background: 'linear-gradient(135deg, rgba(0, 6, 102, 0.4) 0%, rgba(26, 35, 126, 0.4) 100%)' }}></div>
+      </div>
 
-        {/* Bouton retour */}
-        <div className="mb-6">
-          <Link to="/shows"
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold text-white transition-opacity hover:opacity-80"
-            style={{ fontFamily: 'Manrope, sans-serif', background: 'rgba(255, 255, 255, 0.1)', backdropFilter: 'blur(10px)' }}>
-            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-            </svg>
-            Retour
+      {/* Right side - Login Form */}
+      <div className="w-full md:w-1/2 flex flex-col items-center justify-center px-4 py-8 relative z-10">
+
+        <div className="w-full max-w-sm">
+          {/* Bouton retour */}
+          <div className="mb-6">
+            <Link to="/shows"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold text-white transition-opacity hover:opacity-80"
+              style={{ fontFamily: 'Manrope, sans-serif', background: 'rgba(255, 255, 255, 0.1)', backdropFilter: 'blur(10px)' }}>
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+              </svg>
+              Retour
+            </Link>
+          </div>
+
+          {/* Logo */}
+          <Link to="/shows" className="block text-center mb-8">
+            <h1 className="text-3xl font-bold text-white tracking-tight"
+              style={{ fontFamily: '"Plus Jakarta Sans", sans-serif' }}>
+              Standing-Ovation<span style={{ color: '#fdd400' }}>.be</span>
+            </h1>
+            <p className="text-xs mt-1 tracking-[0.3em] uppercase"
+              style={{ color: 'rgba(255,255,255,0.5)', fontFamily: 'Manrope, sans-serif' }}>
+              {t('shows.hero_badge')}
+            </p>
           </Link>
-        </div>
 
-        {/* Logo */}
-        <Link to="/shows" className="block text-center mb-8">
-          <h1 className="text-3xl font-bold text-white tracking-tight"
-            style={{ fontFamily: '"Plus Jakarta Sans", sans-serif' }}>
-            Standing-Ovation<span style={{ color: '#fdd400' }}>.be</span>
-          </h1>
-          <p className="text-xs mt-1 tracking-[0.3em] uppercase"
-            style={{ color: 'rgba(255,255,255,0.5)', fontFamily: 'Manrope, sans-serif' }}>
-            {t('shows.hero_badge')}
-          </p>
-        </Link>
-
-        {/* Card */}
-        <div className="rounded-3xl p-8" style={{ background: 'white', boxShadow: '0 25px 50px rgba(0,0,0,0.3)' }}>
+          {/* Card */}
+          <div className="rounded-3xl p-8" style={{ background: 'white', boxShadow: '0 25px 50px rgba(0,0,0,0.3)' }}>
 
           <h2 className="text-xl font-bold mb-1" style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', color: '#191c1e' }}>
             {t('auth.welcome')}
@@ -201,12 +213,13 @@ export default function LoginPage() {
           </div>
         </div>
 
-        <p className="text-center text-sm mt-6" style={{ color: 'rgba(255,255,255,0.5)', fontFamily: 'Manrope, sans-serif' }}>
-          {t('auth.noAccountYet')}{' '}
-          <Link to="/register" className="font-semibold hover:underline" style={{ color: '#fdd400' }}>
-            {t('auth.signupFree')}
-          </Link>
-        </p>
+          <p className="text-center text-sm mt-6" style={{ color: 'rgba(255,255,255,0.5)', fontFamily: 'Manrope, sans-serif' }}>
+            {t('auth.noAccountYet')}{' '}
+            <Link to="/register" className="font-semibold hover:underline" style={{ color: '#fdd400' }}>
+              {t('auth.signupFree')}
+            </Link>
+          </p>
+        </div>
       </div>
     </div>
   )
