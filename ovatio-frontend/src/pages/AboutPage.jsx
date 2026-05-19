@@ -146,49 +146,52 @@ export default function AboutPage() {
           </div>
         </div>
 
-        {/* Why + Footer Merged Section */}
-        <div className="rounded-3xl p-12" style={{ background: 'linear-gradient(135deg, #000666 0%, #1a237e 100%)' }}>
-          <h2 className="text-3xl font-bold text-center text-white mb-12" style={{ fontFamily: '"Plus Jakarta Sans", sans-serif' }}>
+        {/* Why Standing Ovation */}
+        <div>
+          <h2 className="text-3xl font-bold text-center mb-12" style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', color: '#191c1e' }}>
             Pourquoi Standing Ovation
           </h2>
-
-          {/* Why Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {[
               { emoji: '⚡', title: 'Réservation Rapide', desc: 'Billets en main en quelques secondes. Pas d\'attente, pur plaisir.' },
               { emoji: '🔒', title: '100% Sécurisé', desc: 'Paiements conformes aux standards internationaux. Vos données protégées.' },
               { emoji: '❤️', title: 'Vos Favorites', desc: 'Créez votre liste de spectacles à ne pas manquer et recevez des alertes.' },
             ].map(({ emoji, title, desc }) => (
-              <div key={title} className="rounded-2xl p-8 text-center" style={{ background: 'rgba(255,255,255,0.1)', backdropFilter: 'blur(10px)' }}>
-                <div className="text-4xl mb-4">{emoji}</div>
-                <h3 className="text-lg font-bold mb-3 text-white" style={{ fontFamily: '"Plus Jakarta Sans", sans-serif' }}>{title}</h3>
-                <p className="text-sm text-white" style={{ color: 'rgba(255,255,255,0.8)', lineHeight: 1.8 }}>{desc}</p>
+              <div key={title} className="rounded-2xl p-8 text-center" style={{ background: '#ffffff', boxShadow: '0px 20px 40px rgba(25, 28, 30, 0.06)' }}>
+                <div className="text-5xl mb-4">{emoji}</div>
+                <h3 className="text-lg font-bold mb-3" style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', color: '#191c1e' }}>{title}</h3>
+                <p className="text-sm" style={{ color: '#454652', lineHeight: 1.8 }}>{desc}</p>
               </div>
             ))}
           </div>
+        </div>
 
-          {/* CTA */}
-          <div className="text-center mb-16 border-t border-b" style={{ borderColor: 'rgba(255,255,255,0.2)', paddingTop: '3rem', paddingBottom: '3rem' }}>
-            <h3 className="text-2xl font-bold text-white mb-6" style={{ fontFamily: '"Plus Jakarta Sans", sans-serif' }}>Commencez maintenant</h3>
-            <p className="text-white mb-8 max-w-2xl mx-auto" style={{ color: 'rgba(255,255,255,0.9)' }}>
-              Rejoignez des milliers de mélomanes et fans de spectacles qui découvrent et réservent sur Standing Ovation chaque jour.
-            </p>
-            <div className="flex gap-4 justify-center flex-wrap">
-              <a href="/register" className="px-8 py-3 rounded-xl font-semibold text-sm transition-all hover:scale-105"
-                style={{ background: '#fdd400', color: '#000666', fontFamily: '"Plus Jakarta Sans", sans-serif' }}>
-                S'inscrire gratuitement
-              </a>
-              <a href="/shows" className="px-8 py-3 rounded-xl font-semibold text-sm border-2 text-white transition-all hover:scale-105"
-                style={{ borderColor: '#fdd400', fontFamily: '"Plus Jakarta Sans", sans-serif' }}>
-                Découvrir les spectacles
-              </a>
-            </div>
+        {/* Getting Started CTA */}
+        <div className="rounded-3xl p-12 text-center" style={{ background: 'linear-gradient(135deg, #000666 0%, #1a237e 100%)' }}>
+          <h2 className="text-3xl font-bold text-white mb-6" style={{ fontFamily: '"Plus Jakarta Sans", sans-serif' }}>Commencez maintenant</h2>
+          <p className="text-white mb-8 max-w-2xl mx-auto" style={{ color: 'rgba(255,255,255,0.9)', fontSize: '1.1rem', lineHeight: 1.8 }}>
+            Rejoignez des milliers de mélomanes et fans de spectacles qui découvrent et réservent sur Standing Ovation chaque jour.
+          </p>
+          <div className="flex gap-4 justify-center flex-wrap">
+            <a href="/register" className="px-8 py-4 rounded-xl font-semibold text-base transition-all hover:scale-105"
+              style={{ background: '#fdd400', color: '#000666', fontFamily: '"Plus Jakarta Sans", sans-serif' }}>
+              S'inscrire gratuitement
+            </a>
+            <a href="/shows" className="px-8 py-4 rounded-xl font-semibold text-base border-2 text-white transition-all hover:scale-105"
+              style={{ borderColor: '#fdd400', fontFamily: '"Plus Jakarta Sans", sans-serif' }}>
+              Découvrir les spectacles
+            </a>
           </div>
+        </div>
 
-          {/* Footer Navigation */}
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8 text-sm mb-8">
+      </div>
+
+      {/* FOOTER - Separate at the bottom */}
+      <footer style={{ background: '#1a1f3a', color: '#fff', marginTop: '6rem', paddingTop: '4rem', paddingBottom: '2rem' }}>
+        <div className="max-w-6xl mx-auto px-4">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8 text-sm">
             <div>
-              <h4 className="font-bold mb-4 text-white" style={{ fontFamily: '"Plus Jakarta Sans", sans-serif' }}>Utiliser Standing Ovation</h4>
+              <h4 className="font-bold mb-4 text-base" style={{ fontFamily: '"Plus Jakarta Sans", sans-serif' }}>Utiliser Standing Ovation</h4>
               <ul className="space-y-2 text-xs" style={{ color: 'rgba(255,255,255,0.7)' }}>
                 <li><a href="/shows" className="hover:text-white transition-colors">Tous les spectacles</a></li>
                 <li><a href="/reservations" className="hover:text-white transition-colors">Mes réservations</a></li>
@@ -196,7 +199,7 @@ export default function AboutPage() {
               </ul>
             </div>
             <div>
-              <h4 className="font-bold mb-4 text-white" style={{ fontFamily: '"Plus Jakarta Sans", sans-serif' }}>Organisateurs</h4>
+              <h4 className="font-bold mb-4 text-base" style={{ fontFamily: '"Plus Jakarta Sans", sans-serif' }}>Organisateurs</h4>
               <ul className="space-y-2 text-xs" style={{ color: 'rgba(255,255,255,0.7)' }}>
                 <li><a href="/become-producer" className="hover:text-white transition-colors">Devenir producteur</a></li>
                 <li><a href="/dashboard" className="hover:text-white transition-colors">Tableau de bord</a></li>
@@ -204,7 +207,7 @@ export default function AboutPage() {
               </ul>
             </div>
             <div>
-              <h4 className="font-bold mb-4 text-white" style={{ fontFamily: '"Plus Jakarta Sans", sans-serif' }}>Bruxelles</h4>
+              <h4 className="font-bold mb-4 text-base" style={{ fontFamily: '"Plus Jakarta Sans", sans-serif' }}>Bruxelles</h4>
               <ul className="space-y-2 text-xs" style={{ color: 'rgba(255,255,255,0.7)' }}>
                 <li><a href="/categories/theatre" className="hover:text-white transition-colors">Théâtre</a></li>
                 <li><a href="/categories/musique" className="hover:text-white transition-colors">Musique</a></li>
@@ -212,7 +215,7 @@ export default function AboutPage() {
               </ul>
             </div>
             <div>
-              <h4 className="font-bold mb-4 text-white" style={{ fontFamily: '"Plus Jakarta Sans", sans-serif' }}>Légal</h4>
+              <h4 className="font-bold mb-4 text-base" style={{ fontFamily: '"Plus Jakarta Sans", sans-serif' }}>Légal</h4>
               <ul className="space-y-2 text-xs" style={{ color: 'rgba(255,255,255,0.7)' }}>
                 <li><a href="/privacy" className="hover:text-white transition-colors">Confidentialité</a></li>
                 <li><a href="/terms" className="hover:text-white transition-colors">Conditions</a></li>
@@ -221,11 +224,12 @@ export default function AboutPage() {
             </div>
           </div>
 
-          <div className="text-center text-xs border-t pt-8" style={{ color: 'rgba(255,255,255,0.6)', borderColor: 'rgba(255,255,255,0.2)' }}>
+          <div className="text-center text-xs border-t pt-8" style={{ color: 'rgba(255,255,255,0.6)', borderTopColor: 'rgba(255,255,255,0.2)' }}>
             <p className="mb-2">Standing Ovation SPRL • BE 0123.456.789</p>
             <p>© 2024 Standing Ovation. Tous droits réservés.</p>
           </div>
         </div>
+      </footer>
 
       </div>
     </div>
