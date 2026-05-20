@@ -201,7 +201,7 @@ export default function ShowDetailPage() {
                   {t('detail.about')}
                 </h2>
                 <p className="text-base leading-loose"
-                  style={{ color: '#555', fontFamily: 'Manrope, sans-serif', lineHeight: 1.9 }}>
+                  style={{ color: '#555', fontFamily: 'Manrope, sans-serif', lineHeight: 1.9, textAlign: 'justify' }}>
                   {show.description}
                 </p>
               </section>
