@@ -79,7 +79,7 @@ export default function AboutPage() {
                 name: 'Cirque Royal',
                 desc: 'Variété, stand-up, humour et magie',
                 genres: ['Stand-up', 'Variété', 'Humour'],
-                image: 'https://images.unsplash.com/photo-1577720643272-265efce3c772?w=600&h=400&fit=crop'
+                image: 'https://images.unsplash.com/photo-1459749411175-04bf5292ceea?w=600&h=400&fit=crop'
               },
               {
                 name: 'Théâtre Le Public',
