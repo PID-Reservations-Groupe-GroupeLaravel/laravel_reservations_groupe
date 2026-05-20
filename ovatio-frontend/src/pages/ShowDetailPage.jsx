@@ -41,7 +41,42 @@ export default function ShowDetailPage() {
   const [formError, setFormError]         = useState('')
 
   const [translatedReviews, setTranslatedReviews] = useState({})
-  const [translatingReview, setTranslatingReview] = useState(null)
+  const [translatingReviews, setTranslatingReviews] = useState(false)
+
+  // Traduire automatiquement les avis selon la langue du site
+  useEffect(() => {
+    if (reviews.length === 0) return
+
+    const translateAllReviews = async () => {
+      setTranslatingReviews(true)
+      const langMap = { 'fr': 'FR', 'en': 'EN', 'nl': 'NL' }
+      const targetLang = langMap[t('global.currentLanguage')] || 'EN'
+      const translated = {}
+
+      for (const review of reviews) {
+        if (!review.comment) continue
+        try {
+          const url = new URL('https://api.mymemory.translated.net/get')
+          url.searchParams.append('q', review.comment)
+          url.searchParams.append('langpair', `auto|${targetLang}`)
+
+          const res = await fetch(url)
+          const data = await res.json()
+
+          if (data.responseStatus === 200 && data.responseData.translatedText !== review.comment) {
+            translated[review.id] = data.responseData.translatedText
+          }
+        } catch (err) {
+          console.error('Translation error for review', review.id, err)
+        }
+      }
+
+      setTranslatedReviews(translated)
+      setTranslatingReviews(false)
+    }
+
+    translateAllReviews()
+  }, [reviews, t('global.currentLanguage')])
 
   useEffect(() => {
     Promise.all([
@@ -85,33 +120,7 @@ export default function ShowDetailPage() {
       setSubmitting(false) }
   }
 
-  const handleTranslateReview = async (reviewId, text, userLang = 'auto') => {
-    setTranslatingReview(reviewId)
-    try {
-      const targetLang = t('global.currentLanguage') === 'fr' ? 'FR' : t('global.currentLanguage') === 'nl' ? 'NL' : 'EN'
-      const response = await fetch('https://api.mymemory.translated.net/get', {
-        method: 'GET',
-        headers: { 'Accept': 'application/json' }
-      })
-      const url = new URL('https://api.mymemory.translated.net/get')
-      url.searchParams.append('q', text)
-      url.searchParams.append('langpair', `${userLang}|${targetLang}`)
-
-      const res = await fetch(url)
-      const data = await res.json()
-
-      if (data.responseStatus === 200) {
-        setTranslatedReviews(prev => ({
-          ...prev,
-          [reviewId]: data.responseData.translatedText
-        }))
-      }
-    } catch (err) {
-      console.error('Translation error:', err)
-    } finally {
-      setTranslatingReview(null)
-    }
-  }
+  const [showingOriginal, setShowingOriginal] = useState({})
 
   if (loading) return <Spinner t={t} />
   if (error)   return <ErrorScreen msg={error} t={t} />
@@ -348,13 +357,19 @@ export default function ShowDetailPage() {
                           </div>
                         </div>
                         <div className="flex items-center gap-2">
-                          <button
-                            onClick={() => handleTranslateReview(review.id, review.comment)}
-                            disabled={translatingReview === review.id || translatedReviews[review.id]}
-                            className="text-xs px-2 py-1 rounded hover:opacity-70 transition-opacity disabled:opacity-50"
-                            style={{ background: '#f0f0f0', color: '#000666', fontFamily: 'Manrope, sans-serif', border: 'none', cursor: 'pointer', fontWeight: '600' }}>
-                            {translatingReview === review.id ? '⏳' : translatedReviews[review.id] ? '✓ Traduit' : '🌐 Traduire'}
-                          </button>
+                          {translatedReviews[review.id] && (
+                            <button
+                              onClick={() => setShowingOriginal(prev => ({ ...prev, [review.id]: !prev[review.id] }))}
+                              className="text-xs px-2 py-1 rounded hover:opacity-70 transition-opacity"
+                              style={{ background: showingOriginal[review.id] ? '#fdd400' : '#f0f0f0', color: '#000666', fontFamily: 'Manrope, sans-serif', border: 'none', cursor: 'pointer', fontWeight: '600' }}>
+                              {showingOriginal[review.id] ? '📌 Original' : '🌐 Traduit'}
+                            </button>
+                          )}
+                          {translatingReviews && (
+                            <span className="text-xs" style={{ color: '#aaa', fontFamily: 'Manrope, sans-serif' }}>
+                              ⏳ Traduction...
+                            </span>
+                          )}
                           <span className="text-xs" style={{ color: '#aaa', fontFamily: 'Manrope, sans-serif' }}>
                             {review.created_at}
                           </span>
@@ -362,11 +377,11 @@ export default function ShowDetailPage() {
                       </div>
                       <p className="text-sm leading-relaxed"
                         style={{ color: '#555', fontFamily: 'Manrope, sans-serif', lineHeight: 1.7 }}>
-                        {translatedReviews[review.id] || review.comment}
+                        {showingOriginal[review.id] ? review.comment : (translatedReviews[review.id] || review.comment)}
                       </p>
-                      {translatedReviews[review.id] && (
+                      {translatedReviews[review.id] && showingOriginal[review.id] && (
                         <p className="text-xs mt-3 pt-3" style={{ color: '#aaa', fontFamily: 'Manrope, sans-serif', borderTop: '1px solid #eee' }}>
-                          📌 Original: {review.comment}
+                          🌐 Traduit: {translatedReviews[review.id]}
                         </p>
                       )}
                     </div>
