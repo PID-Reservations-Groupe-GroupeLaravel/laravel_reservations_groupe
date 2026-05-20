@@ -42,6 +42,51 @@ export default function ShowDetailPage() {
 
   const [translatedReviews, setTranslatedReviews] = useState({})
   const [translatingReviews, setTranslatingReviews] = useState(false)
+  const [translatedShowTitle, setTranslatedShowTitle] = useState(null)
+  const [translatedShowDesc, setTranslatedShowDesc] = useState(null)
+  const [translatingContent, setTranslatingContent] = useState(false)
+
+  // Traduire le titre et la description du spectacle selon la langue du site
+  useEffect(() => {
+    if (!show || lang === 'fr') {
+      setTranslatedShowTitle(null)
+      setTranslatedShowDesc(null)
+      return
+    }
+
+    const translateShowContent = async () => {
+      setTranslatingContent(true)
+      try {
+        // Traduire le titre
+        if (show.title) {
+          const titleRes = await api.post('/translate', {
+            text: show.title,
+            target_lang: lang
+          }).catch(() => null)
+          if (titleRes?.data?.translated_text) {
+            setTranslatedShowTitle(titleRes.data.translated_text)
+          }
+        }
+
+        // Traduire la description
+        if (show.description) {
+          const descRes = await api.post('/translate', {
+            text: show.description,
+            target_lang: lang
+          }).catch(() => null)
+          if (descRes?.data?.translated_text) {
+            setTranslatedShowDesc(descRes.data.translated_text)
+          }
+        }
+      } catch (err) {
+        console.error('Translation error for show content:', err)
+      } finally {
+        setTranslatingContent(false)
+      }
+    }
+
+    translateShowContent()
+  }, [show?.id, lang])
 
   // Traduire automatiquement les avis selon la langue du site (via backend API)
   useEffect(() => {
@@ -163,7 +208,7 @@ export default function ShowDetailPage() {
           </p>
           <h1 className="text-5xl md:text-6xl font-extrabold text-white mb-5 leading-none"
             style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', letterSpacing: '-0.03em' }}>
-            {show.title}
+            {translatedShowTitle || show.title}
           </h1>
           <div className="flex flex-wrap items-center gap-6">
             {representations.length > 0 && (
@@ -239,7 +284,7 @@ export default function ShowDetailPage() {
                 </h2>
                 <p className="text-base leading-loose"
                   style={{ color: '#555', fontFamily: 'Manrope, sans-serif', lineHeight: 1.9, textAlign: 'justify' }}>
-                  {show.description}
+                  {translatedShowDesc || show.description}
                 </p>
               </section>
             )}
