@@ -96,7 +96,7 @@ export default function ShowDetailPage() {
     <div style={{ background: '#f5f6fa', minHeight: '100vh' }}>
 
       {/* ══ HERO ══ */}
-      <div className="relative overflow-hidden" style={{ height: '520px' }}>
+      <div className="relative overflow-hidden" style={{ height: '400px' }}>
         {posterUrl
           ? <img src={posterUrl} alt={show.title}
               className="absolute inset-0 w-full h-full object-cover"
@@ -359,22 +359,31 @@ export default function ShowDetailPage() {
             {/* Producteur */}
             {show.producer && (
               <section>
-                <h2 className="text-2xl font-bold mb-4"
+                <h2 className="text-2xl font-bold mb-5"
                   style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', color: '#0a0d2e' }}>
-                  {t('detail.producer')}
+                  🎭 {t('detail.producer')}
                 </h2>
-                <div className="flex items-center gap-4 rounded-2xl p-4 w-fit"
-                  style={{ background: '#fff', boxShadow: '0 2px 12px rgba(0,6,102,0.07)' }}>
-                  <div className="w-11 h-11 rounded-xl flex items-center justify-center font-bold text-sm shrink-0"
-                    style={{ background: '#fdd400', color: '#6f5c00' }}>
-                    {(show.producer.name ?? show.producer.firstname ?? 'P')[0].toUpperCase()}
-                  </div>
-                  <div>
-                    <p className="text-sm font-bold"
-                      style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', color: '#0a0d2e' }}>
-                      {show.producer.name ?? `${show.producer.firstname} ${show.producer.lastname}`}
-                    </p>
-                    <p className="text-xs mt-0.5" style={{ color: '#888', fontFamily: 'Manrope, sans-serif' }}>{t('detail.producer')}</p>
+                <div className="rounded-3xl p-6 border-2 border-dashed"
+                  style={{ background: 'linear-gradient(135deg, rgba(0,6,102,0.03) 0%, rgba(253,212,0,0.03) 100%)', borderColor: '#fdd400' }}>
+                  <div className="flex items-center gap-5 mb-4">
+                    <div className="w-16 h-16 rounded-2xl flex items-center justify-center font-bold text-lg shrink-0"
+                      style={{ background: 'linear-gradient(135deg, #fdd400 0%, #ffb300 100%)', color: '#6f5c00', boxShadow: '0 4px 12px rgba(253,212,0,0.3)' }}>
+                      {(show.producer.name ?? show.producer.firstname ?? 'P')[0].toUpperCase()}
+                    </div>
+                    <div className="flex-1">
+                      <p className="text-lg font-bold"
+                        style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', color: '#0a0d2e' }}>
+                        {show.producer.name ?? `${show.producer.firstname} ${show.producer.lastname}`}
+                      </p>
+                      <p className="text-xs mt-1" style={{ color: '#000666', fontFamily: 'Manrope, sans-serif', fontWeight: '600' }}>
+                        Producteur/Productrice
+                      </p>
+                      {show.producer.email && (
+                        <p className="text-xs mt-2" style={{ color: '#666', fontFamily: 'Manrope, sans-serif' }}>
+                          ✉️ {show.producer.email}
+                        </p>
+                      )}
+                    </div>
                   </div>
                 </div>
               </section>
@@ -545,7 +554,7 @@ export default function ShowDetailPage() {
 
             {/* Coulisses & Galerie */}
             {posterUrl && (
-              <div className="rounded-3xl overflow-hidden relative"
+              <div className="rounded-3xl overflow-hidden relative sticky top-96"
                 style={{ boxShadow: '0 8px 32px rgba(0,6,102,0.12)' }}>
                 <img src={posterUrl} alt={show.title}
                   className="w-full object-cover"
