@@ -126,27 +126,78 @@ export default function ShowDetailPage() {
   // Hardcoded translations for the 4 shows
   const showTranslations = {
     1: { // Ayiti
-      en: { title: 'Haiti', description: 'Alone on stage, Daniel Marcelin retraces the history of Haiti through a story that is both intimate and engaging. Stuck at an airport, he revisits his origins, questions his identity and shares a profound reflection on exile, heritage and the resilience of a people. From colonization to contemporary crises, the show oscillates between humor, emotion and historical critique to provide an experience that is both pedagogical and deeply human.' },
-      nl: { title: 'Haïti', description: 'Solo op het podium. Daniel Marcelin volgt de geschiedenis van Haïti door een verhaal dat zowel intiem als meeslepend is. Vast op een luchthaven, hij herbezint zijn oorsprong, stelt vragen over zijn identiteit en deelt een diepgaande reflectie op ballingschap, erfenis en de veerkracht van een volk. Van kolonisatie tot hedendaagse crises, de voorstelling balanceert tussen humor, emotie en historische kritiek om een ervaring te bieden die zowel pedagogisch als diep menselijk is.' }
+      fr: {
+        title: show.title,
+        description: show.description,
+        curatorReview: '"Un voyage humain d\'une rare intensité. La performance captive de la première à la dernière seconde. Un must-see absolu de la saison bruxelloise."'
+      },
+      en: {
+        title: 'Haiti',
+        description: 'Alone on stage, Daniel Marcelin retraces the history of Haiti through a story that is both intimate and engaging. Stuck at an airport, he revisits his origins, questions his identity and shares a profound reflection on exile, heritage and the resilience of a people. From colonization to contemporary crises, the show oscillates between humor, emotion and historical critique to provide an experience that is both pedagogical and deeply human.',
+        curatorReview: '"A human journey of rare intensity. The performance captivates from the first to the last second. An absolute must-see of the Brussels season."'
+      },
+      nl: {
+        title: 'Haïti',
+        description: 'Solo op het podium. Daniel Marcelin volgt de geschiedenis van Haïti door een verhaal dat zowel intiem als meeslepend is. Vast op een luchthaven, hij herbezint zijn oorsprong, stelt vragen over zijn identiteit en deelt een diepgaande reflectie op ballingschap, erfenis en de veerkracht van een volk. Van kolonisatie tot hedendaagse crises, de voorstelling balanceert tussen humor, emotie en historische kritiek om een ervaring te bieden die zowel pedagogisch als diep menselijk is.',
+        curatorReview: '"Een menselijk reis van zeldzame intensiteit. De voorstelling boeien van begin tot eind. Een absolute must-see van het Brusselse seizoen."'
+      }
     },
     2: { // Cible mouvante
-      en: { title: 'Moving Target', description: 'A social thriller that disturbs and questions. The staging is surgical in its precision, the text of troubling relevance. A must-see.' },
-      nl: { title: 'Bewegend Doel', description: 'Een sociaal thriller die verstoort en vragen stelt. De inszenering is chirurgisch nauwkeurig, de tekst verstoringwekkend relevant. Een must-see.' }
+      fr: {
+        title: show.title,
+        description: show.description,
+        curatorReview: '"Un thriller social qui dérange et questionne. La mise en scène est d\'une précision chirurgicale, le texte d\'une actualité troublante. À voir absolument."'
+      },
+      en: {
+        title: 'Moving Target',
+        description: 'A social thriller that disturbs and questions. The staging is surgical in its precision, the text of troubling relevance. A must-see.',
+        curatorReview: '"A social thriller that disturbs and questions. The staging is surgical in precision, the text of troubling relevance. Absolutely must-see."'
+      },
+      nl: {
+        title: 'Bewegend Doel',
+        description: 'Een sociaal thriller die verstoort en vragen stelt. De inszenering is chirurgisch nauwkeurig, de tekst verstoringwekkend relevant. Een must-see.',
+        curatorReview: '"Een sociaal thriller die verstoort en vragen stelt. De inszenering is chirurgisch nauwkeurig, de tekst verstoringwekkend relevant. Een must-see."'
+      }
     },
     3: { // Claude Semal
-      en: { title: 'Claude Semal Live', description: 'Claude Semal at the height of his art. Between poetry and derision, he offers us a portrait of Belgium both tender and universal. A rare moment.' },
-      nl: { title: 'Claude Semal Live', description: 'Claude Semal op het hoogtepunt van zijn kunst. Tussen poëzie en dérision, biedt hij ons een portret van België dat zowel zacht als universeel is. Een zeldzaam moment.' }
+      fr: {
+        title: show.title,
+        description: show.description,
+        curatorReview: '"Claude Semal au sommet de son art. Entre poésie et dérision, il nous offre un portrait de la Belgique tendre et universel. Un moment rare."'
+      },
+      en: {
+        title: 'Claude Semal Live',
+        description: 'Claude Semal at the height of his art. Between poetry and derision, he offers us a portrait of Belgium both tender and universal. A rare moment.',
+        curatorReview: '"Claude Semal at the peak of his art. Between poetry and derision, he offers us a portrait of Belgium both tender and universal. A rare moment."'
+      },
+      nl: {
+        title: 'Claude Semal Live',
+        description: 'Claude Semal op het hoogtepunt van zijn kunst. Tussen poëzie en dérision, biedt hij ons een portret van België dat zowel zacht als universeel is. Een zeldzaam moment.',
+        curatorReview: '"Claude Semal op het hoogtepunt van zijn kunst. Tussen poëzie en dérision, biedt hij ons een portret van België dat zowel zacht als universeel is. Een zeldzaam moment."'
+      }
     },
     4: { // One-man show
-      en: { title: 'One-Man Show', description: 'A one-man show of dizzying virtuosity. Funny, moving, unexpected — this show will stay with you for a long time.' },
-      nl: { title: 'One-Man Show', description: 'Een one-man show van duizelingwekkende virtuositeit. Grappig, ontroerend, onverwacht — deze voorstelling blijft je lang bij.' }
+      fr: {
+        title: show.title,
+        description: show.description,
+        curatorReview: '"Un seul-en-scène d\'une virtuosité étourdissante. Drôle, émouvant, inattendu — ce spectacle vous restera longtemps en mémoire."'
+      },
+      en: {
+        title: 'One-Man Show',
+        description: 'A one-man show of dizzying virtuosity. Funny, moving, unexpected — this show will stay with you for a long time.',
+        curatorReview: '"A solo performance of breathtaking virtuosity. Funny, moving, unexpected — this show will stay with you long."'
+      },
+      nl: {
+        title: 'One-Man Show',
+        description: 'Een one-man show van duizelingwekkende virtuositeit. Grappig, ontroerend, onverwacht — deze voorstelling blijft je lang bij.',
+        curatorReview: '"Een one-man show van duizelingwekkende virtuositeit. Grappig, ontroerend, onverwacht — deze voorstelling blijft je lang bij."'
+      }
     }
   }
 
   const getTranslatedContent = () => {
-    if (lang === 'fr') return { title: show.title, description: show.description }
     const translations = showTranslations[show?.id]
-    if (!translations || !translations[lang]) return { title: show.title, description: show.description }
+    if (!translations || !translations[lang]) return { title: show.title, description: show.description, curatorReview: '' }
     return translations[lang]
   }
 
@@ -331,14 +382,7 @@ export default function ShowDetailPage() {
 
                 <p className="text-base italic leading-relaxed"
                   style={{ color: 'rgba(255,255,255,0.85)', fontFamily: 'Manrope, sans-serif', lineHeight: 1.8 }}>
-                  {show.slug === 'ayiti' || show.id === 1
-                    ? '"Un voyage humain d\'une rare intensité. La performance captive de la première à la dernière seconde. Un must-see absolu de la saison bruxelloise."'
-                    : show.slug === 'cible-mouvante' || show.id === 2
-                    ? '"Un thriller social qui dérange et questionne. La mise en scène est d\'une précision chirurgicale, le texte d\'une actualité troublante. À voir absolument."'
-                    : show.id === 3
-                    ? '"Claude Semal au sommet de son art. Entre poésie et dérision, il nous offre un portrait de la Belgique tendre et universel. Un moment rare."'
-                    : '"Un seul-en-scène d\'une virtuosité étourdissante. Drôle, émouvant, inattendu — ce spectacle vous restera longtemps en mémoire."'
-                  }
+                  {translatedContent.curatorReview}
                 </p>
               </div>
             </section>
