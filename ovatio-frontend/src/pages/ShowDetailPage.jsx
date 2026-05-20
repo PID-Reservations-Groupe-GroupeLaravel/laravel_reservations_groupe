@@ -648,8 +648,8 @@ export default function ShowDetailPage() {
                               cursor: 'pointer',
                             }}>
                             {isPopular && (
-                              <span className="absolute top-2 right-2 text-xs font-black px-2 py-0.5 rounded-full"
-                                style={{ background: '#fdd400', color: '#6f5c00', fontFamily: 'Manrope, sans-serif' }}>
+                              <span className="absolute right-2 text-xs font-black px-2 py-0.5 rounded-full"
+                                style={{ background: '#fdd400', color: '#6f5c00', fontFamily: 'Manrope, sans-serif', top: '50%', transform: 'translateY(-50%)' }}>
                                 {t('detail.popular')}
                               </span>
                             )}
