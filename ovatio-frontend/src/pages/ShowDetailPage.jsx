@@ -648,23 +648,25 @@ export default function ShowDetailPage() {
                         const isPopular = i === prices.length - 1 && prices.length > 1
                         return (
                           <button key={p.id} type="button" onClick={() => setSelectedPrice(p)}
-                            className="w-full rounded-xl px-4 py-3 text-left transition-all relative"
+                            className="w-full rounded-xl px-4 py-3 text-left transition-all"
                             style={{
                               background: isSel ? '#fff8e1' : '#f5f6fa',
                               border: isSel ? '2px solid #fdd400' : '1px solid #eceef1',
                               cursor: 'pointer',
                             }}>
-                            {isPopular && (
-                              <span className="absolute right-2 text-xs font-black px-2 py-0.5 rounded-full"
-                                style={{ background: '#fdd400', color: '#6f5c00', fontFamily: 'Manrope, sans-serif', top: '50%', transform: 'translateY(-50%)' }}>
-                                {t('detail.popular')}
-                              </span>
-                            )}
-                            <div className="flex items-center justify-between" style={{ paddingRight: isPopular ? '5rem' : 0 }}>
-                              <p className="text-sm font-bold"
-                                style={{ color: '#0a0d2e', fontFamily: '"Plus Jakarta Sans", sans-serif' }}>
-                                {t(`detail.priceType_${p.type}`)}
-                              </p>
+                            <div className="flex items-center justify-between gap-2">
+                              <div className="flex items-center gap-2">
+                                {isPopular && (
+                                  <span className="text-xs font-black px-2 py-0.5 rounded-full"
+                                    style={{ background: '#fdd400', color: '#6f5c00', fontFamily: 'Manrope, sans-serif', flexShrink: 0 }}>
+                                    {t('detail.popular')}
+                                  </span>
+                                )}
+                                <p className="text-sm font-bold"
+                                  style={{ color: '#0a0d2e', fontFamily: '"Plus Jakarta Sans", sans-serif' }}>
+                                  {t(`detail.priceType_${p.type}`)}
+                                </p>
+                              </div>
                               <p className="text-sm font-black"
                                 style={{ color: '#000666', fontFamily: '"Plus Jakarta Sans", sans-serif' }}>
                                 {p.price} €
