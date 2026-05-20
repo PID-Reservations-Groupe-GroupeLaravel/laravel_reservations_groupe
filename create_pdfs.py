@@ -1,0 +1,192 @@
+from reportlab.lib.pagesizes import letter
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from reportlab.lib import colors
+from reportlab.lib.enums import TA_CENTER
+from datetime import datetime
+
+styles = getSampleStyleSheet()
+title_style = ParagraphStyle(
+    'CustomTitle',
+    parent=styles['Heading1'],
+    fontSize=28,
+    textColor=colors.HexColor('#000666'),
+    spaceAfter=30,
+    alignment=TA_CENTER,
+    fontName='Helvetica-Bold'
+)
+
+heading_style = ParagraphStyle(
+    'CustomHeading',
+    parent=styles['Heading2'],
+    fontSize=16,
+    textColor=colors.HexColor('#000666'),
+    spaceAfter=12,
+    spaceBefore=12,
+    fontName='Helvetica-Bold'
+)
+
+# VISITEUR PDF
+doc = SimpleDocTemplate("VISITEUR.pdf", pagesize=letter)
+story = []
+story.append(Paragraph("VISITEUR", title_style))
+story.append(Paragraph("Non-authentifie - Decouverte & Consultation", styles['Normal']))
+story.append(Spacer(1, 20))
+story.append(Paragraph("Vue d'ensemble", heading_style))
+story.append(Paragraph("Vous etes un visiteur non-authentifie. Vous explorez la plateforme Standing-Ovation pour decouvrir les spectacles vivants a Bruxelles, consulter les details et les avis publics.", styles['Normal']))
+story.append(Spacer(1, 12))
+story.append(Paragraph("Ce que vous pouvez faire", heading_style))
+story.append(Paragraph("- Voir le catalogue complet des spectacles", styles['Normal']))
+story.append(Paragraph("- Consulter les details de chaque spectacle", styles['Normal']))
+story.append(Paragraph("- Lire les avis publics et recommandations", styles['Normal']))
+story.append(Paragraph("- Consulter la galerie d'images", styles['Normal']))
+story.append(Paragraph("- Changer la langue (FR / EN / NL) en temps reel", styles['Normal']))
+story.append(Paragraph("- Acceder aux pages publiques", styles['Normal']))
+story.append(Spacer(1, 12))
+story.append(Paragraph("Ce que vous NE POUVEZ PAS faire", heading_style))
+story.append(Paragraph("- Reserver un spectacle (connexion requise)", styles['Normal']))
+story.append(Paragraph("- Payer via Stripe", styles['Normal']))
+story.append(Paragraph("- Laisser un avis personnel", styles['Normal']))
+story.append(Spacer(1, 12))
+story.append(Paragraph("Pages accessibles", heading_style))
+story.append(Paragraph("- ShowsPage - Catalogue avec filtres", styles['Normal']))
+story.append(Paragraph("- ShowDetailPage - Details complets", styles['Normal']))
+story.append(Paragraph("- AboutPage - Presentation de la plateforme", styles['Normal']))
+story.append(Spacer(1, 12))
+story.append(Paragraph("Votre parcours principal", heading_style))
+story.append(Paragraph("1. Visite ShowsPage<br/>2. Cherche un spectacle<br/>3. Clique sur detail<br/>4. Lit descriptions<br/>5. Consulte avis publics<br/>6. CONNEXION REQUISE pour reserver", styles['Normal']))
+story.append(Spacer(1, 20))
+story.append(Paragraph("Document genere: " + datetime.now().strftime("%d/%m/%Y %H:%M"), styles['Normal']))
+doc.build(story)
+print("OK: VISITEUR.pdf")
+
+# MEMBRE PDF
+doc = SimpleDocTemplate("MEMBRE.pdf", pagesize=letter)
+story = []
+story.append(Paragraph("MEMBRE", title_style))
+story.append(Paragraph("Authentifie - Reservation & Paiement", styles['Normal']))
+story.append(Spacer(1, 20))
+story.append(Paragraph("Vue d'ensemble", heading_style))
+story.append(Paragraph("Vous etes un membre authentifie. Vous avez acces a la reservation complete avec paiement Stripe, gestion de profil et possibilite de laisser des avis.", styles['Normal']))
+story.append(Spacer(1, 12))
+story.append(Paragraph("Tous les droits d'un Visiteur, PLUS:", heading_style))
+story.append(Paragraph("- Reserver des spectacles", styles['Normal']))
+story.append(Paragraph("- Payer via Stripe en mode securise", styles['Normal']))
+story.append(Paragraph("- Telecharger QR codes pour vos reservations", styles['Normal']))
+story.append(Paragraph("- Telecharger tickets PDF", styles['Normal']))
+story.append(Paragraph("- Laisser un avis personnel (1-5 etoiles)", styles['Normal']))
+story.append(Paragraph("- Editer/supprimer votre avis", styles['Normal']))
+story.append(Paragraph("- Consulter votre historique de reservations", styles['Normal']))
+story.append(Paragraph("- Gerer votre profil: email, mot de passe, photo, langue", styles['Normal']))
+story.append(Paragraph("- Activer 'Se souvenir de moi' (30 jours)", styles['Normal']))
+story.append(Spacer(1, 12))
+story.append(Paragraph("Tarifs disponibles", heading_style))
+story.append(Paragraph("- Normal (plein tarif)", styles['Normal']))
+story.append(Paragraph("- Enfants (-12 ans)", styles['Normal']))
+story.append(Paragraph("- PMR (Personnes a mobilite reduite)", styles['Normal']))
+story.append(Paragraph("- Senior (60+)", styles['Normal']))
+story.append(Paragraph("- Etudiant (badge POPULAIRE)", styles['Normal']))
+story.append(Spacer(1, 12))
+story.append(Paragraph("Votre flux de reservation", heading_style))
+story.append(Paragraph("1. Voir ShowsPage<br/>2. Clic 'Reserver'<br/>3. Selection: date + tarif + quantite<br/>4. Verification total<br/>5. Paiement Stripe<br/>6. Confirmation + QR code<br/>7. Telechargement ticket PDF", styles['Normal']))
+story.append(Spacer(1, 20))
+story.append(Paragraph("Document genere: " + datetime.now().strftime("%d/%m/%Y %H:%M"), styles['Normal']))
+doc.build(story)
+print("OK: MEMBRE.pdf")
+
+# PRODUCTEUR PDF
+doc = SimpleDocTemplate("PRODUCTEUR.pdf", pagesize=letter)
+story = []
+story.append(Paragraph("PRODUCTEUR", title_style))
+story.append(Paragraph("Member + Producer - Back-Office Creatif", styles['Normal']))
+story.append(Spacer(1, 20))
+story.append(Paragraph("Vue d'ensemble", heading_style))
+story.append(Paragraph("Vous etes un producteur approuve. Vous avez acces au back-office complet pour gerer vos spectacles, representations, et moderer les avis recus.", styles['Normal']))
+story.append(Spacer(1, 12))
+story.append(Paragraph("Tous les droits d'un Membre, PLUS:", heading_style))
+story.append(Paragraph("- Creer vos propres spectacles", styles['Normal']))
+story.append(Paragraph("- Editer tous les champs de vos spectacles", styles['Normal']))
+story.append(Paragraph("- Supprimer vos spectacles", styles['Normal']))
+story.append(Paragraph("- Ajouter representations (dates FUTURES uniquement)", styles['Normal']))
+story.append(Paragraph("- Voir liste complete de vos representations", styles['Normal']))
+story.append(Paragraph("- Annuler representations", styles['Normal']))
+story.append(Paragraph("- Acces au tableau de bord producteur", styles['Normal']))
+story.append(Paragraph("- Moderer les avis recus (accepter/rejeter)", styles['Normal']))
+story.append(Paragraph("- Consulter statistiques de reservations", styles['Normal']))
+story.append(Paragraph("- RSS feed automatique de vos spectacles", styles['Normal']))
+story.append(Spacer(1, 12))
+story.append(Paragraph("Dashboard Producteur", heading_style))
+story.append(Paragraph("- Total spectacles publies", styles['Normal']))
+story.append(Paragraph("- Spectacles confirmes par admin", styles['Normal']))
+story.append(Paragraph("- Total representations", styles['Normal']))
+story.append(Paragraph("- Representations a venir", styles['Normal']))
+story.append(Paragraph("- Total reservations recues", styles['Normal']))
+story.append(Paragraph("- Compteur avis en attente", styles['Normal']))
+story.append(Spacer(1, 12))
+story.append(Paragraph("Limitations intentionnelles", heading_style))
+story.append(Paragraph("- Spectacle non-confirme = non-reservable", styles['Normal']))
+story.append(Paragraph("- Pas de modification des tarifs apres creation", styles['Normal']))
+story.append(Paragraph("- Representations: dates futures uniquement", styles['Normal']))
+story.append(Spacer(1, 12))
+story.append(Paragraph("Votre flux complet", heading_style))
+story.append(Paragraph("1. Candidature via BecomeProducerPage<br/>2. Attente approbation admin<br/>3. Admin approuve<br/>4. Acces AdminPage<br/>5. Creation spectacles<br/>6. Admin confirme<br/>7. Ajout representations<br/>8. Moderation avis", styles['Normal']))
+story.append(Spacer(1, 20))
+story.append(Paragraph("Document genere: " + datetime.now().strftime("%d/%m/%Y %H:%M"), styles['Normal']))
+doc.build(story)
+print("OK: PRODUCTEUR.pdf")
+
+# ADMIN PDF
+doc = SimpleDocTemplate("ADMIN.pdf", pagesize=letter)
+story = []
+story.append(Paragraph("ADMIN", title_style))
+story.append(Paragraph("Super-User - Controle Complet", styles['Normal']))
+story.append(Spacer(1, 20))
+story.append(Paragraph("Vue d'ensemble", heading_style))
+story.append(Paragraph("Vous etes administrateur. Vous avez le controle complet de la plateforme avec TOUS les roles. Vous pouvez faire TOUT.", styles['Normal']))
+story.append(Spacer(1, 12))
+story.append(Paragraph("Pouvoirs COMPLETS", heading_style))
+story.append(Paragraph("Vous avez tous les droits de Visiteur + Membre + Producteur, PLUS:", styles['Normal']))
+story.append(Spacer(1, 6))
+story.append(Paragraph("- Approuver/rejeter demandes producteurs", styles['Normal']))
+story.append(Paragraph("- Voir toutes les demandes (Pending/Approved/Rejected)", styles['Normal']))
+story.append(Paragraph("- Assigner role producteur automatiquement", styles['Normal']))
+story.append(Paragraph("- Confirmer spectacles pour publication", styles['Normal']))
+story.append(Paragraph("- Revoquer confirmation de spectacles", styles['Normal']))
+story.append(Paragraph("- Voir tous les spectacles (confirmes + en attente)", styles['Normal']))
+story.append(Paragraph("- Gerer artistes: CRUD complet", styles['Normal']))
+story.append(Paragraph("- Voir liste de tous les membres", styles['Normal']))
+story.append(Paragraph("- Rechercher par login/email/nom", styles['Normal']))
+story.append(Paragraph("- Desactiver/reactiver comptes", styles['Normal']))
+story.append(Paragraph("- Voir tous les producteurs approuves", styles['Normal']))
+story.append(Paragraph("- Moderer avis cross-producteur", styles['Normal']))
+story.append(Paragraph("- Valider/rejeter avis de n'importe quel producteur", styles['Normal']))
+story.append(Paragraph("- Acceder aux donnees analytiques globales", styles['Normal']))
+story.append(Spacer(1, 12))
+story.append(Paragraph("Modules Admin complets", heading_style))
+story.append(Paragraph("- Demandes Producteurs", styles['Normal']))
+story.append(Paragraph("- Gestion Membres", styles['Normal']))
+story.append(Paragraph("- Gestion Producteurs", styles['Normal']))
+story.append(Paragraph("- Gestion Spectacles", styles['Normal']))
+story.append(Paragraph("- Gestion Artistes", styles['Normal']))
+story.append(Paragraph("- Moderation Avis", styles['Normal']))
+story.append(Spacer(1, 12))
+story.append(Paragraph("Votre flux complet", heading_style))
+story.append(Paragraph("1. Connexion (bob@ovatio.be)<br/>2. Acces AdminPage complet<br/>3. Onglet 'Demandes' - Approuve/rejette producteurs<br/>4. Onglet 'Spectacles' - Confirme shows<br/>5. Onglet 'Artistes' - CRUD<br/>6. Onglet 'Membres' - Gestion<br/>7. Dashboard avec metriques<br/>8. Moderation avis cross-producteur", styles['Normal']))
+story.append(Spacer(1, 12))
+story.append(Paragraph("KPIs a Suivre", heading_style))
+story.append(Paragraph("- 4 spectacles actifs", styles['Normal']))
+story.append(Paragraph("- 3+ representations par spectacle", styles['Normal']))
+story.append(Paragraph("- Support 3 langues (FR/EN/NL)", styles['Normal']))
+story.append(Paragraph("- Paiement securise Stripe", styles['Normal']))
+story.append(Paragraph("- Back-office complete", styles['Normal']))
+story.append(Paragraph("- Moderation avis integree", styles['Normal']))
+story.append(Paragraph("- Responsive design", styles['Normal']))
+story.append(Paragraph("- Validation stricte (0 erreurs critiques)", styles['Normal']))
+story.append(Spacer(1, 20))
+story.append(Paragraph("Document genere: " + datetime.now().strftime("%d/%m/%Y %H:%M"), styles['Normal']))
+doc.build(story)
+print("OK: ADMIN.pdf")
+
+print("\n" + "="*50)
+print("SUCCESS! 4 PDFs created")
+print("="*50)
