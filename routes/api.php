@@ -249,6 +249,10 @@ Route::get('/auth/redirect/google', function () {
 Route::get('/auth/google', [App\Http\Controllers\Auth\SocialiteController::class, 'redirectGoogle'])->name('auth.google');
 Route::get('/auth/callback/google', [App\Http\Controllers\Auth\SocialiteController::class, 'callbackGoogle'])->name('auth.google-callback');
 
+// ─── Apple OAuth ──────────────────────────────────────────────────────────────
+Route::get('/auth/apple', [App\Http\Controllers\Auth\SocialiteController::class, 'redirectApple'])->name('auth.apple');
+Route::get('/auth/callback/apple', [App\Http\Controllers\Auth\SocialiteController::class, 'callbackApple'])->name('auth.apple-callback');
+
 // ─── Connexion ───────────────────────────────────────────────────────────────
 Route::post('/login', function (Request $request) {
 
