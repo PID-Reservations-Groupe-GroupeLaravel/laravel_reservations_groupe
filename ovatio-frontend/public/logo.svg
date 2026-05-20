@@ -1,31 +1,57 @@
-<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-  <!-- Background circle -->
-  <circle cx="50" cy="50" r="48" fill="#000666" opacity="0.1"/>
-
-  <!-- Main circle with gradient -->
+<svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
   <defs>
-    <linearGradient id="logoGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+    <linearGradient id="mainGrad" x1="0%" y1="0%" x2="100%" y2="100%">
       <stop offset="0%" style="stop-color:#000666;stop-opacity:1" />
       <stop offset="100%" style="stop-color:#1a237e;stop-opacity:1" />
     </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
   </defs>
 
-  <circle cx="50" cy="50" r="45" fill="url(#logoGradient)"/>
+  <!-- Main background circle -->
+  <circle cx="60" cy="60" r="58" fill="url(#mainGrad)" />
 
-  <!-- Stage/Theater curtain shape -->
-  <g transform="translate(50, 50)">
-    <!-- Left curtain -->
-    <path d="M -15 -20 Q -20 0 -15 20 L -5 20 Q -8 5 -5 -20 Z" fill="#fdd400" opacity="0.9"/>
+  <!-- Inner elegant design -->
+  <g transform="translate(60, 60)">
+    <!-- Spotlight beam - stylized -->
+    <path d="M -20 -35 L 20 -35 L 15 -5 L -15 -5 Z" fill="#fdd400" opacity="0.2"/>
+    <path d="M -15 -35 L 15 -35 L 12 -8 L -12 -8 Z" fill="#fdd400" opacity="0.4"/>
 
-    <!-- Right curtain -->
-    <path d="M 15 -20 Q 20 0 15 20 L 5 20 Q 8 5 5 -20 Z" fill="#fdd400" opacity="0.9"/>
+    <!-- Center stage circle -->
+    <circle cx="0" cy="0" r="18" fill="#fdd400" opacity="0.95"/>
 
-    <!-- Center spotlight/stage light -->
-    <circle cx="0" cy="-8" r="4" fill="#fdd400"/>
-    <path d="M -3 -4 L -8 8 L 8 8 L 3 -4 Z" fill="#fdd400" opacity="0.7"/>
+    <!-- "SO" letters - elegant serif style -->
+    <g transform="translate(0, 5)">
+      <!-- "S" -->
+      <g transform="translate(-10, 0)">
+        <path d="M -4 -6 Q -6 -4 -4 -2 Q -2 0 -4 2 Q -6 4 -4 6"
+              fill="none" stroke="#000666" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </g>
+      <!-- "O" -->
+      <g transform="translate(8, 0)">
+        <circle cx="0" cy="0" r="5" fill="none" stroke="#000666" stroke-width="2.5"/>
+      </g>
+    </g>
 
-    <!-- Standing Ovation text indicator (small) -->
-    <circle cx="0" cy="12" r="8" fill="#ffffff" opacity="0.95"/>
-    <text x="0" y="14" font-size="8" font-weight="bold" text-anchor="middle" fill="#000666">SO</text>
+    <!-- Decorative lines representing audience/applause -->
+    <g stroke="#fdd400" stroke-width="1.5" opacity="0.6">
+      <!-- Left arc -->
+      <path d="M -28 -5 Q -32 10 -28 20" fill="none" stroke-linecap="round"/>
+      <!-- Right arc -->
+      <path d="M 28 -5 Q 32 10 28 20" fill="none" stroke-linecap="round"/>
+    </g>
+
+    <!-- Bottom accent dots -->
+    <circle cx="-8" cy="28" r="1.5" fill="#fdd400" opacity="0.7"/>
+    <circle cx="0" cy="30" r="1.5" fill="#fdd400" opacity="0.7"/>
+    <circle cx="8" cy="28" r="1.5" fill="#fdd400" opacity="0.7"/>
   </g>
+
+  <!-- Border accent -->
+  <circle cx="60" cy="60" r="58" fill="none" stroke="#fdd400" stroke-width="1.5" opacity="0.4"/>
 </svg>
