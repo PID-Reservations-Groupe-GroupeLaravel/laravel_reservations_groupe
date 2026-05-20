@@ -117,7 +117,7 @@ export default function LoginPage() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
-                  placeholder="bob ou bob@standing-ovation.be"
+                  placeholder="votre.email@example.com"
                   className="flex-1 bg-transparent text-sm outline-none"
                   style={{ fontFamily: 'Manrope, sans-serif', color: '#191c1e' }}
                 />
