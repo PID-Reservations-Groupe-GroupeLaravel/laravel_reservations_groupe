@@ -88,7 +88,7 @@ export default function RegisterPage() {
       <div className="hidden lg:flex lg:w-5/12 flex-col justify-between p-12 relative overflow-hidden"
         style={{
           background: 'linear-gradient(160deg, #000666 0%, #1a237e 100%)',
-          backgroundImage: 'url("https://images.unsplash.com/photo-1511379938547-c1f69b13d835?w=800&h=1000&fit=crop")',
+          backgroundImage: 'url("https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=800&h=1000&fit=crop")',
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           backgroundBlend: 'multiply'
