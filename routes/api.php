@@ -898,15 +898,21 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/shows/{id}/representations', function (Request $request, $id) {
             $show = \App\Models\Show::where('id', $id)->where('user_id', $request->user()->id)->firstOrFail();
 
+            // Detect language from request header or use default
+            $locale = $request->header('Accept-Language', 'fr');
+            if (strpos($locale, 'en') === 0) {
+                $locale = 'en';
+            } elseif (strpos($locale, 'nl') === 0) {
+                $locale = 'nl';
+            } else {
+                $locale = 'fr';
+            }
+
+            app()->setLocale($locale);
+
             $data = $request->validate([
                 'schedule'    => 'required|date|after:now',
                 'location_id' => 'nullable|integer|exists:locations,id',
-            ], [
-                'schedule.required' => '❌ La date est obligatoire. Veuillez sélectionner une date pour la représentation.',
-                'schedule.date' => '❌ Format de date invalide. Utilisez le format JJ/MM/AAAA ou sélectionnez via le calendrier.',
-                'schedule.after' => '❌ La date ne peut pas être dans le passé. Veuillez choisir une date d\'aujourd\'hui ou ultérieure.',
-                'location_id.integer' => '❌ Le lieu doit être un ID valide.',
-                'location_id.exists' => '❌ Le lieu sélectionné n\'existe pas. Veuillez choisir un autre lieu.',
             ]);
 
             $rep = \App\Models\Representation::create([
