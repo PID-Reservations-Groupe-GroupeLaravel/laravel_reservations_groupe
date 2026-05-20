@@ -35,23 +35,15 @@ class RegisteredUserController extends Controller
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
 
-        // Générer le login automatiquement au format "prénom.nom"
-        $baseLogin = strtolower($validated['firstname'] . '.' . $validated['lastname']);
-        $login = $baseLogin;
-        $counter = 1;
-
-        // Si le login existe déjà, ajouter un numéro
-        while (User::where('login', $login)->exists()) {
-            $login = $baseLogin . $counter;
-            $counter++;
-        }
+        // Le login est l'email
+        $validated['login'] = strtolower($validated['email']);
 
         // name obligatoire en DB : on le fabrique
         $validated['name'] = $validated['firstname'] . ' ' . $validated['lastname'];
 
         //  création user (sans 'role' !)
         $user = User::create([
-            'login' => $login,
+            'login' => $validated['login'],
             'firstname' => $validated['firstname'],
             'lastname' => $validated['lastname'],
             'langue' => $validated['langue'],
