@@ -76,9 +76,10 @@ export default function RegisterPage() {
   }
 
   const inputClass = (name) => ({
-    background: errors[name] ? '#ffdad6' : '#f2f4f7',
+    background: errors[name] ? '#ffdad6' : '#ffffff',
     color: '#191c1e',
     fontFamily: 'Manrope, sans-serif',
+    border: '1px solid #e0e3e6',
   })
 
   return (
@@ -88,7 +89,7 @@ export default function RegisterPage() {
       <div className="hidden lg:flex lg:w-5/12 flex-col justify-between p-12 relative overflow-hidden"
         style={{
           background: 'linear-gradient(160deg, #000666 0%, #1a237e 100%)',
-          backgroundImage: 'url("https://images.unsplash.com/photo-1514306688484-ace2b7637992?w=800&h=1000&fit=crop")',
+          backgroundImage: 'url("https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=800&h=1000&fit=crop")',
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           backgroundBlend: 'multiply'
@@ -245,7 +246,7 @@ export default function RegisterPage() {
                   style={{ fontFamily: 'Manrope, sans-serif', color: '#454652' }}>{t('auth.languagePref')}</label>
                 <select value={form.langue} onChange={set('langue')}
                   className="w-full rounded-xl px-4 py-2.5 text-sm outline-none"
-                  style={{ background: '#f2f4f7', color: '#191c1e', fontFamily: 'Manrope, sans-serif' }}>
+                  style={{ background: '#ffffff', color: '#191c1e', fontFamily: 'Manrope, sans-serif', border: '1px solid #e0e3e6' }}>
                   <option value="fr">Français</option>
                   <option value="en">English</option>
                   <option value="nl">Nederlands</option>
