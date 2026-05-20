@@ -123,6 +123,35 @@ export default function ShowDetailPage() {
   if (error)   return <ErrorScreen msg={error} t={t} />
   if (!show)   return <ErrorScreen msg={t('detail.notFound')} t={t} />
 
+  // Hardcoded translations for the 4 shows
+  const showTranslations = {
+    1: { // Ayiti
+      en: { title: 'Haiti', description: 'Alone on stage, Daniel Marcelin retraces the history of Haiti through a story that is both intimate and engaging. Stuck at an airport, he revisits his origins, questions his identity and shares a profound reflection on exile, heritage and the resilience of a people. From colonization to contemporary crises, the show oscillates between humor, emotion and historical critique to provide an experience that is both pedagogical and deeply human.' },
+      nl: { title: 'Haïti', description: 'Solo op het podium. Daniel Marcelin volgt de geschiedenis van Haïti door een verhaal dat zowel intiem als meeslepend is. Vast op een luchthaven, hij herbezint zijn oorsprong, stelt vragen over zijn identiteit en deelt een diepgaande reflectie op ballingschap, erfenis en de veerkracht van een volk. Van kolonisatie tot hedendaagse crises, de voorstelling balanceert tussen humor, emotie en historische kritiek om een ervaring te bieden die zowel pedagogisch als diep menselijk is.' }
+    },
+    2: { // Cible mouvante
+      en: { title: 'Moving Target', description: 'A social thriller that disturbs and questions. The staging is surgical in its precision, the text of troubling relevance. A must-see.' },
+      nl: { title: 'Bewegend Doel', description: 'Een sociaal thriller die verstoort en vragen stelt. De inszenering is chirurgisch nauwkeurig, de tekst verstoringwekkend relevant. Een must-see.' }
+    },
+    3: { // Claude Semal
+      en: { title: 'Claude Semal Live', description: 'Claude Semal at the height of his art. Between poetry and derision, he offers us a portrait of Belgium both tender and universal. A rare moment.' },
+      nl: { title: 'Claude Semal Live', description: 'Claude Semal op het hoogtepunt van zijn kunst. Tussen poëzie en dérision, biedt hij ons een portret van België dat zowel zacht als universeel is. Een zeldzaam moment.' }
+    },
+    4: { // One-man show
+      en: { title: 'One-Man Show', description: 'A one-man show of dizzying virtuosity. Funny, moving, unexpected — this show will stay with you for a long time.' },
+      nl: { title: 'One-Man Show', description: 'Een one-man show van duizelingwekkende virtuositeit. Grappig, ontroerend, onverwacht — deze voorstelling blijft je lang bij.' }
+    }
+  }
+
+  const getTranslatedContent = () => {
+    if (lang === 'fr') return { title: show.title, description: show.description }
+    const translations = showTranslations[show?.id]
+    if (!translations || !translations[lang]) return { title: show.title, description: show.description }
+    return translations[lang]
+  }
+
+  const translatedContent = getTranslatedContent()
+
   const posterUrl      = show.poster_url ? `/images/${show.poster_url}` : null
   const total          = selectedPrice ? (selectedPrice.price * quantity).toFixed(2) : null
   const minPrice       = prices.length > 0 ? Math.min(...prices.map(p => p.price)) : null
@@ -163,7 +192,7 @@ export default function ShowDetailPage() {
           </p>
           <h1 className="text-5xl md:text-6xl font-extrabold text-white mb-5 leading-none"
             style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', letterSpacing: '-0.03em' }}>
-            {show.title}
+            {translatedContent.title}
           </h1>
           <div className="flex flex-wrap items-center gap-6">
             {representations.length > 0 && (
@@ -239,7 +268,7 @@ export default function ShowDetailPage() {
                 </h2>
                 <p className="text-base leading-loose"
                   style={{ color: '#555', fontFamily: 'Manrope, sans-serif', lineHeight: 1.9, textAlign: 'justify' }}>
-                  {show.description}
+                  {translatedContent.description}
                 </p>
               </section>
             )}
