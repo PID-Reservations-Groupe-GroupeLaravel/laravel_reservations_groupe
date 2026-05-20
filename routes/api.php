@@ -7,6 +7,7 @@ use App\Http\Controllers\Admin\AdminStatsController;
 use App\Http\Controllers\Admin\AdminUserController;
 use App\Http\Controllers\ArtistApiController;
 use App\Http\Controllers\Auth\SocialiteController;
+use App\Http\Controllers\ReviewTranslationController;
 use App\Http\Controllers\ShowApiController;
 use App\Mail\WelcomeMail;
 use App\Models\Price;
@@ -118,6 +119,9 @@ Route::get('/shows/{id}/reviews', function ($id) {
         ]);
     return response()->json($reviews);
 })->whereNumber('id');
+
+// GET /reviews/{id}/translate — traduire un avis
+Route::get('/reviews/{id}/translate', [ReviewTranslationController::class, 'translate'])->whereNumber('id');
 
 // POST /shows/{id}/reviews — poster un avis (membre avec ticket payé)
 Route::middleware('auth:sanctum')->post('/shows/{id}/reviews', function (Request $request, $id) {

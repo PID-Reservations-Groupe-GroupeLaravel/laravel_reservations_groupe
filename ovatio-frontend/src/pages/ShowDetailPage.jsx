@@ -43,28 +43,25 @@ export default function ShowDetailPage() {
   const [translatedReviews, setTranslatedReviews] = useState({})
   const [translatingReviews, setTranslatingReviews] = useState(false)
 
-  // Traduire automatiquement les avis selon la langue du site
+  // Traduire automatiquement les avis selon la langue du site (via backend API)
   useEffect(() => {
-    if (reviews.length === 0) return
+    if (reviews.length === 0 || lang === 'fr') {
+      // Pas besoin de traduire vers le français (langue source des avis)
+      setTranslatedReviews({})
+      return
+    }
 
     const translateAllReviews = async () => {
       setTranslatingReviews(true)
-      const langMap = { 'fr': 'FR', 'en': 'EN', 'nl': 'NL' }
-      const targetLang = langMap[lang] || 'EN'
       const translated = {}
 
       for (const review of reviews) {
         if (!review.comment) continue
         try {
-          const url = new URL('https://api.mymemory.translated.net/get')
-          url.searchParams.append('q', review.comment)
-          url.searchParams.append('langpair', `auto|${targetLang}`)
-
-          const res = await fetch(url)
-          const data = await res.json()
-
-          if (data.responseStatus === 200 && data.responseData.translatedText !== review.comment) {
-            translated[review.id] = data.responseData.translatedText
+          const res = await api.get(`/reviews/${review.id}/translate?lang=${lang}`)
+          const data = res.data
+          if (data.translated_comment && data.translated_comment !== review.comment) {
+            translated[review.id] = data.translated_comment
           }
         } catch (err) {
           console.error('Translation error for review', review.id, err)
