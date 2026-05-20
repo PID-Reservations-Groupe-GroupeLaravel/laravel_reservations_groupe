@@ -40,6 +40,9 @@ export default function ShowDetailPage() {
   const [success, setSuccess]             = useState('')
   const [formError, setFormError]         = useState('')
 
+  const [translatedReviews, setTranslatedReviews] = useState({})
+  const [translatingReview, setTranslatingReview] = useState(null)
+
   useEffect(() => {
     Promise.all([
       api.get(`/shows/${id}`),
@@ -80,6 +83,34 @@ export default function ShowDetailPage() {
       setFormError(errors ? Object.values(errors).flat().join(' ') : (err.response?.data?.message ?? t('detail.bookingError')))
     } finally {
       setSubmitting(false) }
+  }
+
+  const handleTranslateReview = async (reviewId, text, userLang = 'auto') => {
+    setTranslatingReview(reviewId)
+    try {
+      const targetLang = t('global.currentLanguage') === 'fr' ? 'FR' : t('global.currentLanguage') === 'nl' ? 'NL' : 'EN'
+      const response = await fetch('https://api.mymemory.translated.net/get', {
+        method: 'GET',
+        headers: { 'Accept': 'application/json' }
+      })
+      const url = new URL('https://api.mymemory.translated.net/get')
+      url.searchParams.append('q', text)
+      url.searchParams.append('langpair', `${userLang}|${targetLang}`)
+
+      const res = await fetch(url)
+      const data = await res.json()
+
+      if (data.responseStatus === 200) {
+        setTranslatedReviews(prev => ({
+          ...prev,
+          [reviewId]: data.responseData.translatedText
+        }))
+      }
+    } catch (err) {
+      console.error('Translation error:', err)
+    } finally {
+      setTranslatingReview(null)
+    }
   }
 
   if (loading) return <Spinner t={t} />
@@ -316,14 +347,28 @@ export default function ShowDetailPage() {
                             <Stars score={review.score} size="0.85rem" />
                           </div>
                         </div>
-                        <span className="text-xs" style={{ color: '#aaa', fontFamily: 'Manrope, sans-serif' }}>
-                          {review.created_at}
-                        </span>
+                        <div className="flex items-center gap-2">
+                          <button
+                            onClick={() => handleTranslateReview(review.id, review.comment)}
+                            disabled={translatingReview === review.id || translatedReviews[review.id]}
+                            className="text-xs px-2 py-1 rounded hover:opacity-70 transition-opacity disabled:opacity-50"
+                            style={{ background: '#f0f0f0', color: '#000666', fontFamily: 'Manrope, sans-serif', border: 'none', cursor: 'pointer', fontWeight: '600' }}>
+                            {translatingReview === review.id ? '⏳' : translatedReviews[review.id] ? '✓ Traduit' : '🌐 Traduire'}
+                          </button>
+                          <span className="text-xs" style={{ color: '#aaa', fontFamily: 'Manrope, sans-serif' }}>
+                            {review.created_at}
+                          </span>
+                        </div>
                       </div>
                       <p className="text-sm leading-relaxed"
                         style={{ color: '#555', fontFamily: 'Manrope, sans-serif', lineHeight: 1.7 }}>
-                        {review.comment}
+                        {translatedReviews[review.id] || review.comment}
                       </p>
+                      {translatedReviews[review.id] && (
+                        <p className="text-xs mt-3 pt-3" style={{ color: '#aaa', fontFamily: 'Manrope, sans-serif', borderTop: '1px solid #eee' }}>
+                          📌 Original: {review.comment}
+                        </p>
+                      )}
                     </div>
                   ))}
                 </div>
