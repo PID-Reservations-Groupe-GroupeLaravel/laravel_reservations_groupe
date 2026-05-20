@@ -126,7 +126,7 @@ export default function RegisterPage() {
         </div>
 
         <p className="text-xs relative z-10" style={{ color: 'rgba(255,255,255,0.5)', fontFamily: 'Manrope, sans-serif' }}>
-          Standing Ovation.be — {t('shows.hero_badge')}
+          Standing Ovation.be
         </p>
       </div>
 

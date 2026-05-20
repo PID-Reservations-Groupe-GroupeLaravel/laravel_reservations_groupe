@@ -53,7 +53,7 @@ Route::get('/rss', function (\Illuminate\Http\Request $request) {
 
     $query = \App\Models\Show::with(['representations' => function ($q) {
         $q->orderBy('schedule');
-    }]);
+    }, 'prices']);
 
     if ($mode === 'upcoming') {
         $query->whereHas('representations', fn($q) => $q->where('schedule', '>=', now()));
@@ -61,6 +61,29 @@ Route::get('/rss', function (\Illuminate\Http\Request $request) {
 
     $shows = $query->latest()->take(20)->get();
 
+    // Navigateur → vue HTML
+    $accept = $request->header('Accept', '');
+    $wantsHtml = str_contains($accept, 'text/html') || $request->query('view') === '1';
+
+    if ($wantsHtml) {
+        $showsData = $shows->map(function ($show) {
+            $next = $show->representations->first(fn($r) => $r->schedule >= now());
+            $minPrice = $show->prices->min('price');
+            return [
+                'title'    => $show->title,
+                'desc'     => $show->description ?? '',
+                'status'   => $show->status ?? 'A_CONFIRMER',
+                'image'    => $show->poster_url ? url('/images/' . $show->poster_url) : null,
+                'nextDate' => $next ? \Carbon\Carbon::parse($next->schedule)->locale('fr')->isoFormat('D MMM YYYY à HH[h]mm') : null,
+                'minPrice' => $minPrice ? number_format($minPrice, 2, ',', ' ') . ' €' : null,
+                'bookUrl'  => url('/shows/' . $show->id),
+            ];
+        });
+
+        return view('rss.viewer', ['shows' => $showsData, 'mode' => $mode]);
+    }
+
+    // Lecteur RSS → XML
     $items = $shows->map(function ($show) {
         $next = $show->representations->first(fn($r) => $r->schedule >= now());
         $date = $next ? \Carbon\Carbon::parse($next->schedule)->toRssString() : now()->toRssString();
@@ -76,9 +99,9 @@ Route::get('/rss', function (\Illuminate\Http\Request $request) {
 
     $xml = '<?xml version="1.0" encoding="UTF-8"?>' . "\n"
         . '<rss version="2.0"><channel>' . "\n"
-        . '<title>Ovatio.be – Spectacles</title>' . "\n"
+        . '<title>Standing-Ovation.be – Spectacles</title>' . "\n"
         . '<link>' . url('/') . '</link>' . "\n"
-        . '<description>Les derniers spectacles sur Ovatio.be</description>' . "\n"
+        . '<description>Les derniers spectacles sur Standing-Ovation.be</description>' . "\n"
         . $items . "\n"
         . '</channel></rss>';
 

@@ -78,7 +78,6 @@ export default function LoginPage() {
             </h1>
             <p className="text-xs mt-1 tracking-[0.3em] uppercase"
               style={{ color: 'rgba(255,255,255,0.5)', fontFamily: 'Manrope, sans-serif' }}>
-              {t('shows.hero_badge')}
             </p>
           </Link>
 
