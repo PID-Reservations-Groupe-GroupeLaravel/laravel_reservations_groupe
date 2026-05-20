@@ -88,6 +88,11 @@ export default {
     seatPlural: 'plaatsen',
     ticketSingular: 'ticket',
     ticketPlural: 'tickets',
+    priceType_normal: 'Standaard tarief',
+    priceType_enfants: 'Kinderen (-12 jr)',
+    priceType_PMR: 'Beperkte mobiliteit',
+    priceType_SENIOR: 'Senior (60+)',
+    priceType_ETUDIANT: 'Student',
   },
   auth: {
     loginTitle: 'Inloggen',
@@ -175,7 +180,7 @@ export default {
     ticketClose: 'Sluiten',
   },
   footer: {
-    tagline: 'Het gecureerde podium van Brussel. De elegantie van live performance herdefiniëren.',
+    tagline: 'De elegantie van live performance herdefiniëren.',
     legal: 'Juridische informatie',
     contact: 'Contact',
     press: 'Pers',
@@ -495,6 +500,8 @@ export default {
     saving: 'Opslaan...',
     fieldPrices: 'Tarieven',
     fieldArtists: 'Artiesten & rollen',
+    errorTitle: 'Validatiefout',
+    closeBtn: 'Sluiten',
     // Reviews tab (producer)
     noReviews: 'Geen recensies in behandeling.',
     loadReviewsError: 'Kan recensies niet laden.',

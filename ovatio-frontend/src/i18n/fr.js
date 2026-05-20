@@ -88,6 +88,11 @@ export default {
     seatPlural: 'places',
     ticketSingular: 'billet',
     ticketPlural: 'billets',
+    priceType_normal: 'Tarif normal',
+    priceType_enfants: 'Enfants (-12 ans)',
+    priceType_PMR: 'Tarif PMR',
+    priceType_SENIOR: 'Senior (60+)',
+    priceType_ETUDIANT: 'Étudiant',
   },
   auth: {
     loginTitle: 'Connexion',
@@ -175,7 +180,7 @@ export default {
     ticketClose: 'Fermer',
   },
   footer: {
-    tagline: "La scène curatée de Bruxelles. Redéfinir l'élégance de la performance vivante.",
+    tagline: "Redéfinir l'élégance de la performance vivante.",
     legal: 'Mentions Légales',
     contact: 'Contact',
     press: 'Presse',
@@ -495,6 +500,8 @@ export default {
     saving: 'Enregistrement...',
     fieldPrices: 'Tarifs',
     fieldArtists: 'Artistes & rôles',
+    errorTitle: 'Erreur de validation',
+    closeBtn: 'Fermer',
     // Reviews tab (producer)
     noReviews: 'Aucun avis en attente de modération.',
     loadReviewsError: 'Impossible de charger les avis.',

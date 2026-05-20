@@ -32,44 +32,81 @@ function AppLayout() {
       <main className="flex-1">
         <Outlet />
       </main>
-      <footer style={{ background: 'linear-gradient(135deg, #000666 0%, #1a237e 100%)' }}>
-        <div className="max-w-7xl mx-auto px-8 py-12 grid grid-cols-1 md:grid-cols-2 gap-8">
-          <div>
-            <span
-              className="text-xl font-black tracking-tight block mb-3"
-              style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', color: '#ffffff' }}
-            >
-              Ovatio<span style={{ color: '#fdd400' }}>.be</span>
-            </span>
-            <p
-              className="text-sm max-w-xs leading-relaxed"
-              style={{ fontFamily: 'Manrope, sans-serif', color: 'rgba(255,255,255,0.55)' }}
-            >
-              <FooterTagline />
-            </p>
-          </div>
-          <div className="flex flex-col md:items-end justify-between gap-6">
-            <nav className="flex flex-wrap gap-6">
-              <FooterLinks />
-              <a
-                href="http://localhost:8001/api/rss"
-                target="_blank"
-                rel="noreferrer"
-                className="text-sm hover:opacity-100 transition-opacity flex items-center gap-1"
-                style={{ fontFamily: 'Manrope, sans-serif', color: '#e07b39' }}
+      <footer style={{ background: 'linear-gradient(135deg, #000666 0%, #1a237e 100%)', color: '#fff' }}>
+        <div className="max-w-7xl mx-auto px-8 py-12">
+          {/* Header avec logo */}
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-12">
+            <div className="md:col-span-1">
+              <span
+                className="text-xl font-black tracking-tight block mb-3"
+                style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', color: '#ffffff' }}
               >
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M6.18 15.64a2.18 2.18 0 0 1 2.18 2.18C8.36 19.01 7.38 20 6.18 20C4.98 20 4 19.01 4 17.82a2.18 2.18 0 0 1 2.18-2.18M4 4.44A15.56 15.56 0 0 1 19.56 20h-2.83A12.73 12.73 0 0 0 4 7.27V4.44m0 5.66a9.9 9.9 0 0 1 9.9 9.9h-2.83A7.07 7.07 0 0 0 4 12.93V10.1z"/>
-                </svg>
-                RSS
-              </a>
-            </nav>
+                Standing Ovation<span style={{ color: '#fdd400' }}>.be</span>
+              </span>
+              <p
+                className="text-xs leading-relaxed"
+                style={{ fontFamily: 'Manrope, sans-serif', color: 'rgba(255,255,255,0.6)' }}
+              >
+                <FooterTagline />
+              </p>
+            </div>
+
+            {/* Navigation - 3 colonnes */}
+            <div>
+              <h4 className="font-bold mb-4 text-sm" style={{ fontFamily: '"Plus Jakarta Sans", sans-serif' }}>
+                Utiliser Standing Ovation
+              </h4>
+              <ul className="space-y-2 text-xs" style={{ color: 'rgba(255,255,255,0.7)' }}>
+                <li><a href="/shows" className="hover:text-white transition-colors">Tous les spectacles</a></li>
+                <li><a href="/reservations" className="hover:text-white transition-colors">Mes réservations</a></li>
+                <li><a href="/account" className="hover:text-white transition-colors">Mon profil</a></li>
+              </ul>
+            </div>
+
+            <div>
+              <h4 className="font-bold mb-4 text-sm" style={{ fontFamily: '"Plus Jakarta Sans", sans-serif' }}>
+                Bruxelles
+              </h4>
+              <ul className="space-y-2 text-xs" style={{ color: 'rgba(255,255,255,0.7)' }}>
+                <li><a href="/categories/theatre" className="hover:text-white transition-colors">Théâtre</a></li>
+                <li><a href="/categories/musique" className="hover:text-white transition-colors">Musique</a></li>
+                <li><a href="/categories/danse" className="hover:text-white transition-colors">Danse</a></li>
+              </ul>
+            </div>
+
+            <div>
+              <h4 className="font-bold mb-4 text-sm" style={{ fontFamily: '"Plus Jakarta Sans", sans-serif' }}>
+                Légal & Contact
+              </h4>
+              <ul className="space-y-2 text-xs" style={{ color: 'rgba(255,255,255,0.7)' }}>
+                <li><a href="/mentions-legales" className="hover:text-white transition-colors">Mentions légales</a></li>
+                <li><a href="/contact" className="hover:text-white transition-colors">Nous contacter</a></li>
+                <li><a href="/presse" className="hover:text-white transition-colors">Presse</a></li>
+                <li><a href="/newsletter" className="hover:text-white transition-colors">Newsletter</a></li>
+              </ul>
+            </div>
+          </div>
+
+          {/* Bottom - Copyright + RSS */}
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between pt-8 border-t" style={{ borderColor: 'rgba(255,255,255,0.1)' }}>
             <p
-              className="text-sm font-semibold"
+              className="text-xs font-semibold mb-4 md:mb-0"
               style={{ fontFamily: 'Manrope, sans-serif', color: '#fdd400' }}
             >
               <FooterCopyright />
             </p>
+            <a
+              href="http://localhost:8000/api/rss"
+              target="_blank"
+              rel="noreferrer"
+              className="text-xs hover:opacity-100 transition-opacity flex items-center gap-1"
+              style={{ fontFamily: 'Manrope, sans-serif', color: '#e07b39' }}
+            >
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M6.18 15.64a2.18 2.18 0 0 1 2.18 2.18C8.36 19.01 7.38 20 6.18 20C4.98 20 4 19.01 4 17.82a2.18 2.18 0 0 1 2.18-2.18M4 4.44A15.56 15.56 0 0 1 19.56 20h-2.83A12.73 12.73 0 0 0 4 7.27V4.44m0 5.66a9.9 9.9 0 0 1 9.9 9.9h-2.83A7.07 7.07 0 0 0 4 12.93V10.1z"/>
+              </svg>
+              RSS
+            </a>
           </div>
         </div>
       </footer>

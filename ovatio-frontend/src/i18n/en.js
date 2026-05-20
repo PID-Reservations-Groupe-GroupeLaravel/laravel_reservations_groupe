@@ -88,6 +88,11 @@ export default {
     seatPlural: 'seats',
     ticketSingular: 'ticket',
     ticketPlural: 'tickets',
+    priceType_normal: 'Standard Price',
+    priceType_enfants: 'Children (-12 yrs)',
+    priceType_PMR: 'Reduced Mobility',
+    priceType_SENIOR: 'Senior (60+)',
+    priceType_ETUDIANT: 'Student',
   },
   auth: {
     loginTitle: 'Log in',
@@ -175,7 +180,7 @@ export default {
     ticketClose: 'Close',
   },
   footer: {
-    tagline: 'The curated stage of Brussels. Redefining the elegance of live performance.',
+    tagline: 'Redefining the elegance of live performance.',
     legal: 'Legal Notice',
     contact: 'Contact',
     press: 'Press',
@@ -495,6 +500,8 @@ export default {
     saving: 'Saving...',
     fieldPrices: 'Pricing tiers',
     fieldArtists: 'Artists & roles',
+    errorTitle: 'Validation error',
+    closeBtn: 'Close',
     // Reviews tab (producer)
     noReviews: 'No reviews pending moderation.',
     loadReviewsError: 'Unable to load reviews.',

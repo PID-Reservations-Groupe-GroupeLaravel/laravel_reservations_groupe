@@ -87,7 +87,7 @@ export default function Navbar() {
           className="text-xl font-black tracking-tight shrink-0"
           style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', color: '#000666' }}
         >
-          Ovatio<span style={{ color: '#fdd400' }}>.be</span>
+          Standing-Ovation<span style={{ color: '#fdd400' }}>.be</span>
         </Link>
 
         {/* Nav links — centre */}
@@ -116,7 +116,7 @@ export default function Navbar() {
             </Link>
           )}
           <a
-            href="http://localhost:8001/api/rss"
+            href="http://localhost:8000/api/rss"
             target="_blank"
             rel="noreferrer"
             className="text-sm font-semibold transition-colors hover:opacity-80 flex items-center gap-1"
@@ -135,15 +135,6 @@ export default function Navbar() {
               style={{ fontFamily: 'Manrope, sans-serif', color: '#000666' }}
             >
               {t('nav.becomeProducer')} ✦
-            </Link>
-          )}
-          {!user && (
-            <Link
-              to="/devenir-producteur"
-              className="text-sm font-semibold transition-colors hover:text-[#000666]"
-              style={{ fontFamily: 'Manrope, sans-serif', color: '#454652' }}
-            >
-              {t('nav.becomeProducer')}
             </Link>
           )}
         </div>

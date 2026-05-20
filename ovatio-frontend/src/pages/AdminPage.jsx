@@ -631,6 +631,7 @@ function SpectaclesTab({ t }) {
   const [form, setForm]           = useState(EMPTY_FORM)
   const [saving, setSaving]       = useState(false)
   const [formError, setFormError] = useState('')
+  const [showFormErrorModal, setShowFormErrorModal] = useState(false)
   // reps view
   const [repsShow, setRepsShow]   = useState(null)
   const [reps, setReps]           = useState([])
@@ -638,6 +639,8 @@ function SpectaclesTab({ t }) {
   const [repsError, setRepsError] = useState('')
   const [newRep, setNewRep]       = useState({ schedule: '', location_id: '' })
   const [addingRep, setAddingRep] = useState(false)
+  const [repError, setRepError]   = useState('') // Error message for adding rep
+  const [showErrorModal, setShowErrorModal] = useState(false)
 
   const loadShows = () =>
     api.get('/producer/shows')
@@ -723,7 +726,30 @@ function SpectaclesTab({ t }) {
       }
       setView('list')
     } catch (err) {
-      setFormError(err.response?.data?.message ?? t('admin.saveError'))
+      let errorMsg = t('admin.saveError')
+
+      if (err.response?.data?.message) {
+        errorMsg = err.response.data.message
+      } else if (err.response?.data?.errors) {
+        const errors = err.response.data.errors
+        const errorMessages = []
+
+        Object.keys(errors).forEach(field => {
+          const fieldErrors = errors[field]
+          if (Array.isArray(fieldErrors)) {
+            errorMessages.push(fieldErrors[0])
+          } else {
+            errorMessages.push(fieldErrors)
+          }
+        })
+
+        if (errorMessages.length > 0) {
+          errorMsg = errorMessages.join('\n')
+        }
+      }
+
+      setFormError(errorMsg)
+      setShowFormErrorModal(true)
     } finally {
       setSaving(false)
     }
@@ -731,6 +757,7 @@ function SpectaclesTab({ t }) {
 
   const handleAddRep = async (e) => {
     e.preventDefault()
+    setRepError('')
     setAddingRep(true)
     try {
       const res = await api.post(`/producer/shows/${repsShow.id}/representations`, newRep)
@@ -740,7 +767,30 @@ function SpectaclesTab({ t }) {
         s.id === repsShow.id ? { ...s, representations_count: (s.representations_count ?? 0) + 1 } : s
       ))
     } catch (err) {
-      alert(err.response?.data?.message ?? t('admin.saveError'))
+      // Capture all validation errors from backend
+      let errorMsg = t('admin.saveError')
+
+      if (err.response?.data?.message) {
+        errorMsg = err.response.data.message
+      } else if (err.response?.data?.errors) {
+        const errors = err.response.data.errors
+        const errorMessages = []
+
+        // Collect all error messages from all fields
+        if (errors.schedule) {
+          errorMessages.push(Array.isArray(errors.schedule) ? errors.schedule[0] : errors.schedule)
+        }
+        if (errors.location_id) {
+          errorMessages.push(Array.isArray(errors.location_id) ? errors.location_id[0] : errors.location_id)
+        }
+
+        if (errorMessages.length > 0) {
+          errorMsg = errorMessages.join('\n')
+        }
+      }
+
+      setRepError(errorMsg)
+      setShowErrorModal(true)
     } finally {
       setAddingRep(false)
     }
@@ -770,6 +820,42 @@ function SpectaclesTab({ t }) {
   if (view === 'form') {
     return (
       <div>
+        {/* Form Error Modal */}
+        {showFormErrorModal && (
+          <div style={{
+            position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
+            background: 'rgba(0, 0, 0, 0.5)', display: 'flex',
+            alignItems: 'center', justifyContent: 'center', zIndex: 9999
+          }}>
+            <div style={{
+              background: '#fff', borderRadius: '16px', padding: '24px',
+              maxWidth: '500px', boxShadow: '0 20px 60px rgba(0,0,0,0.3)',
+              fontFamily: 'Manrope, sans-serif'
+            }}>
+              <div style={{ fontSize: '32px', marginBottom: '12px' }}>⚠️</div>
+              <h2 style={{ fontSize: '18px', fontWeight: 'bold', marginBottom: '12px', color: '#191c1e' }}>
+                {t('admin.errorTitle')}
+              </h2>
+              <div style={{
+                color: '#454652', marginBottom: '20px', lineHeight: 1.6,
+                whiteSpace: 'pre-wrap', wordWrap: 'break-word',
+                background: '#f5f5f5', padding: '12px', borderRadius: '8px',
+                borderLeft: '4px solid #c62828'
+              }}>
+                {formError}
+              </div>
+              <button onClick={() => setShowFormErrorModal(false)}
+                style={{
+                  background: '#000666', color: '#fff', border: 'none',
+                  padding: '10px 24px', borderRadius: '8px', cursor: 'pointer',
+                  fontFamily: 'Manrope, sans-serif', fontWeight: 600, fontSize: '0.875rem'
+                }}>
+                {t('admin.closeBtn')}
+              </button>
+            </div>
+          </div>
+        )}
+
         <button onClick={() => setView('list')}
           style={{ background: 'none', border: 'none', cursor: 'pointer',
             color: '#000666', fontFamily: 'Manrope, sans-serif', fontSize: '0.875rem',
@@ -784,12 +870,6 @@ function SpectaclesTab({ t }) {
             {editingShow ? t('admin.editShow') : t('admin.createShow')}
           </h2>
 
-          {formError && (
-            <div className="rounded-xl px-4 py-3 mb-4 text-sm"
-              style={{ background: '#ffebee', color: '#c62828', fontFamily: 'Manrope, sans-serif' }}>
-              {formError}
-            </div>
-          )}
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
@@ -923,6 +1003,42 @@ function SpectaclesTab({ t }) {
   if (view === 'reps') {
     return (
       <div>
+        {/* Error Modal */}
+        {showErrorModal && (
+          <div style={{
+            position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
+            background: 'rgba(0, 0, 0, 0.5)', display: 'flex',
+            alignItems: 'center', justifyContent: 'center', zIndex: 9999
+          }}>
+            <div style={{
+              background: '#fff', borderRadius: '16px', padding: '24px',
+              maxWidth: '500px', boxShadow: '0 20px 60px rgba(0,0,0,0.3)',
+              fontFamily: 'Manrope, sans-serif'
+            }}>
+              <div style={{ fontSize: '32px', marginBottom: '12px' }}>⚠️</div>
+              <h2 style={{ fontSize: '18px', fontWeight: 'bold', marginBottom: '12px', color: '#191c1e' }}>
+                {t('admin.errorTitle')}
+              </h2>
+              <div style={{
+                color: '#454652', marginBottom: '20px', lineHeight: 1.6,
+                whiteSpace: 'pre-wrap', wordWrap: 'break-word',
+                background: '#f5f5f5', padding: '12px', borderRadius: '8px',
+                borderLeft: '4px solid #c62828'
+              }}>
+                {repError}
+              </div>
+              <button onClick={() => setShowErrorModal(false)}
+                style={{
+                  background: '#000666', color: '#fff', border: 'none',
+                  padding: '10px 24px', borderRadius: '8px', cursor: 'pointer',
+                  fontFamily: 'Manrope, sans-serif', fontWeight: 600, fontSize: '0.875rem'
+                }}>
+                {t('admin.closeBtn')}
+              </button>
+            </div>
+          </div>
+        )}
+
         <button onClick={() => setView('list')}
           style={{ background: 'none', border: 'none', cursor: 'pointer',
             color: '#000666', fontFamily: 'Manrope, sans-serif', fontSize: '0.875rem',

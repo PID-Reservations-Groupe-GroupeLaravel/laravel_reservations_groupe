@@ -22,7 +22,7 @@ function Stars({ score, size = '1rem' }) {
 export default function ShowDetailPage() {
   const { id } = useParams()
   const { user } = useAuth()
-  const { t } = useLanguage()
+  const { t, lang } = useLanguage()
   const navigate = useNavigate()
 
   const [show, setShow]                       = useState(null)
@@ -39,6 +39,48 @@ export default function ShowDetailPage() {
   const [submitting, setSubmitting]       = useState(false)
   const [success, setSuccess]             = useState('')
   const [formError, setFormError]         = useState('')
+
+  const [translatedReviews, setTranslatedReviews] = useState({})
+  const [translatingReviews, setTranslatingReviews] = useState(false)
+
+  // Locale mapping for date formatting
+  const getLocale = (language) => {
+    const localeMap = { fr: 'fr-BE', en: 'en-GB', nl: 'nl-BE' }
+    return localeMap[language] || 'fr-BE'
+  }
+  const locale = getLocale(lang)
+
+  // Traduire automatiquement les avis selon la langue du site (via backend API)
+  useEffect(() => {
+    if (reviews.length === 0 || lang === 'fr') {
+      // Pas besoin de traduire vers le français (langue source des avis)
+      setTranslatedReviews({})
+      return
+    }
+
+    const translateAllReviews = async () => {
+      setTranslatingReviews(true)
+      const translated = {}
+
+      for (const review of reviews) {
+        if (!review.comment) continue
+        try {
+          const res = await api.get(`/reviews/${review.id}/translate?lang=${lang}`)
+          const data = res.data
+          if (data.translated_comment && data.translated_comment !== review.comment) {
+            translated[review.id] = data.translated_comment
+          }
+        } catch (err) {
+          console.error('Translation error for review', review.id, err)
+        }
+      }
+
+      setTranslatedReviews(translated)
+      setTranslatingReviews(false)
+    }
+
+    translateAllReviews()
+  }, [reviews, lang])
 
   useEffect(() => {
     Promise.all([
@@ -82,9 +124,91 @@ export default function ShowDetailPage() {
       setSubmitting(false) }
   }
 
+  const [showingOriginal, setShowingOriginal] = useState({})
+
   if (loading) return <Spinner t={t} />
   if (error)   return <ErrorScreen msg={error} t={t} />
   if (!show)   return <ErrorScreen msg={t('detail.notFound')} t={t} />
+
+  // Hardcoded translations for the 4 shows
+  const showTranslations = {
+    1: { // Ayiti
+      fr: {
+        title: show.title,
+        description: show.description,
+        curatorReview: '"Un voyage humain d\'une rare intensité. La performance captive de la première à la dernière seconde. Un must-see absolu de la saison bruxelloise."'
+      },
+      en: {
+        title: 'Haiti',
+        description: 'Alone on stage, Daniel Marcelin retraces the history of Haiti through a story that is both intimate and engaging. Stuck at an airport, he revisits his origins, questions his identity and shares a profound reflection on exile, heritage and the resilience of a people. From colonization to contemporary crises, the show oscillates between humor, emotion and historical critique to provide an experience that is both pedagogical and deeply human.',
+        curatorReview: '"A human journey of rare intensity. The performance captivates from the first to the last second. An absolute must-see of the Brussels season."'
+      },
+      nl: {
+        title: 'Haïti',
+        description: 'Solo op het podium. Daniel Marcelin volgt de geschiedenis van Haïti door een verhaal dat zowel intiem als meeslepend is. Vast op een luchthaven, hij herbezint zijn oorsprong, stelt vragen over zijn identiteit en deelt een diepgaande reflectie op ballingschap, erfenis en de veerkracht van een volk. Van kolonisatie tot hedendaagse crises, de voorstelling balanceert tussen humor, emotie en historische kritiek om een ervaring te bieden die zowel pedagogisch als diep menselijk is.',
+        curatorReview: '"Een menselijk reis van zeldzame intensiteit. De voorstelling boeien van begin tot eind. Een absolute must-see van het Brusselse seizoen."'
+      }
+    },
+    2: { // Cible mouvante
+      fr: {
+        title: show.title,
+        description: show.description,
+        curatorReview: '"Un thriller social qui dérange et questionne. La mise en scène est d\'une précision chirurgicale, le texte d\'une actualité troublante. À voir absolument."'
+      },
+      en: {
+        title: 'Moving Target',
+        description: 'A social thriller that disturbs and questions. The staging is surgical in its precision, the text of troubling relevance. A must-see.',
+        curatorReview: '"A social thriller that disturbs and questions. The staging is surgical in precision, the text of troubling relevance. Absolutely must-see."'
+      },
+      nl: {
+        title: 'Bewegend Doel',
+        description: 'Een sociaal thriller die verstoort en vragen stelt. De inszenering is chirurgisch nauwkeurig, de tekst verstoringwekkend relevant. Een must-see.',
+        curatorReview: '"Een sociaal thriller die verstoort en vragen stelt. De inszenering is chirurgisch nauwkeurig, de tekst verstoringwekkend relevant. Een must-see."'
+      }
+    },
+    3: { // Claude Semal
+      fr: {
+        title: show.title,
+        description: show.description,
+        curatorReview: '"Claude Semal au sommet de son art. Entre poésie et dérision, il nous offre un portrait de la Belgique tendre et universel. Un moment rare."'
+      },
+      en: {
+        title: 'Claude Semal Live',
+        description: 'Claude Semal at the height of his art. Between poetry and derision, he offers us a portrait of Belgium both tender and universal. A rare moment.',
+        curatorReview: '"Claude Semal at the peak of his art. Between poetry and derision, he offers us a portrait of Belgium both tender and universal. A rare moment."'
+      },
+      nl: {
+        title: 'Claude Semal Live',
+        description: 'Claude Semal op het hoogtepunt van zijn kunst. Tussen poëzie en dérision, biedt hij ons een portret van België dat zowel zacht als universeel is. Een zeldzaam moment.',
+        curatorReview: '"Claude Semal op het hoogtepunt van zijn kunst. Tussen poëzie en dérision, biedt hij ons een portret van België dat zowel zacht als universeel is. Een zeldzaam moment."'
+      }
+    },
+    4: { // One-man show
+      fr: {
+        title: show.title,
+        description: show.description,
+        curatorReview: '"Un seul-en-scène d\'une virtuosité étourdissante. Drôle, émouvant, inattendu — ce spectacle vous restera longtemps en mémoire."'
+      },
+      en: {
+        title: 'One-Man Show',
+        description: 'A one-man show of dizzying virtuosity. Funny, moving, unexpected — this show will stay with you for a long time.',
+        curatorReview: '"A solo performance of breathtaking virtuosity. Funny, moving, unexpected — this show will stay with you long."'
+      },
+      nl: {
+        title: 'One-Man Show',
+        description: 'Een one-man show van duizelingwekkende virtuositeit. Grappig, ontroerend, onverwacht — deze voorstelling blijft je lang bij.',
+        curatorReview: '"Een one-man show van duizelingwekkende virtuositeit. Grappig, ontroerend, onverwacht — deze voorstelling blijft je lang bij."'
+      }
+    }
+  }
+
+  const getTranslatedContent = () => {
+    const translations = showTranslations[show?.id]
+    if (!translations || !translations[lang]) return { title: show.title, description: show.description, curatorReview: '' }
+    return translations[lang]
+  }
+
+  const translatedContent = getTranslatedContent()
 
   const posterUrl      = show.poster_url ? `/images/${show.poster_url}` : null
   const total          = selectedPrice ? (selectedPrice.price * quantity).toFixed(2) : null
@@ -96,7 +220,7 @@ export default function ShowDetailPage() {
     <div style={{ background: '#f5f6fa', minHeight: '100vh' }}>
 
       {/* ══ HERO ══ */}
-      <div className="relative overflow-hidden" style={{ height: '520px' }}>
+      <div className="relative overflow-hidden" style={{ height: '400px' }}>
         {posterUrl
           ? <img src={posterUrl} alt={show.title}
               className="absolute inset-0 w-full h-full object-cover"
@@ -126,15 +250,15 @@ export default function ShowDetailPage() {
           </p>
           <h1 className="text-5xl md:text-6xl font-extrabold text-white mb-5 leading-none"
             style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', letterSpacing: '-0.03em' }}>
-            {show.title}
+            {translatedContent.title}
           </h1>
           <div className="flex flex-wrap items-center gap-6">
             {representations.length > 0 && (
               <span className="flex items-center gap-2 text-sm"
                 style={{ color: 'rgba(255,255,255,0.65)', fontFamily: 'Manrope, sans-serif' }}>
                 📅&nbsp;
-                {new Date(representations[0].schedule).toLocaleDateString('fr-BE', { day: 'numeric', month: 'long', year: 'numeric' })}
-                {representations.length > 1 && <> — {new Date(representations[representations.length - 1].schedule).toLocaleDateString('fr-BE', { day: 'numeric', month: 'long', year: 'numeric' })}</>}
+                {new Date(representations[0].schedule).toLocaleDateString(locale, { day: 'numeric', month: 'long', year: 'numeric' })}
+                {representations.length > 1 && <> — {new Date(representations[representations.length - 1].schedule).toLocaleDateString(locale, { day: 'numeric', month: 'long', year: 'numeric' })}</>}
               </span>
             )}
             {representations[0]?.location && (
@@ -160,6 +284,39 @@ export default function ShowDetailPage() {
           {/* ══ GAUCHE — 2/3 ══ */}
           <div className="lg:col-span-2 space-y-12">
 
+            {/* Producteur EN PREMIÈRE POSITION */}
+            {show.producer && (
+              <section>
+                <h2 className="text-2xl font-bold mb-5"
+                  style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', color: '#0a0d2e' }}>
+                  {t('detail.producer')}
+                </h2>
+                <div className="rounded-3xl p-6 border-2 border-dashed"
+                  style={{ background: 'linear-gradient(135deg, rgba(0,6,102,0.03) 0%, rgba(253,212,0,0.03) 100%)', borderColor: '#fdd400' }}>
+                  <div className="flex items-center gap-5 mb-4">
+                    <div className="w-16 h-16 rounded-2xl flex items-center justify-center font-bold text-lg shrink-0"
+                      style={{ background: 'linear-gradient(135deg, #fdd400 0%, #ffb300 100%)', color: '#6f5c00', boxShadow: '0 4px 12px rgba(253,212,0,0.3)' }}>
+                      {(show.producer.name ?? show.producer.firstname ?? 'P')[0].toUpperCase()}
+                    </div>
+                    <div className="flex-1">
+                      <p className="text-lg font-bold"
+                        style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', color: '#0a0d2e' }}>
+                        {show.producer.name ?? `${show.producer.firstname} ${show.producer.lastname}`}
+                      </p>
+                      <p className="text-xs mt-1" style={{ color: '#000666', fontFamily: 'Manrope, sans-serif', fontWeight: '600' }}>
+                        Producteur/Productrice
+                      </p>
+                      {show.producer.email && (
+                        <p className="text-xs mt-2" style={{ color: '#666', fontFamily: 'Manrope, sans-serif' }}>
+                          ✉️ {show.producer.email}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </section>
+            )}
+
             {/* À propos */}
             {show.description && (
               <section>
@@ -168,8 +325,8 @@ export default function ShowDetailPage() {
                   {t('detail.about')}
                 </h2>
                 <p className="text-base leading-loose"
-                  style={{ color: '#555', fontFamily: 'Manrope, sans-serif', lineHeight: 1.9 }}>
-                  {show.description}
+                  style={{ color: '#555', fontFamily: 'Manrope, sans-serif', lineHeight: 1.9, textAlign: 'justify' }}>
+                  {translatedContent.description}
                 </p>
               </section>
             )}
@@ -232,14 +389,7 @@ export default function ShowDetailPage() {
 
                 <p className="text-base italic leading-relaxed"
                   style={{ color: 'rgba(255,255,255,0.85)', fontFamily: 'Manrope, sans-serif', lineHeight: 1.8 }}>
-                  {show.slug === 'ayiti' || show.id === 1
-                    ? '"Un voyage humain d\'une rare intensité. La performance captive de la première à la dernière seconde. Un must-see absolu de la saison bruxelloise."'
-                    : show.slug === 'cible-mouvante' || show.id === 2
-                    ? '"Un thriller social qui dérange et questionne. La mise en scène est d\'une précision chirurgicale, le texte d\'une actualité troublante. À voir absolument."'
-                    : show.id === 3
-                    ? '"Claude Semal au sommet de son art. Entre poésie et dérision, il nous offre un portrait de la Belgique tendre et universel. Un moment rare."'
-                    : '"Un seul-en-scène d\'une virtuosité étourdissante. Drôle, émouvant, inattendu — ce spectacle vous restera longtemps en mémoire."'
-                  }
+                  {translatedContent.curatorReview}
                 </p>
               </div>
             </section>
@@ -283,14 +433,34 @@ export default function ShowDetailPage() {
                             <Stars score={review.score} size="0.85rem" />
                           </div>
                         </div>
-                        <span className="text-xs" style={{ color: '#aaa', fontFamily: 'Manrope, sans-serif' }}>
-                          {review.created_at}
-                        </span>
+                        <div className="flex items-center gap-2">
+                          {translatedReviews[review.id] && (
+                            <button
+                              onClick={() => setShowingOriginal(prev => ({ ...prev, [review.id]: !prev[review.id] }))}
+                              className="text-xs px-2 py-1 rounded hover:opacity-70 transition-opacity"
+                              style={{ background: showingOriginal[review.id] ? '#fdd400' : '#f0f0f0', color: '#000666', fontFamily: 'Manrope, sans-serif', border: 'none', cursor: 'pointer', fontWeight: '600' }}>
+                              {showingOriginal[review.id] ? '📌 Original' : '🌐 Traduit'}
+                            </button>
+                          )}
+                          {translatingReviews && (
+                            <span className="text-xs" style={{ color: '#aaa', fontFamily: 'Manrope, sans-serif' }}>
+                              ⏳ Traduction...
+                            </span>
+                          )}
+                          <span className="text-xs" style={{ color: '#aaa', fontFamily: 'Manrope, sans-serif' }}>
+                            {review.created_at}
+                          </span>
+                        </div>
                       </div>
                       <p className="text-sm leading-relaxed"
                         style={{ color: '#555', fontFamily: 'Manrope, sans-serif', lineHeight: 1.7 }}>
-                        {review.comment}
+                        {showingOriginal[review.id] ? review.comment : (translatedReviews[review.id] || review.comment)}
                       </p>
+                      {translatedReviews[review.id] && showingOriginal[review.id] && (
+                        <p className="text-xs mt-3 pt-3" style={{ color: '#aaa', fontFamily: 'Manrope, sans-serif', borderTop: '1px solid #eee' }}>
+                          🌐 Traduit: {translatedReviews[review.id]}
+                        </p>
+                      )}
                     </div>
                   ))}
                 </div>
@@ -356,25 +526,38 @@ export default function ShowDetailPage() {
               </section>
             )}
 
-            {/* Producteur */}
-            {show.producer && (
+            {/* Coulisses & Galerie - MOVED TO LEFT */}
+            {posterUrl && (
               <section>
-                <h2 className="text-2xl font-bold mb-4"
-                  style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', color: '#0a0d2e' }}>
-                  {t('detail.producer')}
-                </h2>
-                <div className="flex items-center gap-4 rounded-2xl p-4 w-fit"
-                  style={{ background: '#fff', boxShadow: '0 2px 12px rgba(0,6,102,0.07)' }}>
-                  <div className="w-11 h-11 rounded-xl flex items-center justify-center font-bold text-sm shrink-0"
-                    style={{ background: '#fdd400', color: '#6f5c00' }}>
-                    {(show.producer.name ?? show.producer.firstname ?? 'P')[0].toUpperCase()}
-                  </div>
-                  <div>
-                    <p className="text-sm font-bold"
-                      style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', color: '#0a0d2e' }}>
-                      {show.producer.name ?? `${show.producer.firstname} ${show.producer.lastname}`}
+                <div className="rounded-3xl overflow-hidden relative"
+                  style={{ boxShadow: '0 8px 32px rgba(0,6,102,0.12)' }}>
+                  <img src={posterUrl} alt={show.title}
+                    className="w-full object-cover"
+                    style={{ height: '200px', filter: 'brightness(0.45) saturate(1.2)' }} />
+                  <div className="absolute inset-0 flex flex-col justify-end p-5"
+                    style={{ background: 'linear-gradient(to top, rgba(0,6,60,0.9) 40%, transparent)' }}>
+                    <p className="text-base font-bold text-white"
+                      style={{ fontFamily: '"Plus Jakarta Sans", sans-serif' }}>
+                      {t('detail.backstage')}
                     </p>
-                    <p className="text-xs mt-0.5" style={{ color: '#888', fontFamily: 'Manrope, sans-serif' }}>{t('detail.producer')}</p>
+                    <p className="text-xs mt-1"
+                      style={{ color: 'rgba(255,255,255,0.55)', fontFamily: 'Manrope, sans-serif' }}>
+                      {t('detail.backstageDesc')}
+                    </p>
+                    {/* Thumbnails */}
+                    <div className="flex gap-2 mt-3">
+                      {[1, 2, 3].map(i => (
+                        <div key={i} className="w-12 h-12 rounded-lg overflow-hidden"
+                          style={{ border: '2px solid rgba(255,255,255,0.2)' }}>
+                          <img src={posterUrl} alt="" className="w-full h-full object-cover"
+                            style={{ filter: `brightness(${0.5 + i * 0.15})` }} />
+                        </div>
+                      ))}
+                      <div className="w-12 h-12 rounded-lg flex items-center justify-center text-xs font-bold"
+                        style={{ background: 'rgba(255,255,255,0.15)', color: '#fff', border: '2px solid rgba(255,255,255,0.2)', fontFamily: 'Manrope, sans-serif' }}>
+                        +12
+                      </div>
+                    </div>
                   </div>
                 </div>
               </section>
@@ -439,11 +622,11 @@ export default function ShowDetailPage() {
                               <div>
                                 <p className="text-sm font-bold"
                                   style={{ color: isSel ? '#fff' : '#0a0d2e', fontFamily: '"Plus Jakarta Sans", sans-serif' }}>
-                                  {d.toLocaleDateString('fr-BE', { weekday: 'short', day: 'numeric', month: 'short' })}
+                                  {d.toLocaleDateString(locale, { weekday: 'short', day: 'numeric', month: 'short' })}
                                 </p>
                                 <p className="text-xs mt-0.5"
                                   style={{ color: isSel ? 'rgba(255,255,255,0.5)' : '#888', fontFamily: 'Manrope, sans-serif' }}>
-                                  {d.toLocaleTimeString('fr-BE', { hour: '2-digit', minute: '2-digit' })}
+                                  {d.toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit' })}
                                   {r.location ? ` · ${r.location?.name ?? r.location}` : ''}
                                 </p>
                               </div>
@@ -465,23 +648,25 @@ export default function ShowDetailPage() {
                         const isPopular = i === prices.length - 1 && prices.length > 1
                         return (
                           <button key={p.id} type="button" onClick={() => setSelectedPrice(p)}
-                            className="w-full rounded-xl px-4 py-3 text-left transition-all relative"
+                            className="w-full rounded-xl px-4 py-3 text-left transition-all"
                             style={{
                               background: isSel ? '#fff8e1' : '#f5f6fa',
                               border: isSel ? '2px solid #fdd400' : '1px solid #eceef1',
                               cursor: 'pointer',
                             }}>
-                            {isPopular && (
-                              <span className="absolute top-2 right-2 text-xs font-black px-2 py-0.5 rounded-full"
-                                style={{ background: '#fdd400', color: '#6f5c00', fontFamily: 'Manrope, sans-serif' }}>
-                                {t('detail.popular')}
-                              </span>
-                            )}
-                            <div className="flex items-center justify-between" style={{ paddingRight: isPopular ? '5rem' : 0 }}>
-                              <p className="text-sm font-bold"
-                                style={{ color: '#0a0d2e', fontFamily: '"Plus Jakarta Sans", sans-serif' }}>
-                                {p.label}
-                              </p>
+                            <div className="flex items-center justify-between gap-2">
+                              <div className="flex items-center gap-2">
+                                <p className="text-sm font-bold"
+                                  style={{ color: '#0a0d2e', fontFamily: '"Plus Jakarta Sans", sans-serif' }}>
+                                  {t(`detail.priceType_${p.type}`)}
+                                </p>
+                                {isPopular && (
+                                  <span className="text-xs font-black px-2 py-0.5 rounded-full"
+                                    style={{ background: '#fdd400', color: '#6f5c00', fontFamily: 'Manrope, sans-serif', flexShrink: 0 }}>
+                                    {t('detail.popular')}
+                                  </span>
+                                )}
+                              </div>
                               <p className="text-sm font-black"
                                 style={{ color: '#000666', fontFamily: '"Plus Jakarta Sans", sans-serif' }}>
                                 {p.price} €
@@ -542,41 +727,6 @@ export default function ShowDetailPage() {
                 </form>
               )}
             </div>
-
-            {/* Coulisses & Galerie */}
-            {posterUrl && (
-              <div className="rounded-3xl overflow-hidden relative"
-                style={{ boxShadow: '0 8px 32px rgba(0,6,102,0.12)' }}>
-                <img src={posterUrl} alt={show.title}
-                  className="w-full object-cover"
-                  style={{ height: '160px', filter: 'brightness(0.45) saturate(1.2)' }} />
-                <div className="absolute inset-0 flex flex-col justify-end p-5"
-                  style={{ background: 'linear-gradient(to top, rgba(0,6,60,0.9) 40%, transparent)' }}>
-                  <p className="text-base font-bold text-white"
-                    style={{ fontFamily: '"Plus Jakarta Sans", sans-serif' }}>
-                    {t('detail.backstage')}
-                  </p>
-                  <p className="text-xs mt-1"
-                    style={{ color: 'rgba(255,255,255,0.55)', fontFamily: 'Manrope, sans-serif' }}>
-                    {t('detail.backstageDesc')}
-                  </p>
-                  {/* Thumbnails */}
-                  <div className="flex gap-2 mt-3">
-                    {[1, 2, 3].map(i => (
-                      <div key={i} className="w-12 h-12 rounded-lg overflow-hidden"
-                        style={{ border: '2px solid rgba(255,255,255,0.2)' }}>
-                        <img src={posterUrl} alt="" className="w-full h-full object-cover"
-                          style={{ filter: `brightness(${0.5 + i * 0.15})` }} />
-                      </div>
-                    ))}
-                    <div className="w-12 h-12 rounded-lg flex items-center justify-center text-xs font-bold"
-                      style={{ background: 'rgba(255,255,255,0.15)', color: '#fff', border: '2px solid rgba(255,255,255,0.2)', fontFamily: 'Manrope, sans-serif' }}>
-                      +12
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )}
 
           </div>
         </div>

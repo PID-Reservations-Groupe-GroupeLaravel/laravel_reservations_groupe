@@ -6,7 +6,10 @@ use App\Http\Controllers\Admin\AdminShowController;
 use App\Http\Controllers\Admin\AdminStatsController;
 use App\Http\Controllers\Admin\AdminUserController;
 use App\Http\Controllers\ArtistApiController;
+use App\Http\Controllers\Auth\SocialiteController;
+use App\Http\Controllers\ReviewTranslationController;
 use App\Http\Controllers\ShowApiController;
+use App\Http\Controllers\TranslateController;
 use App\Mail\WelcomeMail;
 use App\Models\Price;
 use App\Models\Representation;
@@ -118,6 +121,12 @@ Route::get('/shows/{id}/reviews', function ($id) {
     return response()->json($reviews);
 })->whereNumber('id');
 
+// GET /reviews/{id}/translate — traduire un avis
+Route::get('/reviews/{id}/translate', [ReviewTranslationController::class, 'translate'])->whereNumber('id');
+
+// POST /translate — traduire n'importe quel texte
+Route::post('/translate', [TranslateController::class, 'translate']);
+
 // POST /shows/{id}/reviews — poster un avis (membre avec ticket payé)
 Route::middleware('auth:sanctum')->post('/shows/{id}/reviews', function (Request $request, $id) {
     $request->validate([
@@ -136,6 +145,7 @@ Route::middleware('auth:sanctum')->post('/shows/{id}/reviews', function (Request
         ], 403);
     }
 
+    // Store the review WITHOUT translation first
     $review = \App\Models\Review::create([
         'user_id'   => $request->user()->id,
         'show_id'   => $id,
@@ -157,6 +167,7 @@ Route::middleware('auth:sanctum')->post('/shows/{id}/reviews', function (Request
 Route::get('/prices', function () {
     $prices = Price::all()->map(fn($p) => [
         'id'    => $p->id,
+        'type'  => $p->type,
         'label' => $p->type,
         'price' => $p->price,
     ]);
@@ -239,6 +250,18 @@ Route::post('/check-email', function (Request $request) {
     $exists = User::where('email', $request->email)->exists();
     return response()->json(['available' => !$exists]);
 });
+
+// ─── Google OAuth ─────────────────────────────────────────────────────────────
+Route::get('/auth/redirect/google', function () {
+    return redirect()->away(\App\Http\Controllers\Auth\SocialiteController::class);
+});
+
+Route::get('/auth/google', [App\Http\Controllers\Auth\SocialiteController::class, 'redirectGoogle'])->name('auth.google');
+Route::get('/auth/callback/google', [App\Http\Controllers\Auth\SocialiteController::class, 'callbackGoogle'])->name('auth.google-callback');
+
+// ─── Apple OAuth ──────────────────────────────────────────────────────────────
+Route::get('/auth/apple', [App\Http\Controllers\Auth\SocialiteController::class, 'redirectApple'])->name('auth.apple');
+Route::get('/auth/callback/apple', [App\Http\Controllers\Auth\SocialiteController::class, 'callbackApple'])->name('auth.apple-callback');
 
 // ─── Connexion ───────────────────────────────────────────────────────────────
 Route::post('/login', function (Request $request) {
@@ -875,6 +898,18 @@ Route::middleware('auth:sanctum')->group(function () {
         // POST /producer/shows/{id}/representations → ajouter une représentation
         Route::post('/shows/{id}/representations', function (Request $request, $id) {
             $show = \App\Models\Show::where('id', $id)->where('user_id', $request->user()->id)->firstOrFail();
+
+            // Detect language from request header or use default
+            $locale = $request->header('Accept-Language', 'fr');
+            if (strpos($locale, 'en') === 0) {
+                $locale = 'en';
+            } elseif (strpos($locale, 'nl') === 0) {
+                $locale = 'nl';
+            } else {
+                $locale = 'fr';
+            }
+
+            app()->setLocale($locale);
 
             $data = $request->validate([
                 'schedule'    => 'required|date|after:now',
