@@ -28,7 +28,6 @@ class RegisteredUserController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $validated = $request->validate([
-            'login' => ['required', 'string', 'max:255', 'unique:users,login'],
             'firstname' => ['required', 'string', 'max:255'],
             'lastname' => ['required', 'string', 'max:255'],
             'langue' => ['required', 'string', 'size:2'],
@@ -36,12 +35,23 @@ class RegisteredUserController extends Controller
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
 
+        // Générer le login automatiquement au format "prénom.nom"
+        $baseLogin = strtolower($validated['firstname'] . '.' . $validated['lastname']);
+        $login = $baseLogin;
+        $counter = 1;
+
+        // Si le login existe déjà, ajouter un numéro
+        while (User::where('login', $login)->exists()) {
+            $login = $baseLogin . $counter;
+            $counter++;
+        }
+
         // name obligatoire en DB : on le fabrique
         $validated['name'] = $validated['firstname'] . ' ' . $validated['lastname'];
 
         //  création user (sans 'role' !)
         $user = User::create([
-            'login' => $validated['login'],
+            'login' => $login,
             'firstname' => $validated['firstname'],
             'lastname' => $validated['lastname'],
             'langue' => $validated['langue'],
