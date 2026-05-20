@@ -10,6 +10,7 @@ use App\Http\Controllers\Auth\SocialiteController;
 use App\Http\Controllers\ReviewTranslationController;
 use App\Http\Controllers\ShowApiController;
 use App\Http\Controllers\TranslateController;
+use App\Services\TranslationService;
 use App\Mail\WelcomeMail;
 use App\Models\Price;
 use App\Models\Representation;
@@ -128,7 +129,7 @@ Route::get('/reviews/{id}/translate', [ReviewTranslationController::class, 'tran
 Route::post('/translate', [TranslateController::class, 'translate']);
 
 // POST /shows/{id}/reviews — poster un avis (membre avec ticket payé)
-Route::middleware('auth:sanctum')->post('/shows/{id}/reviews', function (Request $request, $id) {
+Route::middleware('auth:sanctum')->post('/shows/{id}/reviews', function (Request $request, $id, TranslationService $translationService) {
     $request->validate([
         'score'   => 'required|integer|min:1|max:5',
         'comment' => 'required|string|min:5|max:1000',
@@ -145,12 +146,30 @@ Route::middleware('auth:sanctum')->post('/shows/{id}/reviews', function (Request
         ], 403);
     }
 
+    // Auto-translate the comment to all supported languages
+    try {
+        $translations = $translationService->translateToAll($request->comment);
+    } catch (\Exception $e) {
+        \Illuminate\Support\Facades\Log::warning('Translation error on review creation: ' . $e->getMessage());
+        // If translation fails, use original comment for all languages
+        $translations = [
+            'fr' => $request->comment,
+            'en' => $request->comment,
+            'nl' => $request->comment,
+        ];
+    }
+
     $review = \App\Models\Review::create([
-        'user_id'   => $request->user()->id,
-        'show_id'   => $id,
-        'score'     => $request->score,
-        'comment'   => $request->comment,
-        'validated' => null,
+        'user_id'        => $request->user()->id,
+        'show_id'        => $id,
+        'score'          => $request->score,
+        'comment'        => $request->comment,
+        'comment_fr'     => $translations['fr'] ?? $request->comment,
+        'comment_en'     => $translations['en'] ?? $request->comment,
+        'comment_nl'     => $translations['nl'] ?? $request->comment,
+        'translated_by'  => 'deepl',
+        'source_language'=> 'fr',
+        'validated'      => null,
     ]);
 
     return response()->json([

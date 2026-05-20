@@ -3,44 +3,63 @@
 namespace App\Services;
 
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Http;
 
 class TranslationService
 {
-    private string $apiUrl = 'https://api.mymemory.translated.net/get';
+    private TranslationManager $manager;
+
+    public function __construct(TranslationManager $manager)
+    {
+        $this->manager = $manager;
+    }
 
     /**
-     * Traduit un texte vers la langue cible via MyMemory API (gratuit, sans clé).
-     * Résultat mis en cache 24h pour éviter les appels API répétés.
+     * Traduit un texte vers la langue cible
+     * Utilise DeepL en priorité, fallback Google Cloud
+     * Résultat mis en cache 24h avec Redis
      */
     public function translate(string $text, string $targetLang): string
     {
-        $cacheKey = 'translation_' . md5($text . '_' . $targetLang);
-
-        return Cache::remember($cacheKey, now()->addHours(24), function () use ($text, $targetLang) {
-            try {
-                $response = Http::timeout(10)->get($this->apiUrl, [
-                    'q'        => $text,
-                    'langpair' => 'auto|' . strtoupper($targetLang),
-                    'de'       => 'standing-ovation@example.com',
-                ]);
-
-                if ($response->successful()) {
-                    $data = $response->json();
-                    if ($data['responseStatus'] === 200 && isset($data['responseData']['translatedText'])) {
-                        return $data['responseData']['translatedText'];
-                    }
-                }
-            } catch (\Exception $e) {
-                \Log::warning('Translation service error: ' . $e->getMessage());
-            }
-
-            return $text;
-        });
+        return $this->manager->translateTo($text, $targetLang);
     }
 
+    /**
+     * Traduit un texte dans toutes les langues supportées
+     */
+    public function translateToAll(string $text, ?string $sourceLang = null): array
+    {
+        return $this->manager->translate($text, $this->supportedLanguages(), $sourceLang);
+    }
+
+    /**
+     * Détecte la langue d'un texte
+     */
+    public function detectLanguage(string $text): string
+    {
+        return $this->manager->detectLanguageWithFallback($text);
+    }
+
+    /**
+     * Invalide le cache pour un texte
+     */
+    public function invalidateCache(string $text): void
+    {
+        $this->manager->invalidateCache($text);
+    }
+
+    /**
+     * Retourne les langues supportées
+     */
     public function supportedLanguages(): array
     {
         return ['fr', 'en', 'nl'];
+    }
+
+    /**
+     * Retourne le statut des providers
+     */
+    public function getProvidersStatus(): array
+    {
+        return $this->manager->getProvidersStatus();
     }
 }
