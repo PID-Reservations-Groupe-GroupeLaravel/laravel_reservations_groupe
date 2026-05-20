@@ -43,6 +43,13 @@ export default function ShowDetailPage() {
   const [translatedReviews, setTranslatedReviews] = useState({})
   const [translatingReviews, setTranslatingReviews] = useState(false)
 
+  // Locale mapping for date formatting
+  const getLocale = (language) => {
+    const localeMap = { fr: 'fr-BE', en: 'en-GB', nl: 'nl-BE' }
+    return localeMap[language] || 'fr-BE'
+  }
+  const locale = getLocale(lang)
+
   // Traduire automatiquement les avis selon la langue du site (via backend API)
   useEffect(() => {
     if (reviews.length === 0 || lang === 'fr') {
@@ -250,8 +257,8 @@ export default function ShowDetailPage() {
               <span className="flex items-center gap-2 text-sm"
                 style={{ color: 'rgba(255,255,255,0.65)', fontFamily: 'Manrope, sans-serif' }}>
                 📅&nbsp;
-                {new Date(representations[0].schedule).toLocaleDateString('fr-BE', { day: 'numeric', month: 'long', year: 'numeric' })}
-                {representations.length > 1 && <> — {new Date(representations[representations.length - 1].schedule).toLocaleDateString('fr-BE', { day: 'numeric', month: 'long', year: 'numeric' })}</>}
+                {new Date(representations[0].schedule).toLocaleDateString(locale, { day: 'numeric', month: 'long', year: 'numeric' })}
+                {representations.length > 1 && <> — {new Date(representations[representations.length - 1].schedule).toLocaleDateString(locale, { day: 'numeric', month: 'long', year: 'numeric' })}</>}
               </span>
             )}
             {representations[0]?.location && (
@@ -615,11 +622,11 @@ export default function ShowDetailPage() {
                               <div>
                                 <p className="text-sm font-bold"
                                   style={{ color: isSel ? '#fff' : '#0a0d2e', fontFamily: '"Plus Jakarta Sans", sans-serif' }}>
-                                  {d.toLocaleDateString('fr-BE', { weekday: 'short', day: 'numeric', month: 'short' })}
+                                  {d.toLocaleDateString(locale, { weekday: 'short', day: 'numeric', month: 'short' })}
                                 </p>
                                 <p className="text-xs mt-0.5"
                                   style={{ color: isSel ? 'rgba(255,255,255,0.5)' : '#888', fontFamily: 'Manrope, sans-serif' }}>
-                                  {d.toLocaleTimeString('fr-BE', { hour: '2-digit', minute: '2-digit' })}
+                                  {d.toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit' })}
                                   {r.location ? ` · ${r.location?.name ?? r.location}` : ''}
                                 </p>
                               </div>
