@@ -239,19 +239,21 @@ export default function RegisterPage() {
               {errors.email && <p className="text-xs mt-1" style={{ color: '#ba1a1a' }}>{errors.email[0]}</p>}
             </div>
 
-            {/* Langue / Mot de passe */}
+            {/* Langue */}
+            <div>
+              <label className="block text-xs font-semibold uppercase tracking-wider mb-1.5"
+                style={{ fontFamily: 'Manrope, sans-serif', color: '#000666' }}>{t('auth.languagePref')}</label>
+              <select value={form.langue} onChange={set('langue')}
+                className="w-full rounded-xl px-4 py-2.5 text-sm outline-none"
+                style={{ background: '#ffffff', color: '#191c1e', fontFamily: 'Manrope, sans-serif', border: '1px solid #e0e3e6' }}>
+                <option value="fr">Français</option>
+                <option value="en">English</option>
+                <option value="nl">Nederlands</option>
+              </select>
+            </div>
+
+            {/* Mot de passe / Confirmation */}
             <div className="grid grid-cols-2 gap-3">
-              <div>
-                <label className="block text-xs font-semibold uppercase tracking-wider mb-1.5"
-                  style={{ fontFamily: 'Manrope, sans-serif', color: '#000666' }}>{t('auth.languagePref')}</label>
-                <select value={form.langue} onChange={set('langue')}
-                  className="w-full rounded-xl px-4 py-2.5 text-sm outline-none"
-                  style={{ background: '#ffffff', color: '#191c1e', fontFamily: 'Manrope, sans-serif', border: '1px solid #e0e3e6' }}>
-                  <option value="fr">Français</option>
-                  <option value="en">English</option>
-                  <option value="nl">Nederlands</option>
-                </select>
-              </div>
               <div>
                 <label className="block text-xs font-semibold uppercase tracking-wider mb-1.5"
                   style={{ fontFamily: 'Manrope, sans-serif', color: '#000666' }}>{t('auth.passwordField')}</label>
@@ -269,13 +271,10 @@ export default function RegisterPage() {
                 </div>
                 {errors.password && <p className="text-xs mt-1" style={{ color: '#ba1a1a' }}>{errors.password[0]}</p>}
               </div>
-            </div>
-
-            {/* Confirmation */}
-            <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider mb-1.5"
-                style={{ fontFamily: 'Manrope, sans-serif', color: '#454652' }}>{t('auth.confirmPassword')}</label>
-              <div className="flex items-center rounded-xl px-3 py-2.5 gap-2" style={inputClass('password_confirmation')}>
+              <div>
+                <label className="block text-xs font-semibold uppercase tracking-wider mb-1.5"
+                  style={{ fontFamily: 'Manrope, sans-serif', color: '#000666' }}>{t('auth.confirmPassword')}</label>
+                <div className="flex items-center rounded-xl px-3 py-2.5 gap-2" style={inputClass('password_confirmation')}>
                 <input type={showConfirm ? 'text' : 'password'} value={form.password_confirmation}
                   onChange={set('password_confirmation')}
                   placeholder={t('auth.repeatPassword')}
@@ -287,6 +286,8 @@ export default function RegisterPage() {
                     : <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
                   }
                 </button>
+                </div>
+                {errors.password_confirmation && <p className="text-xs mt-1" style={{ color: '#ba1a1a' }}>{errors.password_confirmation[0]}</p>}
               </div>
             </div>
 
