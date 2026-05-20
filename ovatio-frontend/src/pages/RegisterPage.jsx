@@ -83,7 +83,7 @@ export default function RegisterPage() {
   })
 
   return (
-    <div className="h-screen w-screen flex" style={{ background: '#f7f9fc' }}>
+    <div className="h-screen w-screen flex" style={{ background: '#ffffff' }}>
 
       {/* ── Gauche — Hero ── */}
       <div className="hidden lg:flex lg:w-5/12 flex-col justify-between p-12 relative overflow-hidden"
@@ -134,8 +134,8 @@ export default function RegisterPage() {
           {/* Bouton retour */}
           <div className="mb-6">
             <Link to="/shows"
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold text-gray-700 transition-opacity hover:opacity-80"
-              style={{ fontFamily: 'Manrope, sans-serif', background: '#f2f4f7' }}>
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold text-white transition-opacity hover:opacity-80"
+              style={{ fontFamily: 'Manrope, sans-serif', background: '#000666' }}>
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
               </svg>
@@ -195,7 +195,7 @@ export default function RegisterPage() {
             <div className="grid grid-cols-2 gap-3">
               <div>
                 <label className="block text-xs font-semibold uppercase tracking-wider mb-1.5"
-                  style={{ fontFamily: 'Manrope, sans-serif', color: '#454652' }}>{t('auth.firstname')}</label>
+                  style={{ fontFamily: 'Manrope, sans-serif', color: '#000666' }}>{t('auth.firstname')}</label>
                 <input type="text" value={form.firstname} onChange={set('firstname')}
                   placeholder="Jean"
                   className="w-full rounded-xl px-4 py-2.5 text-sm outline-none"
@@ -204,7 +204,7 @@ export default function RegisterPage() {
               </div>
               <div>
                 <label className="block text-xs font-semibold uppercase tracking-wider mb-1.5"
-                  style={{ fontFamily: 'Manrope, sans-serif', color: '#454652' }}>{t('auth.lastname')}</label>
+                  style={{ fontFamily: 'Manrope, sans-serif', color: '#000666' }}>{t('auth.lastname')}</label>
                 <input type="text" value={form.lastname} onChange={set('lastname')}
                   placeholder="Dupont"
                   className="w-full rounded-xl px-4 py-2.5 text-sm outline-none"
@@ -243,7 +243,7 @@ export default function RegisterPage() {
             <div className="grid grid-cols-2 gap-3">
               <div>
                 <label className="block text-xs font-semibold uppercase tracking-wider mb-1.5"
-                  style={{ fontFamily: 'Manrope, sans-serif', color: '#454652' }}>{t('auth.languagePref')}</label>
+                  style={{ fontFamily: 'Manrope, sans-serif', color: '#000666' }}>{t('auth.languagePref')}</label>
                 <select value={form.langue} onChange={set('langue')}
                   className="w-full rounded-xl px-4 py-2.5 text-sm outline-none"
                   style={{ background: '#ffffff', color: '#191c1e', fontFamily: 'Manrope, sans-serif', border: '1px solid #e0e3e6' }}>
@@ -254,7 +254,7 @@ export default function RegisterPage() {
               </div>
               <div>
                 <label className="block text-xs font-semibold uppercase tracking-wider mb-1.5"
-                  style={{ fontFamily: 'Manrope, sans-serif', color: '#454652' }}>{t('auth.passwordField')}</label>
+                  style={{ fontFamily: 'Manrope, sans-serif', color: '#000666' }}>{t('auth.passwordField')}</label>
                 <div className="flex items-center rounded-xl px-3 py-2.5 gap-2" style={inputClass('password')}>
                   <input type={showPassword ? 'text' : 'password'} value={form.password} onChange={set('password')}
                     placeholder={t('auth.minPassword')}
