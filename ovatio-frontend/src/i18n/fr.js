@@ -500,6 +500,8 @@ export default {
     saving: 'Enregistrement...',
     fieldPrices: 'Tarifs',
     fieldArtists: 'Artistes & rôles',
+    errorTitle: 'Erreur de validation',
+    closeBtn: 'Fermer',
     // Reviews tab (producer)
     noReviews: 'Aucun avis en attente de modération.',
     loadReviewsError: 'Impossible de charger les avis.',

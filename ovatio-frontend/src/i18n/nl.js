@@ -500,6 +500,8 @@ export default {
     saving: 'Opslaan...',
     fieldPrices: 'Tarieven',
     fieldArtists: 'Artiesten & rollen',
+    errorTitle: 'Validatiefout',
+    closeBtn: 'Sluiten',
     // Reviews tab (producer)
     noReviews: 'Geen recensies in behandeling.',
     loadReviewsError: 'Kan recensies niet laden.',

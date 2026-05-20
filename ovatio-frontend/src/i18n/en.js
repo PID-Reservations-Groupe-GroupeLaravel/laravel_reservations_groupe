@@ -500,6 +500,8 @@ export default {
     saving: 'Saving...',
     fieldPrices: 'Pricing tiers',
     fieldArtists: 'Artists & roles',
+    errorTitle: 'Validation error',
+    closeBtn: 'Close',
     // Reviews tab (producer)
     noReviews: 'No reviews pending moderation.',
     loadReviewsError: 'Unable to load reviews.',
