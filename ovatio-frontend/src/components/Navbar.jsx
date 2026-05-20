@@ -137,15 +137,6 @@ export default function Navbar() {
               {t('nav.becomeProducer')} ✦
             </Link>
           )}
-          {!user && (
-            <Link
-              to="/devenir-producteur"
-              className="text-sm font-semibold transition-colors hover:text-[#000666]"
-              style={{ fontFamily: 'Manrope, sans-serif', color: '#454652' }}
-            >
-              {t('nav.becomeProducer')}
-            </Link>
-          )}
         </div>
 
         {/* Right actions */}

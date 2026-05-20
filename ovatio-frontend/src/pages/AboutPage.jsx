@@ -119,21 +119,21 @@ export default function AboutPage() {
                 venue: 'Théâtre Royal de la Monnaie',
                 date: 'Juin 2024',
                 genre: 'Ballet Classique',
-                image: 'https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=500&h=700&fit=crop'
+                image: 'https://images.unsplash.com/photo-1487180144351-b8472da7d491?w=500&h=700&fit=crop'
               },
               {
                 title: 'Concert Symphonique',
                 venue: 'Palais des Beaux-Arts (BOZAR)',
                 date: 'Mai 2024',
                 genre: 'Musique Classique',
-                image: 'https://images.unsplash.com/photo-1487180144351-b8472da7d491?w=500&h=700&fit=crop'
+                image: 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=500&h=700&fit=crop'
               },
               {
                 title: 'Comédie Musicale - Le Grand Show',
                 venue: 'Cirque Royal',
                 date: 'Mai 2024',
                 genre: 'Spectacle',
-                image: 'https://images.unsplash.com/photo-1577720643272-265efce3c772?w=500&h=700&fit=crop'
+                image: 'https://images.unsplash.com/photo-1514320291840-2e0a9bf2a9ae?w=500&h=700&fit=crop'
               },
             ].map(({ title, venue, date, genre, image }) => (
               <div key={title} className="rounded-2xl overflow-hidden border-l-4" style={{ background: '#ffffff', boxShadow: '0px 20px 40px rgba(25, 28, 30, 0.06)', borderLeftColor: '#000666' }}>
