@@ -656,7 +656,7 @@ export default function ShowDetailPage() {
                             <div className="flex items-center justify-between" style={{ paddingRight: isPopular ? '5rem' : 0 }}>
                               <p className="text-sm font-bold"
                                 style={{ color: '#0a0d2e', fontFamily: '"Plus Jakarta Sans", sans-serif' }}>
-                                {p.label}
+                                {t(`detail.priceType_${p.type}`)}
                               </p>
                               <p className="text-sm font-black"
                                 style={{ color: '#000666', fontFamily: '"Plus Jakarta Sans", sans-serif' }}>

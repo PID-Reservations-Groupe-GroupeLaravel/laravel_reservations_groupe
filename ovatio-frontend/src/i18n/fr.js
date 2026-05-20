@@ -88,6 +88,11 @@ export default {
     seatPlural: 'places',
     ticketSingular: 'billet',
     ticketPlural: 'billets',
+    priceType_normal: 'Tarif normal',
+    priceType_enfants: 'Enfants (-12 ans)',
+    priceType_PMR: 'Tarif PMR',
+    priceType_SENIOR: 'Senior (60+)',
+    priceType_ETUDIANT: 'Étudiant',
   },
   auth: {
     loginTitle: 'Connexion',
