@@ -166,6 +166,7 @@ Route::middleware('auth:sanctum')->post('/shows/{id}/reviews', function (Request
 Route::get('/prices', function () {
     $prices = Price::all()->map(fn($p) => [
         'id'    => $p->id,
+        'type'  => $p->type,
         'label' => $p->type,
         'price' => $p->price,
     ]);
