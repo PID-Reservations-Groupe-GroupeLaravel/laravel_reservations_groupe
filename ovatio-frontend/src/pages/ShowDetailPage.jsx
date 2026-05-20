@@ -165,7 +165,7 @@ export default function ShowDetailPage() {
               <section>
                 <h2 className="text-2xl font-bold mb-5"
                   style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', color: '#0a0d2e' }}>
-                  🎭 {t('detail.producer')}
+                  {t('detail.producer')}
                 </h2>
                 <div className="rounded-3xl p-6 border-2 border-dashed"
                   style={{ background: 'linear-gradient(135deg, rgba(0,6,102,0.03) 0%, rgba(253,212,0,0.03) 100%)', borderColor: '#fdd400' }}>
@@ -388,6 +388,43 @@ export default function ShowDetailPage() {
                 )}
               </section>
             )}
+
+            {/* Coulisses & Galerie - MOVED TO LEFT */}
+            {posterUrl && (
+              <section>
+                <div className="rounded-3xl overflow-hidden relative"
+                  style={{ boxShadow: '0 8px 32px rgba(0,6,102,0.12)' }}>
+                  <img src={posterUrl} alt={show.title}
+                    className="w-full object-cover"
+                    style={{ height: '200px', filter: 'brightness(0.45) saturate(1.2)' }} />
+                  <div className="absolute inset-0 flex flex-col justify-end p-5"
+                    style={{ background: 'linear-gradient(to top, rgba(0,6,60,0.9) 40%, transparent)' }}>
+                    <p className="text-base font-bold text-white"
+                      style={{ fontFamily: '"Plus Jakarta Sans", sans-serif' }}>
+                      {t('detail.backstage')}
+                    </p>
+                    <p className="text-xs mt-1"
+                      style={{ color: 'rgba(255,255,255,0.55)', fontFamily: 'Manrope, sans-serif' }}>
+                      {t('detail.backstageDesc')}
+                    </p>
+                    {/* Thumbnails */}
+                    <div className="flex gap-2 mt-3">
+                      {[1, 2, 3].map(i => (
+                        <div key={i} className="w-12 h-12 rounded-lg overflow-hidden"
+                          style={{ border: '2px solid rgba(255,255,255,0.2)' }}>
+                          <img src={posterUrl} alt="" className="w-full h-full object-cover"
+                            style={{ filter: `brightness(${0.5 + i * 0.15})` }} />
+                        </div>
+                      ))}
+                      <div className="w-12 h-12 rounded-lg flex items-center justify-center text-xs font-bold"
+                        style={{ background: 'rgba(255,255,255,0.15)', color: '#fff', border: '2px solid rgba(255,255,255,0.2)', fontFamily: 'Manrope, sans-serif' }}>
+                        +12
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </section>
+            )}
           </div>
 
           {/* ══ DROITE — sidebar sticky 1/3 ══ */}
@@ -551,41 +588,6 @@ export default function ShowDetailPage() {
                 </form>
               )}
             </div>
-
-            {/* Coulisses & Galerie */}
-            {posterUrl && (
-              <div className="rounded-3xl overflow-hidden relative sticky top-96"
-                style={{ boxShadow: '0 8px 32px rgba(0,6,102,0.12)' }}>
-                <img src={posterUrl} alt={show.title}
-                  className="w-full object-cover"
-                  style={{ height: '160px', filter: 'brightness(0.45) saturate(1.2)' }} />
-                <div className="absolute inset-0 flex flex-col justify-end p-5"
-                  style={{ background: 'linear-gradient(to top, rgba(0,6,60,0.9) 40%, transparent)' }}>
-                  <p className="text-base font-bold text-white"
-                    style={{ fontFamily: '"Plus Jakarta Sans", sans-serif' }}>
-                    {t('detail.backstage')}
-                  </p>
-                  <p className="text-xs mt-1"
-                    style={{ color: 'rgba(255,255,255,0.55)', fontFamily: 'Manrope, sans-serif' }}>
-                    {t('detail.backstageDesc')}
-                  </p>
-                  {/* Thumbnails */}
-                  <div className="flex gap-2 mt-3">
-                    {[1, 2, 3].map(i => (
-                      <div key={i} className="w-12 h-12 rounded-lg overflow-hidden"
-                        style={{ border: '2px solid rgba(255,255,255,0.2)' }}>
-                        <img src={posterUrl} alt="" className="w-full h-full object-cover"
-                          style={{ filter: `brightness(${0.5 + i * 0.15})` }} />
-                      </div>
-                    ))}
-                    <div className="w-12 h-12 rounded-lg flex items-center justify-center text-xs font-bold"
-                      style={{ background: 'rgba(255,255,255,0.15)', color: '#fff', border: '2px solid rgba(255,255,255,0.2)', fontFamily: 'Manrope, sans-serif' }}>
-                      +12
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )}
 
           </div>
         </div>
