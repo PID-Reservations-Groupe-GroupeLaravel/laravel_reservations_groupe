@@ -36,13 +36,15 @@ export default function GoogleOAuthButton({ t }) {
       <button
         type="button"
         onClick={handleAppleAuth}
-        className="flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl border-2 font-semibold text-sm transition-all hover:opacity-80"
+        disabled
+        className="flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl border-2 font-semibold text-sm transition-all opacity-50 cursor-not-allowed"
         style={{
           borderColor: '#e0e3e6',
           color: '#191c1e',
           fontFamily: '"Plus Jakarta Sans", sans-serif',
           background: '#ffffff'
         }}
+        title="Disponible bientôt - Nécessite Apple Developer Program"
       >
         <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
           <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.3-3.14-2.53C4.25 17 2.94 12.46 4.7 9.12c.9-1.56 2.64-2.55 4.48-2.58 1.3-.02 2.53.75 3.32.75.78 0 2.26-1.01 3.79-.85.64.1 2.45.44 3.61 3.3-.36.23-2.09 1.28-2.06 3.85.03 3.02 2.69 4.05 2.95 4.1 0 0-.37 1.02-1.24 1.97l-1.52-.12c-1.32-.15-1.78.38-3.47.4z" />
