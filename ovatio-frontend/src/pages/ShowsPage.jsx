@@ -27,7 +27,7 @@ export default function ShowsPage() {
         className="relative py-24 px-6 overflow-hidden text-center"
         style={{
           background: 'linear-gradient(135deg, #000666 0%, #1a237e 100%)',
-          backgroundImage: 'url("https://images.unsplash.com/photo-1485579149c0-123123c6f4b8?w=1200&h=600&fit=crop")',
+          backgroundImage: 'url("https://images.unsplash.com/photo-1514306688484-ace2b7637992?w=1200&h=600&fit=crop")',
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           backgroundBlend: 'multiply'
