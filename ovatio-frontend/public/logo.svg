@@ -1,0 +1,31 @@
+<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background circle -->
+  <circle cx="50" cy="50" r="48" fill="#000666" opacity="0.1"/>
+
+  <!-- Main circle with gradient -->
+  <defs>
+    <linearGradient id="logoGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#000666;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#1a237e;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+
+  <circle cx="50" cy="50" r="45" fill="url(#logoGradient)"/>
+
+  <!-- Stage/Theater curtain shape -->
+  <g transform="translate(50, 50)">
+    <!-- Left curtain -->
+    <path d="M -15 -20 Q -20 0 -15 20 L -5 20 Q -8 5 -5 -20 Z" fill="#fdd400" opacity="0.9"/>
+
+    <!-- Right curtain -->
+    <path d="M 15 -20 Q 20 0 15 20 L 5 20 Q 8 5 5 -20 Z" fill="#fdd400" opacity="0.9"/>
+
+    <!-- Center spotlight/stage light -->
+    <circle cx="0" cy="-8" r="4" fill="#fdd400"/>
+    <path d="M -3 -4 L -8 8 L 8 8 L 3 -4 Z" fill="#fdd400" opacity="0.7"/>
+
+    <!-- Standing Ovation text indicator (small) -->
+    <circle cx="0" cy="12" r="8" fill="#ffffff" opacity="0.95"/>
+    <text x="0" y="14" font-size="8" font-weight="bold" text-anchor="middle" fill="#000666">SO</text>
+  </g>
+</svg>
