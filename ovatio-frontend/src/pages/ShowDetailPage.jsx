@@ -160,6 +160,39 @@ export default function ShowDetailPage() {
           {/* ══ GAUCHE — 2/3 ══ */}
           <div className="lg:col-span-2 space-y-12">
 
+            {/* Producteur EN PREMIÈRE POSITION */}
+            {show.producer && (
+              <section>
+                <h2 className="text-2xl font-bold mb-5"
+                  style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', color: '#0a0d2e' }}>
+                  🎭 {t('detail.producer')}
+                </h2>
+                <div className="rounded-3xl p-6 border-2 border-dashed"
+                  style={{ background: 'linear-gradient(135deg, rgba(0,6,102,0.03) 0%, rgba(253,212,0,0.03) 100%)', borderColor: '#fdd400' }}>
+                  <div className="flex items-center gap-5 mb-4">
+                    <div className="w-16 h-16 rounded-2xl flex items-center justify-center font-bold text-lg shrink-0"
+                      style={{ background: 'linear-gradient(135deg, #fdd400 0%, #ffb300 100%)', color: '#6f5c00', boxShadow: '0 4px 12px rgba(253,212,0,0.3)' }}>
+                      {(show.producer.name ?? show.producer.firstname ?? 'P')[0].toUpperCase()}
+                    </div>
+                    <div className="flex-1">
+                      <p className="text-lg font-bold"
+                        style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', color: '#0a0d2e' }}>
+                        {show.producer.name ?? `${show.producer.firstname} ${show.producer.lastname}`}
+                      </p>
+                      <p className="text-xs mt-1" style={{ color: '#000666', fontFamily: 'Manrope, sans-serif', fontWeight: '600' }}>
+                        Producteur/Productrice
+                      </p>
+                      {show.producer.email && (
+                        <p className="text-xs mt-2" style={{ color: '#666', fontFamily: 'Manrope, sans-serif' }}>
+                          ✉️ {show.producer.email}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </section>
+            )}
+
             {/* À propos */}
             {show.description && (
               <section>
@@ -353,39 +386,6 @@ export default function ShowDetailPage() {
                     </Link>
                   </div>
                 )}
-              </section>
-            )}
-
-            {/* Producteur */}
-            {show.producer && (
-              <section>
-                <h2 className="text-2xl font-bold mb-5"
-                  style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', color: '#0a0d2e' }}>
-                  🎭 {t('detail.producer')}
-                </h2>
-                <div className="rounded-3xl p-6 border-2 border-dashed"
-                  style={{ background: 'linear-gradient(135deg, rgba(0,6,102,0.03) 0%, rgba(253,212,0,0.03) 100%)', borderColor: '#fdd400' }}>
-                  <div className="flex items-center gap-5 mb-4">
-                    <div className="w-16 h-16 rounded-2xl flex items-center justify-center font-bold text-lg shrink-0"
-                      style={{ background: 'linear-gradient(135deg, #fdd400 0%, #ffb300 100%)', color: '#6f5c00', boxShadow: '0 4px 12px rgba(253,212,0,0.3)' }}>
-                      {(show.producer.name ?? show.producer.firstname ?? 'P')[0].toUpperCase()}
-                    </div>
-                    <div className="flex-1">
-                      <p className="text-lg font-bold"
-                        style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', color: '#0a0d2e' }}>
-                        {show.producer.name ?? `${show.producer.firstname} ${show.producer.lastname}`}
-                      </p>
-                      <p className="text-xs mt-1" style={{ color: '#000666', fontFamily: 'Manrope, sans-serif', fontWeight: '600' }}>
-                        Producteur/Productrice
-                      </p>
-                      {show.producer.email && (
-                        <p className="text-xs mt-2" style={{ color: '#666', fontFamily: 'Manrope, sans-serif' }}>
-                          ✉️ {show.producer.email}
-                        </p>
-                      )}
-                    </div>
-                  </div>
-                </div>
               </section>
             )}
           </div>
