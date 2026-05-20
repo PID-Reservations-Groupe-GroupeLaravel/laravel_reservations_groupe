@@ -33,13 +33,10 @@ export default function RegisterPage() {
     const newForm = { ...form, [field]: e.target.value }
     setForm(newForm)
 
-    // Auto-generate login when firstname or lastname changes
-    if (field === 'firstname' || field === 'lastname') {
-      if (newForm.firstname && newForm.lastname) {
-        const autoLogin = (newForm.firstname + '.' + newForm.lastname).toLowerCase()
-        newForm.login = autoLogin
-        setForm(newForm)
-      }
+    // Auto-generate login (email) when email changes
+    if (field === 'email') {
+      newForm.login = newForm.email.toLowerCase()
+      setForm(newForm)
     }
   }
 
@@ -219,17 +216,17 @@ export default function RegisterPage() {
               </div>
             </div>
 
-            {/* Login - Auto-generated from firstname and lastname */}
-            {form.login && (
+            {/* Login - Email used for login */}
+            {form.email && (
               <div>
                 <label className="block text-xs font-semibold uppercase tracking-wider mb-1.5"
                   style={{ fontFamily: 'Manrope, sans-serif', color: '#454652' }}>Votre identifiant de connexion</label>
                 <div className="w-full rounded-xl px-4 py-2.5 text-sm"
                   style={{ background: '#f7f9fc', color: '#191c1e', border: '1px solid #e0e3e6', fontFamily: 'Manrope, sans-serif' }}>
-                  {form.login}
+                  {form.email}
                 </div>
                 <p className="text-xs mt-1" style={{ color: '#767683', fontFamily: 'Manrope, sans-serif' }}>
-                  Généré automatiquement à partir de votre prénom et nom
+                  Utilisez votre adresse email pour vous connecter
                 </p>
               </div>
             )}
