@@ -2,6 +2,7 @@ import { useState, useRef } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
 import { useLanguage } from '../contexts/LanguageContext'
+import GoogleOAuthButton from '../components/GoogleOAuthButton'
 import api from '../api/axios'
 
 export default function RegisterPage() {
@@ -317,6 +318,16 @@ export default function RegisterPage() {
               style={{ background: 'linear-gradient(135deg, #000666, #1a237e)', fontFamily: '"Plus Jakarta Sans", sans-serif' }}>
               {loading ? t('auth.registering') : t('auth.registerBtn')}
             </button>
+
+            {/* Séparateur */}
+            <div className="flex items-center gap-3 my-4">
+              <div className="flex-1 h-px" style={{ background: '#e0e3e6' }} />
+              <span className="text-xs" style={{ color: '#767683', fontFamily: 'Manrope, sans-serif' }}>{t('auth.or')}</span>
+              <div className="flex-1 h-px" style={{ background: '#e0e3e6' }} />
+            </div>
+
+            {/* Google OAuth */}
+            <GoogleOAuthButton t={t} />
           </form>
         </div>
       </div>
