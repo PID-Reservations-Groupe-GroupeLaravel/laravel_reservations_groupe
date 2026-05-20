@@ -22,7 +22,7 @@ function Stars({ score, size = '1rem' }) {
 export default function ShowDetailPage() {
   const { id } = useParams()
   const { user } = useAuth()
-  const { t } = useLanguage()
+  const { t, lang } = useLanguage()
   const navigate = useNavigate()
 
   const [show, setShow]                       = useState(null)
@@ -50,7 +50,7 @@ export default function ShowDetailPage() {
     const translateAllReviews = async () => {
       setTranslatingReviews(true)
       const langMap = { 'fr': 'FR', 'en': 'EN', 'nl': 'NL' }
-      const targetLang = langMap[t('global.currentLanguage')] || 'EN'
+      const targetLang = langMap[lang] || 'EN'
       const translated = {}
 
       for (const review of reviews) {
@@ -76,7 +76,7 @@ export default function ShowDetailPage() {
     }
 
     translateAllReviews()
-  }, [reviews, t('global.currentLanguage')])
+  }, [reviews, lang])
 
   useEffect(() => {
     Promise.all([
