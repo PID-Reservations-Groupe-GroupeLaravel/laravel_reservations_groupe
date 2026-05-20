@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\AdminShowController;
 use App\Http\Controllers\Admin\AdminStatsController;
 use App\Http\Controllers\Admin\AdminUserController;
 use App\Http\Controllers\ArtistApiController;
+use App\Http\Controllers\Auth\SocialiteController;
 use App\Http\Controllers\ShowApiController;
 use App\Mail\WelcomeMail;
 use App\Models\Price;
@@ -239,6 +240,14 @@ Route::post('/check-email', function (Request $request) {
     $exists = User::where('email', $request->email)->exists();
     return response()->json(['available' => !$exists]);
 });
+
+// ─── Google OAuth ─────────────────────────────────────────────────────────────
+Route::get('/auth/redirect/google', function () {
+    return redirect()->away(\App\Http\Controllers\Auth\SocialiteController::class);
+});
+
+Route::get('/auth/google', [App\Http\Controllers\Auth\SocialiteController::class, 'redirectGoogle'])->name('auth.google');
+Route::get('/auth/callback/google', [App\Http\Controllers\Auth\SocialiteController::class, 'callbackGoogle'])->name('auth.google-callback');
 
 // ─── Connexion ───────────────────────────────────────────────────────────────
 Route::post('/login', function (Request $request) {
