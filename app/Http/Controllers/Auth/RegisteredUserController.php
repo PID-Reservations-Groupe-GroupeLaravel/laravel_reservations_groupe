@@ -28,13 +28,15 @@ class RegisteredUserController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $validated = $request->validate([
-            'login' => ['required', 'string', 'max:255', 'unique:users,login'],
             'firstname' => ['required', 'string', 'max:255'],
             'lastname' => ['required', 'string', 'max:255'],
             'langue' => ['required', 'string', 'size:2'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:users,email'],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
+
+        // Le login est l'email
+        $validated['login'] = strtolower($validated['email']);
 
         // name obligatoire en DB : on le fabrique
         $validated['name'] = $validated['firstname'] . ' ' . $validated['lastname'];

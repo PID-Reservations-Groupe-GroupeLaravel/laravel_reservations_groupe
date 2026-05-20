@@ -8,12 +8,17 @@ const api = axios.create({
   },
 })
 
-// Injecter automatiquement le token Bearer depuis localStorage
+// Injecter automatiquement le token Bearer et la langue depuis localStorage
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem('ovatio_token')
   if (token) {
     config.headers.Authorization = `Bearer ${token}`
   }
+
+  // Ajouter la langue actuelle au header Accept-Language
+  const langue = localStorage.getItem('langue') ?? 'fr'
+  config.headers['Accept-Language'] = langue
+
   return config
 })
 

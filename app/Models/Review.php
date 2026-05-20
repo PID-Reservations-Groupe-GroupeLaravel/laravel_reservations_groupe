@@ -15,6 +15,11 @@ class Review extends Model
         'show_id',
         'score',
         'comment',
+        'comment_fr',
+        'comment_en',
+        'comment_nl',
+        'translated_by',
+        'source_language',
         'validated',
     ];
 

@@ -24,31 +24,27 @@ export default function ShowsPage() {
 
       {/* ── HERO ── */}
       <div
-        className="relative py-24 px-6 overflow-hidden"
-        style={{ background: 'linear-gradient(135deg, #000666 0%, #1a237e 100%)' }}
+        className="relative py-24 px-6 overflow-hidden text-center"
+        style={{
+          background: 'linear-gradient(135deg, #000666 0%, #1a237e 100%)',
+          backgroundImage: 'url("https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=1200&h=600&fit=crop")',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundBlend: 'multiply'
+        }}
       >
-        <div className="absolute pointer-events-none"
-          style={{ top: '-20%', left: '-15%', width: '50%', height: '50%',
-            background: '#fdd400', borderRadius: '50%', filter: 'blur(120px)', opacity: 0.15 }} />
-        <div className="absolute pointer-events-none"
-          style={{ bottom: '-20%', right: '-15%', width: '45%', height: '45%',
-            background: '#8690ee', borderRadius: '50%', filter: 'blur(120px)', opacity: 0.12 }} />
+        <div className="absolute inset-0 pointer-events-none"
+          style={{ background: 'linear-gradient(135deg, rgba(0, 6, 102, 0.87) 0%, rgba(26, 35, 126, 0.87) 100%)' }} />
 
-        <div className="relative max-w-7xl mx-auto">
-          <span
-            className="inline-block text-xs font-black uppercase tracking-[0.25em] px-4 py-1.5 rounded-full mb-6"
-            style={{ background: '#fdd400', color: '#6f5c00', fontFamily: 'Manrope, sans-serif' }}
-          >
-            {t('shows.hero_badge')}
-          </span>
+        <div className="relative max-w-4xl mx-auto">
           <h1
-            className="text-5xl md:text-6xl font-extrabold text-white mb-4"
-            style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', letterSpacing: '-0.02em', lineHeight: 1.1 }}
+            className="text-5xl md:text-6xl font-extrabold text-white mb-6"
+            style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', letterSpacing: '-0.02em', lineHeight: 1.2 }}
           >
             {t('shows.hero_title')}
           </h1>
-          <p className="text-lg max-w-xl"
-            style={{ color: 'rgba(255,255,255,0.55)', fontFamily: 'Manrope, sans-serif' }}>
+          <p className="text-lg max-w-3xl mx-auto"
+            style={{ color: 'rgba(255,255,255,0.90)', fontFamily: 'Manrope, sans-serif', lineHeight: 1.8 }}>
             {t('shows.hero_subtitle')}
           </p>
         </div>

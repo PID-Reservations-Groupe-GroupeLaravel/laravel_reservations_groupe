@@ -12,26 +12,22 @@ class PriceSeeder extends Seeder
         $data = [
             [
                 'type' => 'normal',
-                'price' => 14.90,
-                'description' => 'Ancien tarif normal.',
-                'start_date' => '2020-01-01',
-                'end_date' => '2023-12-31',
-            ],
-            [
-                'type' => 'normal',
                 'price' => 15.90,
-                'description' => 'Prix normal actuel.',
+                'description' => 'Tarif normal',
                 'start_date' => '2024-01-01',
                 'end_date' => '9999-12-31',
             ],
             [
                 'type' => 'enfants',
                 'price' => 7.90,
-                'description' => 'Tarif enfant <12 ans.',
+                'description' => 'Tarif enfant <12 ans',
                 'start_date' => '2020-01-01',
                 'end_date' => '9999-12-31',
             ],
         ];
+
+        // Delete old/expired prices
+        DB::table('prices')->where('end_date', '<', now()->toDateString())->delete();
 
         DB::table('prices')->upsert(
             $data,

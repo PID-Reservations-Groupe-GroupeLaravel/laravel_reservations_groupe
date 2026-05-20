@@ -13,7 +13,7 @@ class ShowApiController extends Controller
      */
     public function index()
     {
-        $shows = Show::all()->map(function (Show $show) {
+        $shows = Show::with('producer')->get()->map(function (Show $show) {
             return $this->formatShow($show);
         });
 
@@ -26,7 +26,7 @@ class ShowApiController extends Controller
      */
     public function show(string $id)
     {
-        $show = Show::with(['representations', 'prices'])->find($id);
+        $show = Show::with(['producer', 'representations', 'prices'])->find($id);
 
         if (!$show) {
             return response()->json(['message' => 'Show not found'], 404);
@@ -50,6 +50,11 @@ class ShowApiController extends Controller
             'created_in'  => $show->created_in,
             'bookable'    => (bool) $show->bookable,
             'status'      => $show->bookable ? 'CONFIRME' : 'A_CONFIRMER',
+            'producer'    => $show->producer ? [
+                'id'    => $show->producer->id,
+                'name'  => $show->producer->name,
+                'email' => $show->producer->email,
+            ] : null,
         ];
 
         if ($withDetails) {
