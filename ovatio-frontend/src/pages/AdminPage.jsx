@@ -4,6 +4,21 @@ import { useAuth } from '../contexts/AuthContext'
 import { useLanguage } from '../contexts/LanguageContext'
 import api from '../api/axios'
 
+async function downloadCsv(role) {
+  const token = localStorage.getItem('ovatio_token') || sessionStorage.getItem('ovatio_token')
+  const res = await fetch(`/api/admin/users/export?role=${role}`, {
+    headers: { Authorization: `Bearer ${token}`, Accept: 'text/csv' },
+  })
+  if (!res.ok) return alert('Erreur lors de l\'export.')
+  const blob = await res.blob()
+  const url = URL.createObjectURL(blob)
+  const a = document.createElement('a')
+  a.href = url
+  a.download = `export_${role}_${new Date().toISOString().slice(0,10)}.csv`
+  a.click()
+  URL.revokeObjectURL(url)
+}
+
 const styleTab = (active) => ({
   background: active ? '#000666' : '#f2f4f7',
   color: active ? '#ffffff' : '#454652',
@@ -342,8 +357,8 @@ function MembresTab({ t }) {
 
   return (
     <>
-      {/* Barre de recherche */}
-      <div className="mb-6 flex items-center gap-3 rounded-xl px-4 py-3"
+      {/* Barre de recherche + exports */}
+      <div className="mb-4 flex items-center gap-3 rounded-xl px-4 py-3"
         style={{ background: '#fff', boxShadow: '0 2px 12px rgba(0,6,102,0.06)' }}>
         <span style={{ color: '#767683', fontSize: '1rem' }}>🔍</span>
         <input
@@ -359,6 +374,20 @@ function MembresTab({ t }) {
             ×
           </button>
         )}
+      </div>
+      <div className="mb-6 flex gap-2 justify-end">
+        <button onClick={() => downloadCsv('members')}
+          style={{ background: '#e8f5e9', color: '#2e7d32', border: 'none', cursor: 'pointer',
+            padding: '6px 14px', borderRadius: '8px', fontFamily: 'Manrope, sans-serif',
+            fontSize: '0.78rem', fontWeight: 600 }}>
+          ↓ Export membres CSV
+        </button>
+        <button onClick={() => downloadCsv('admins')}
+          style={{ background: '#fff8e1', color: '#6f5c00', border: 'none', cursor: 'pointer',
+            padding: '6px 14px', borderRadius: '8px', fontFamily: 'Manrope, sans-serif',
+            fontSize: '0.78rem', fontWeight: 600 }}>
+          ↓ Export admins CSV
+        </button>
       </div>
 
       <div className="rounded-2xl overflow-hidden"
@@ -499,8 +528,8 @@ function ProducteursTab({ t }) {
 
   return (
     <>
-      {/* Barre de recherche */}
-      <div className="mb-6 flex items-center gap-3 rounded-xl px-4 py-3"
+      {/* Barre de recherche + export */}
+      <div className="mb-4 flex items-center gap-3 rounded-xl px-4 py-3"
         style={{ background: '#fff', boxShadow: '0 2px 12px rgba(0,6,102,0.06)' }}>
         <span style={{ color: '#767683', fontSize: '1rem' }}>🔍</span>
         <input
@@ -516,6 +545,14 @@ function ProducteursTab({ t }) {
             ×
           </button>
         )}
+      </div>
+      <div className="mb-6 flex justify-end">
+        <button onClick={() => downloadCsv('producers')}
+          style={{ background: '#e0f2fe', color: '#0369a1', border: 'none', cursor: 'pointer',
+            padding: '6px 14px', borderRadius: '8px', fontFamily: 'Manrope, sans-serif',
+            fontSize: '0.78rem', fontWeight: 600 }}>
+          ↓ Export producteurs CSV
+        </button>
       </div>
 
       {filtered.length === 0 && (

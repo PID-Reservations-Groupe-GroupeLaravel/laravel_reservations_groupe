@@ -523,6 +523,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::middleware('admin')->prefix('admin')->group(function () {
 
         // ─── CRUD complet (D1) ───────────────────────────────────────────────
+        Route::get('users/export',          [AdminUserController::class, 'exportCsv']);
         Route::apiResource('users', AdminUserController::class)->only(['index', 'update', 'destroy']);
         Route::post('users/{user}/disable', [AdminUserController::class, 'disable']);
         Route::post('users/{user}/enable',  [AdminUserController::class, 'enable']);

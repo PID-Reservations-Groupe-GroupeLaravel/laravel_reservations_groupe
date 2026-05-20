@@ -10,7 +10,7 @@ const api = axios.create({
 
 // Injecter automatiquement le token Bearer et la langue depuis localStorage
 api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('ovatio_token')
+  const token = localStorage.getItem('ovatio_token') || sessionStorage.getItem('ovatio_token')
   if (token) {
     config.headers.Authorization = `Bearer ${token}`
   }
@@ -30,6 +30,9 @@ api.interceptors.response.use(
     if (error.response?.status === 401 && !isLoginRequest) {
       localStorage.removeItem('ovatio_token')
       localStorage.removeItem('ovatio_user')
+      localStorage.removeItem('ovatio_remember_until')
+      sessionStorage.removeItem('ovatio_token')
+      sessionStorage.removeItem('ovatio_user')
       window.location.href = '/login'
     }
     return Promise.reject(error)
