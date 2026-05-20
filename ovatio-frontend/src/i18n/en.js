@@ -88,6 +88,11 @@ export default {
     seatPlural: 'seats',
     ticketSingular: 'ticket',
     ticketPlural: 'tickets',
+    priceType_normal: 'Standard Price',
+    priceType_enfants: 'Children (-12 yrs)',
+    priceType_PMR: 'Reduced Mobility',
+    priceType_SENIOR: 'Senior (60+)',
+    priceType_ETUDIANT: 'Student',
   },
   auth: {
     loginTitle: 'Log in',

@@ -88,6 +88,11 @@ export default {
     seatPlural: 'plaatsen',
     ticketSingular: 'ticket',
     ticketPlural: 'tickets',
+    priceType_normal: 'Standaard tarief',
+    priceType_enfants: 'Kinderen (-12 jr)',
+    priceType_PMR: 'Beperkte mobiliteit',
+    priceType_SENIOR: 'Senior (60+)',
+    priceType_ETUDIANT: 'Student',
   },
   auth: {
     loginTitle: 'Inloggen',
