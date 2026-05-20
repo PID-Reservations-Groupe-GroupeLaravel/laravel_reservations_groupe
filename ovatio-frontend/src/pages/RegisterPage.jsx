@@ -24,13 +24,24 @@ export default function RegisterPage() {
   const [preview, setPreview]           = useState(null)
   const [errors, setErrors]             = useState({})
   const [loading, setLoading]           = useState(false)
-  const [loginAvail, setLoginAvail]     = useState(null)
   const [emailAvail, setEmailAvail]     = useState(null)
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirm, setShowConfirm]   = useState(false)
   const fileRef = useRef()
 
-  const set = (field) => (e) => setForm({ ...form, [field]: e.target.value })
+  const set = (field) => (e) => {
+    const newForm = { ...form, [field]: e.target.value }
+    setForm(newForm)
+
+    // Auto-generate login when firstname or lastname changes
+    if (field === 'firstname' || field === 'lastname') {
+      if (newForm.firstname && newForm.lastname) {
+        const autoLogin = (newForm.firstname + '.' + newForm.lastname).toLowerCase()
+        newForm.login = autoLogin
+        setForm(newForm)
+      }
+    }
+  }
 
   const handlePhoto = (e) => {
     const file = e.target.files[0]
@@ -39,10 +50,10 @@ export default function RegisterPage() {
     setPreview(URL.createObjectURL(file))
   }
 
-  const checkLogin = async () => {
-    if (!form.login) return
-    const { data } = await api.post('/check-login', { login: form.login })
-    setLoginAvail(data.available)
+  const checkEmail = async () => {
+    if (!form.email) return
+    const { data } = await api.post('/check-email', { email: form.email })
+    setEmailAvail(data.available)
   }
 
   const checkEmail = async () => {
@@ -214,18 +225,20 @@ export default function RegisterPage() {
               </div>
             </div>
 
-            {/* Login */}
-            <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider mb-1.5"
-                style={{ fontFamily: 'Manrope, sans-serif', color: '#454652' }}>{t('auth.loginField')}</label>
-              <input type="text" value={form.login} onChange={set('login')}
-                onBlur={checkLogin} placeholder="mon_login"
-                className="w-full rounded-xl px-4 py-2.5 text-sm outline-none"
-                style={inputClass('login')} />
-              {loginAvail === true  && <p className="text-xs mt-1" style={{ color: '#386a20' }}>{t('auth.loginAvailable')}</p>}
-              {loginAvail === false && <p className="text-xs mt-1" style={{ color: '#ba1a1a' }}>{t('auth.loginTaken')}</p>}
-              {errors.login && <p className="text-xs mt-1" style={{ color: '#ba1a1a' }}>{errors.login[0]}</p>}
-            </div>
+            {/* Login - Auto-generated from firstname and lastname */}
+            {form.login && (
+              <div>
+                <label className="block text-xs font-semibold uppercase tracking-wider mb-1.5"
+                  style={{ fontFamily: 'Manrope, sans-serif', color: '#454652' }}>Votre identifiant de connexion</label>
+                <div className="w-full rounded-xl px-4 py-2.5 text-sm"
+                  style={{ background: '#f7f9fc', color: '#191c1e', border: '1px solid #e0e3e6', fontFamily: 'Manrope, sans-serif' }}>
+                  {form.login}
+                </div>
+                <p className="text-xs mt-1" style={{ color: '#767683', fontFamily: 'Manrope, sans-serif' }}>
+                  Généré automatiquement à partir de votre prénom et nom
+                </p>
+              </div>
+            )}
 
             {/* Email */}
             <div>
