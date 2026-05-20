@@ -656,16 +656,16 @@ export default function ShowDetailPage() {
                             }}>
                             <div className="flex items-center justify-between gap-2">
                               <div className="flex items-center gap-2">
+                                <p className="text-sm font-bold"
+                                  style={{ color: '#0a0d2e', fontFamily: '"Plus Jakarta Sans", sans-serif' }}>
+                                  {t(`detail.priceType_${p.type}`)}
+                                </p>
                                 {isPopular && (
                                   <span className="text-xs font-black px-2 py-0.5 rounded-full"
                                     style={{ background: '#fdd400', color: '#6f5c00', fontFamily: 'Manrope, sans-serif', flexShrink: 0 }}>
                                     {t('detail.popular')}
                                   </span>
                                 )}
-                                <p className="text-sm font-bold"
-                                  style={{ color: '#0a0d2e', fontFamily: '"Plus Jakarta Sans", sans-serif' }}>
-                                  {t(`detail.priceType_${p.type}`)}
-                                </p>
                               </div>
                               <p className="text-sm font-black"
                                 style={{ color: '#000666', fontFamily: '"Plus Jakarta Sans", sans-serif' }}>
