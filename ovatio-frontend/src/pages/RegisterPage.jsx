@@ -56,12 +56,6 @@ export default function RegisterPage() {
     setEmailAvail(data.available)
   }
 
-  const checkEmail = async () => {
-    if (!form.email) return
-    const { data } = await api.post('/check-email', { email: form.email })
-    setEmailAvail(data.available)
-  }
-
   const handleSubmit = async (e) => {
     e.preventDefault()
     setErrors({})
