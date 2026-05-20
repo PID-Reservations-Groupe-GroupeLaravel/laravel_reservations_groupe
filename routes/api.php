@@ -449,7 +449,7 @@ Route::middleware('auth:sanctum')->group(function () {
             'payment_method_types' => ['card'],
             'line_items'           => $lineItems,
             'mode'                 => 'payment',
-            'success_url'          => $frontendUrl . '/reservations?payment=success',
+            'success_url'          => $frontendUrl . '/reservations?payment=success&session_id={CHECKOUT_SESSION_ID}',
             'cancel_url'           => $frontendUrl . '/reservations?payment=cancel',
             'metadata'             => ['reservation_id' => $reservation->id],
         ]);
@@ -471,6 +471,57 @@ Route::middleware('auth:sanctum')->group(function () {
         $reservation->save();
 
         return response()->json(['message' => 'Réservation annulée.']);
+    });
+
+    // GET /reservations/verify-payment?session_id=xxx → vérifier paiement Stripe et générer ticket
+    Route::get('/reservations/verify-payment', function (Request $request) {
+        $sessionId = $request->query('session_id');
+        if (!$sessionId) {
+            return response()->json(['error' => 'session_id manquant'], 400);
+        }
+
+        \Stripe\Stripe::setApiKey(config('services.stripe.secret'));
+
+        try {
+            $session = \Stripe\Checkout\Session::retrieve($sessionId);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Session Stripe invalide'], 400);
+        }
+
+        if ($session->payment_status !== 'paid') {
+            return response()->json(['error' => 'Paiement non complété'], 422);
+        }
+
+        $reservationId = $session->metadata->reservation_id ?? null;
+        if (!$reservationId) {
+            return response()->json(['error' => 'Réservation introuvable'], 400);
+        }
+
+        $reservation = Reservation::where('id', $reservationId)
+            ->where('user_id', $request->user()->id)
+            ->firstOrFail();
+
+        if ($reservation->status !== 'Payée') {
+            $reservation->status = 'Payée';
+            $reservation->save();
+        }
+
+        $existing = DB::table('tickets')->where('reservation_id', $reservation->id)->first();
+        if ($existing) {
+            $qrCode = $existing->qr_code;
+        } else {
+            $qrCode = 'OVT-' . strtoupper(Str::random(8)) . '-' . $reservation->id;
+            DB::table('tickets')->insert([
+                'reservation_id' => $reservation->id,
+                'qr_code'        => $qrCode,
+                'created_at'     => now(),
+            ]);
+        }
+
+        return response()->json([
+            'reservation_id' => $reservation->id,
+            'qr_code'        => $qrCode,
+        ]);
     });
 
     // POST /reservations/{id}/ticket → générer et sauvegarder un ticket

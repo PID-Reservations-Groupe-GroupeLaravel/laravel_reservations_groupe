@@ -19,16 +19,32 @@ export default function ReservationsPage() {
   const [ticketModal, setTicketModal]   = useState(null) // { qrCode, reservation }
 
   const paymentStatus = searchParams.get('payment')
+  const sessionId     = searchParams.get('session_id')
 
   const fetchReservations = () => {
     setLoading(true)
-    api.get('/reservations')
+    return api.get('/reservations')
       .then((res) => setReservations(res.data.data ?? res.data))
       .catch(() => setError(t('reservations.loadError')))
       .finally(() => setLoading(false))
   }
 
-  useEffect(() => { fetchReservations() }, [])
+  useEffect(() => {
+    if (paymentStatus === 'success' && sessionId) {
+      api.get(`/reservations/verify-payment?session_id=${sessionId}`)
+        .then(async (res) => {
+          await fetchReservations()
+          const reservation = await api.get('/reservations')
+            .then(r => (r.data.data ?? r.data).find(rv => rv.id === res.data.reservation_id))
+          if (reservation) {
+            setTicketModal({ qrCode: res.data.qr_code, reservation })
+          }
+        })
+        .catch(() => fetchReservations())
+    } else {
+      fetchReservations()
+    }
+  }, [])
 
   const handleCheckout = async (id) => {
     try {
